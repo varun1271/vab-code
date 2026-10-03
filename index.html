@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VAB-CODE — Online Code Editor & Compiler</title>
+  <meta name="description" content="VAB-CODE: Practice coding online. Write Python, C, C++, Java, HTML, CSS, JavaScript — run instantly in your browser with zero setup.">
+  <meta name="keywords" content="vab-code, VAB-CODE, vab code, vabcode, online code editor, compiler, python, c, cpp, java">
+  <link rel="canonical" href="https://vab-code.in/">
+  <meta property="og:site_name" content="VAB-CODE">
+  <meta property="og:title" content="VAB-CODE — Online Code Editor & Compiler">
+  <meta property="og:description" content="Practice coding online. Write Python, C, C++, Java, HTML, CSS, JavaScript — run instantly in your browser with zero setup.">
+  <meta property="og:url" content="https://vab-code.in/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="VAB-CODE — Online Code Editor & Compiler">
+  <meta name="twitter:description" content="Practice coding online. Run Python, C, C++, Java instantly in your browser.">
+  <meta property="og:image" content="https://vab-code.in/assets/brand-logo-original.png">
+  <meta name="twitter:image" content="https://vab-code.in/assets/brand-logo-original.png">
+
+  <!-- Favicon & Touch Icons -->
+  <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/logo-icon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Google tag (gtag.js) Firebase Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3ZFZLNQ9WZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-3ZFZLNQ9WZ');
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6387245631770824"
+       crossorigin="anonymous"></script>
+
+  <!-- Google Schema.org Structured Data (Site Name & WebApplication for Google Search) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://vab-code.in/#website",
+        "url": "https://vab-code.in/",
+        "name": "VAB-CODE",
+        "alternateName": ["vab-code", "VAB CODE", "vabcode", "vab code", "VAB"],
+        "description": "Online code editor and compiler for engineering students and programmers."
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://vab-code.in/#app",
+        "name": "VAB-CODE",
+        "url": "https://vab-code.in/",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "All",
+        "description": "Online code editor and compiler for engineering students.",
+        "founder": {
+          "@type": "Person",
+          "name": "Varun Reddy",
+          "alternateName": "Yeduguri Varun Kumar Reddy",
+          "jobTitle": "Founder & Creator",
+          "sameAs": [
+            "https://github.com/varun1271",
+            "https://www.linkedin.com/in/yeduguri-varun-kumar-reddy-45a808384"
+          ]
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Varun Reddy",
+          "alternateName": "Yeduguri Varun Kumar Reddy",
+          "jobTitle": "Founder & Creator",
+          "sameAs": [
+            "https://github.com/varun1271",
+            "https://www.linkedin.com/in/yeduguri-varun-kumar-reddy-45a808384"
+          ]
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Varun Reddy",
+          "alternateName": "Yeduguri Varun Kumar Reddy",
+          "sameAs": [
+            "https://github.com/varun1271",
+            "https://www.linkedin.com/in/yeduguri-varun-kumar-reddy-45a808384"
+          ]
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Lucide Icons with Reliable Fallback -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.469.0/umd/lucide.min.js"></script>
+  <script>
+    if (!window.lucide) {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"><\/script>');
+    }
+  </script>
+
+  <link rel="stylesheet" href="style.css?v=5.4">
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <div class="logo-icon">
+          <img src="assets/logo-icon.png?v=5.4" alt="VAB-CODE Logo" style="width:26px;height:26px;object-fit:contain;display:block">
+        </div>
+        <div>
+          <span class="logo-text">VAB-CODE</span>
+          <span class="logo-badge">ONLINE IDE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <nav class="nav-tabs">
+        <button class="nav-tab active" data-view="practice" id="navPracticeBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          Practice
+        </button>
+        <button class="nav-tab" data-view="problems" id="navProblemsBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          Problems
+        </button>
+        <a href="/guides.html" class="nav-tab-link" title="Programming Guides & Tutorials">
+          <i data-lucide="book-open" style="width:14px;height:14px"></i>
+          Guides
+        </a>
+        <a href="/about.html" class="nav-tab-link" title="About VAB-CODE">
+          <i data-lucide="info" style="width:14px;height:14px"></i>
+          About
+        </a>
+        <a href="/contact.html" class="nav-tab-link" title="Contact Us">
+          <i data-lucide="mail" style="width:14px;height:14px"></i>
+          Contact
+        </a>
+      </nav>
+    </div>
+
+    <div class="header-right">
+      <button class="header-action-btn" id="historyBtn" title="Saved Code & Local Storage History">
+        <i data-lucide="folder-clock" style="width:15px;height:15px;color:#a78bfa"></i>
+        <span>Saved Code</span>
+        <span class="history-badge" id="historyBadge">0</span>
+      </button>
+      <div class="runtime-badge" id="runtimeBadge">
+        <span class="pulse-dot"></span>
+        <span id="runtimeLabel">Pyodide WASM</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN WORKSPACE (3-COLUMN LAYOUT) ========== -->
+  <main class="workspace">
+    <div class="workspace-body-split">
+
+      <!-- ==================================================== -->
+      <!-- COLUMN 1 (LEFT): Dedicated Google AdSense Display Slot -->
+      <!-- ==================================================== -->
+      <aside class="workspace-left-ad" id="workspaceLeftAd">
+        <div class="ad-slot-header">
+          <span class="ad-slot-badge">ADVERTISEMENT</span>
+        </div>
+        <div class="ad-slot-container" id="leftAdSenseContainer">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-6387245631770824"
+               data-ad-slot="auto"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>
+               (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+      </aside>
+
+      <!-- Vertical Resizer Handle 1 (Left Problem <-> Middle Editor) -->
+      <div class="split-handle-vertical" id="splitHandleLeft">
+        <div class="handle-grip-v"></div>
+      </div>
+
+      <!-- ==================================================== -->
+      <!-- COLUMN 2 (MIDDLE): Code Input & Editor               -->
+      <!-- ==================================================== -->
+      <div class="workspace-left-editor" id="workspaceLeftEditor">
+        <!-- ---- LANGUAGE SELECTOR BAR ---- -->
+        <div class="lang-bar">
+          <div class="lang-bar-inner">
+            <span class="lang-bar-label">Select Language:</span>
+            <div class="lang-buttons">
+              <button class="lang-btn active" data-lang="python">
+                <span class="lang-dot" style="background:#facc15"></span>
+                Python
+              </button>
+              <button class="lang-btn" data-lang="c">
+                <span class="lang-dot" style="background:#22d3ee"></span>
+                C
+              </button>
+              <button class="lang-btn" data-lang="cpp">
+                <span class="lang-dot" style="background:#60a5fa"></span>
+                C++
+              </button>
+              <button class="lang-btn" data-lang="java">
+                <span class="lang-dot" style="background:#fb923c"></span>
+                Java
+              </button>
+              <div class="lang-divider"></div>
+              <button class="lang-btn" data-lang="html">
+                <span class="lang-dot" style="background:#f97316"></span>
+                HTML
+              </button>
+              <button class="lang-btn" data-lang="css">
+                <span class="lang-dot" style="background:#3b82f6"></span>
+                CSS
+              </button>
+              <button class="lang-btn" data-lang="javascript">
+                <span class="lang-dot" style="background:#eab308"></span>
+                JavaScript
+              </button>
+            </div>
+            <div class="core-lang-badge" id="coreLangBadge" title="Automatic cross-translation active between Python, C, C++, and Java">
+              <i data-lucide="zap" style="width:12px;height:12px;color:#facc15"></i>
+              <span>Core Lab 4 ⇄ Auto-Translator</span>
+            </div>
+          </div>
+
+          <!-- Editor Toolbar -->
+          <div class="editor-toolbar">
+            <div class="editor-toolbar-left" style="display:flex;align-items:center;gap:8px">
+              <span class="file-name" id="fileName">main.py</span>
+              <!-- Unsaved Changes Status Indicator -->
+              <div class="save-status-indicator" id="saveStatusIndicator" title="All changes saved locally (Ctrl+S)">
+                <span class="save-status-dot saved" id="saveStatusDot"></span>
+                <span class="save-status-text" id="saveStatusText">Saved</span>
+              </div>
+              <!-- DSA Templates Starter Button -->
+              <button class="templates-btn" id="templatesBtn" title="1-Click DSA & Algorithm Starter Templates">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
+                <span class="btn-text">DSA Templates</span>
+              </button>
+              <!-- Cross-Translate Toolbar Button -->
+              <div class="translate-dropdown-wrapper" id="translateDropdownWrapper">
+                <button class="translate-btn" id="translateBtn" title="Instant Code Cross-Translator (Python, C, C++, Java)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg>
+                  <span class="btn-text">Cross-Translate</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.7"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="translate-menu" id="translateMenu" style="display:none">
+                  <div class="translate-menu-header">
+                    <i data-lucide="zap" style="width:12px;height:12px;color:#facc15"></i>
+                    <span>Convert Current Code To:</span>
+                  </div>
+                  <div class="translate-menu-list" id="translateMenuList"></div>
+                  <div class="translate-menu-footer">
+                    <span>⚡ $0 Server Cost • Gemini Nano / Lab Transpiler</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="toolbar-actions">
+              <!-- PRIMARY ACTION: RUN BUTTON (ALWAYS PROMINENT & VISIBLE) -->
+              <button class="run-btn" id="runBtn" title="Run Code (Ctrl+Enter)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                <span>Run Code</span>
+                <span class="run-shortcut">Ctrl+↵</span>
+              </button>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Font Size & Theme Selectors -->
+              <div class="editor-controls-group">
+                <select class="editor-select-sm" id="fontSizeSelect" title="Editor Font Size">
+                  <option value="12">12px</option>
+                  <option value="14" selected>14px</option>
+                  <option value="16">16px</option>
+                  <option value="18">18px</option>
+                  <option value="20">20px</option>
+                </select>
+                <select class="editor-select-sm" id="themeSelect" title="Editor Theme">
+                  <option value="theme-vsdark" selected>VS Dark</option>
+                  <option value="theme-monokai">Monokai</option>
+                  <option value="theme-dracula">Dracula</option>
+                  <option value="theme-light">Light</option>
+                </select>
+              </div>
+
+              <!-- Format / Beautify Code -->
+              <button class="icon-btn" id="formatBtn" title="Auto-Format / Beautify Code (Ctrl+Shift+F)" aria-label="Format Code">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+              </button>
+
+              <!-- Share Code via Serverless URL Hash -->
+              <button class="share-code-btn" id="shareCodeBtn" title="Share Code via Instant Link (Serverless)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+                <span>Share</span>
+              </button>
+
+              <!-- Printable Lab Record PDF Generator -->
+              <button class="lab-pdf-btn" id="exportPdfBtn" title="Export Printable Lab Record PDF for College Submissions">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                <span>Lab PDF</span>
+              </button>
+
+              <!-- Save to Chrome LocalStorage -->
+              <button class="save-code-btn" id="saveCodeBtn" title="Save Code to Chrome LocalStorage (Ctrl+S)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                <span>Save</span>
+              </button>
+
+              <!-- Download Code File -->
+              <button class="icon-btn" id="downloadCodeBtn" title="Download Code File" aria-label="Download Code">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+              </button>
+
+              <!-- Copy Code to Clipboard -->
+              <button class="icon-btn" id="copyBtn" title="Copy Code to Clipboard" aria-label="Copy Code">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              </button>
+
+              <!-- Reset / Clear Editor -->
+              <button class="icon-btn" id="resetBtn" title="Clear Editor" aria-label="Clear Editor">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Height Monaco Editor Panel (Top to Bottom) -->
+        <div class="editor-panel full-height" id="editorPanel">
+          <!-- High-Contrast Translation Loading Overlay -->
+          <div class="translation-overlay" id="translationOverlay" style="display:none">
+            <div class="translation-card">
+              <div class="translation-glow"></div>
+              <div class="translation-badge-row">
+                <span class="pulse-dot"></span>
+                <span id="translationEngineName">B.Tech Lab Syntax Transpiler</span>
+              </div>
+              <div class="translation-icon-wrapper">
+                <div class="translation-spin-ring"></div>
+                <i data-lucide="zap" class="translation-bolt-icon"></i>
+              </div>
+              <h3 class="translation-title" id="translationTitle">Translating Python to Java... ⚡</h3>
+              <p class="translation-desc" id="translationDesc">Synthesizing university boilerplate, data structures & memory models</p>
+              <div class="translation-meter">
+                <div class="translation-meter-bar"></div>
+              </div>
+              <div class="translation-foot">Zero-Cost Client-Side Engine • $0 Server Bill</div>
+            </div>
+          </div>
+
+          <!-- Translation Success / Revert Banner -->
+          <div class="translation-banner" id="translationBanner" style="display:none">
+            <div class="banner-content">
+              <div class="banner-badge">
+                <i data-lucide="sparkles" style="width:13px;height:13px"></i>
+                <span>TRANSLATED</span>
+              </div>
+              <span class="banner-text" id="bannerText">Code converted from Python to Java</span>
+            </div>
+            <div class="banner-actions">
+              <button class="banner-btn revert" id="revertTranslationBtn" title="Undo and load original template">
+                <i data-lucide="undo-2" style="width:12px;height:12px"></i>
+                Revert to Template
+              </button>
+              <button class="banner-close" id="dismissBannerBtn" title="Dismiss banner">
+                <i data-lucide="x" style="width:13px;height:13px"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Full Height Code Editor from Top to Bottom -->
+          <div class="code-editor-wrapper" id="codeEditorWrapper">
+            <div class="editor-gutter" id="editorGutter">1</div>
+            <textarea id="fallbackEditor" class="fallback-editor" spellcheck="false" placeholder="Write or paste your code here... (or click 'Load Starter Code' from the left challenge panel)"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vertical Resizer Handle 2 (Middle Editor <-> Right Output) -->
+      <div class="split-handle-vertical" id="splitHandleRight">
+        <div class="handle-grip-v"></div>
+      </div>
+
+      <!-- ==================================================== -->
+      <!-- COLUMN 3 (RIGHT): Output Panel (Console & Preview)   -->
+      <!-- ==================================================== -->
+      <div class="workspace-right-column" id="workspaceRightColumn">
+
+        <!-- Output Panel (Console, Test Cases & Preview) -->
+        <div class="output-panel" id="outputPanel">
+          <!-- Output tabs -->
+          <div class="output-tabs">
+            <button class="output-tab active" data-tab="console">
+              <i data-lucide="terminal" style="width:14px;height:14px"></i>
+              Console Output
+            </button>
+            <button class="output-tab" data-tab="testcases">
+              <i data-lucide="check-circle-2" style="width:14px;height:14px;color:#22c55e"></i>
+              Test Cases
+            </button>
+            <button class="output-tab" data-tab="preview">
+              <i data-lucide="monitor" style="width:14px;height:14px"></i>
+              Web Preview
+            </button>
+            <div style="flex:1"></div>
+            <!-- Open/Close Toggle Button for Daily Mind Work Slot (Hidden for clean workspace) -->
+            <button class="workout-toggle-tab-btn" id="toggleWorkoutSlotBtn" title="Toggle Daily Mind Work Slot" style="display:none">
+              <i data-lucide="brain-circuit" style="width:13px;height:13px;color:#facc15"></i>
+              <span>Daily Mind Work</span>
+            </button>
+            <button class="icon-btn small" id="clearBtn" title="Clear Output">
+              <i data-lucide="trash-2" style="width:13px;height:13px"></i>
+            </button>
+            <button class="icon-btn small" id="maximizeOutputBtn" title="Fullscreen Output (F)">
+              <i data-lucide="maximize-2" id="maximizeOutputIcon" style="width:13px;height:13px"></i>
+            </button>
+          </div>
+
+          <!-- Collapsible Custom Input (stdin) for scanf / cin / input() -->
+          <div class="custom-stdin-panel" id="customStdinPanel">
+            <div class="custom-stdin-header" id="customStdinHeader">
+              <div class="custom-stdin-title">
+                <i data-lucide="terminal-square" style="width:13px;height:13px;color:#38bdf8"></i>
+                <span>Custom Input (stdin)</span>
+                <span class="stdin-hint">scanf &bull; cin &bull; input()</span>
+              </div>
+              <div class="custom-stdin-controls">
+                <button class="stdin-btn-text" id="clearStdinBtn" type="button">Clear</button>
+                <button class="stdin-toggle-btn" id="toggleStdinBtn" type="button" title="Toggle Custom Input Box">
+                  <span id="stdinToggleLabel">Open</span>
+                  <i data-lucide="chevron-down" id="stdinChevronIcon" style="width:13px;height:13px"></i>
+                </button>
+              </div>
+            </div>
+            <div class="custom-stdin-body" id="customStdinBody" style="display:none">
+              <textarea id="customStdin" class="custom-stdin-textarea" spellcheck="false" placeholder="Enter custom inputs here (one per line or space-separated)&#10;e.g.&#10;5&#10;10 20&#10;Alice"></textarea>
+            </div>
+          </div>
+
+          <!-- Execution Stats Bar (Real-time performance metrics) -->
+          <div class="exec-stats-bar" id="execStatsBar" style="display:none">
+            <div class="exec-stats-left">
+              <span class="exec-badge success" id="execStatusBadge">
+                <i data-lucide="check-circle-2" style="width:12px;height:12px"></i>
+                <span id="execStatusText">Exit 0</span>
+              </span>
+              <span class="exec-stat-item" title="Execution Time">
+                <i data-lucide="clock" style="width:12px;height:12px;color:#38bdf8"></i>
+                <span id="execStatTime">0ms</span>
+              </span>
+              <span class="exec-stat-item" title="Execution Runtime Engine">
+                <i data-lucide="cpu" style="width:12px;height:12px;color:#a855f7"></i>
+                <span id="execStatEngine">WebAssembly</span>
+              </span>
+            </div>
+            <div class="exec-stats-right">
+              <button class="exec-action-btn" id="copyConsoleBtn" title="Copy Console Output">
+                <i data-lucide="copy" style="width:12px;height:12px"></i>
+                <span>Copy</span>
+              </button>
+              <button class="exec-action-btn" id="quickClearConsoleBtn" title="Clear Console">
+                <i data-lucide="trash-2" style="width:12px;height:12px"></i>
+                <span>Clear</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Console output -->
+          <div class="console-output" id="consoleOutput">
+            <div class="console-line dim">Welcome to VAB-CODE (vab-code)! Select a language, write your code, and hit Run.</div>
+          </div>
+
+          <!-- Automated Test Cases Panel (Hidden by default) -->
+          <div class="testcases-panel" id="testcasesPanel" style="display:none">
+            <div class="testcases-toolbar">
+              <div class="testcases-info">
+                <span class="testcases-heading">Automated Test Runner</span>
+                <span class="testcases-sub" id="testCasesSub">Validate your algorithm against test cases</span>
+              </div>
+              <button class="btn-run-tests" id="btnRunTests">
+                <i data-lucide="play" style="width:13px;height:13px;fill:currentColor"></i>
+                <span>Run All Tests</span>
+              </button>
+            </div>
+            <div class="testcases-results" id="testcasesResults">
+              <!-- Dynamically populated from active problem test cases -->
+            </div>
+          </div>
+
+          <!-- Web preview (hidden by default) -->
+          <div class="web-preview" id="webPreview" style="display:none">
+            <iframe id="previewFrame" sandbox="allow-scripts allow-modals"></iframe>
+          </div>
+
+          <!-- Status bar -->
+          <div class="status-bar">
+            <div class="status-left">
+              <span class="status-indicator" id="statusIndicator">
+                <span class="status-dot green"></span>
+                Ready
+              </span>
+              <span class="status-time" id="statusTime">0ms</span>
+            </div>
+          </div>
+
+          <!-- Output Panel AdSlot (High-Visibility Output Banner) -->
+          <div class="output-bottom-ad" id="outputBottomAd">
+            <div class="ad-slot-header">
+              <span class="ad-slot-badge">ADVERTISEMENT</span>
+            </div>
+            <div class="ad-slot-container-output">
+              <ins class="adsbygoogle"
+                   style="display:block"
+                   data-ad-client="ca-pub-6387245631770824"
+                   data-ad-slot="auto"
+                   data-ad-format="auto"
+                   data-full-width-responsive="true"></ins>
+              <script>
+                   (adsbygoogle = window.adsbygoogle || []).push({});
+              </script>
+            </div>
+          </div>
+        </div>
+
+        <!-- Horizontal Resizer Handle between Output & Workout (Hidden) -->
+        <div class="split-handle-horizontal" id="workoutSplitHandle" style="display:none">
+          <div class="handle-grip-h"></div>
+        </div>
+
+        <!-- Daily Mind Workout Slot (Hidden for clean single container view) -->
+        <div class="daily-workout-slot" id="dailyWorkoutSlot" style="display:none">
+          <div class="workout-slot-header">
+            <div class="workout-title-row">
+              <div class="workout-icon-box">
+                <i data-lucide="brain-circuit" style="width:15px;height:15px;color:#facc15"></i>
+              </div>
+              <div>
+                <h3 class="workout-heading">Daily Mind Work</h3>
+                <span class="workout-sub">Practice challenges & daily brain puzzles</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button class="icon-btn small" id="closeWorkoutSlotBtn" title="Close Daily Workout slot to expand Output">
+                <i data-lucide="x" style="width:14px;height:14px"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="workout-slot-body">
+            <!-- Difficulty Toggles: Easy Mode and Hard Mode -->
+            <div class="difficulty-toggle-wrapper">
+              <span class="toggle-label">Difficulty:</span>
+              <div class="difficulty-toggle-group">
+                <button class="diff-toggle-btn active" id="toggleEasyBtn" data-mode="easy">
+                  <i data-lucide="sparkle" style="width:12px;height:12px"></i>
+                  Easy Mode
+                </button>
+                <button class="diff-toggle-btn" id="toggleHardBtn" data-mode="hard">
+                  <i data-lucide="flame" style="width:12px;height:12px"></i>
+                  Hard Mode
+                </button>
+              </div>
+            </div>
+
+            <!-- Question Display Block -->
+            <div class="quiz-container" id="quizContainer">
+              <div class="quiz-question-meta">
+                <span class="quiz-lang-tag" id="quizLangTag">PYTHON</span>
+                <span class="quiz-qnum" id="quizQnum">Puzzle #1 of 5</span>
+              </div>
+              <div class="quiz-prompt" id="quizPrompt">What will be the exact console output of this code snippet?</div>
+
+              <!-- Code Snippet -->
+              <pre class="quiz-code-snippet"><code id="quizCodeSnippet">def append_item(val, items=[]):
+    items.append(val)
+    return items
+
+print(append_item(1))
+print(append_item(2))</code></pre>
+
+              <!-- 4 Multiple Choice Radio Option Buttons (A, B, C, D) -->
+              <div class="quiz-options-list" id="quizOptionsList">
+                <!-- Rendered dynamically by QuizManager -->
+              </div>
+
+              <!-- Instant Explanation Block (Reveals on selection) -->
+              <div class="quiz-explanation-box" id="quizExplanationBox" style="display:none">
+                <div class="explanation-header" id="explanationHeader">
+                  <span class="explanation-status-icon" id="explanationStatusIcon">✓</span>
+                  <span class="explanation-status-title" id="explanationStatusTitle">Correct Answer!</span>
+                </div>
+                <p class="explanation-text" id="explanationText">In Python, default arguments are evaluated only once at definition time...</p>
+              </div>
+
+              <!-- Next Question Footer -->
+              <div class="quiz-footer-actions">
+                <button class="btn-quiz-next" id="nextQuizBtn">
+                  <i data-lucide="refresh-cw" style="width:13px;height:13px"></i>
+                  <span>Next Question</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Collapsed Bar indicator when Workout is closed -->
+        <div class="workout-collapsed-bar" id="workoutCollapsedBar" style="display:none">
+          <button class="btn-reopen-workout" id="reopenWorkoutBtn">
+            <i data-lucide="brain-circuit" style="width:14px;height:14px;color:#facc15"></i>
+            <span>Open Daily Mind Work</span>
+            <i data-lucide="chevron-up" style="width:14px;height:14px;margin-left:auto"></i>
+          </button>
+        </div>
+
+      </div> <!-- /.workspace-right-column -->
+
+    </div> <!-- /.workspace-body-split -->
+  </main>
+
+  <!-- ========== CRAWLABLE EDUCATIONAL & DOCUMENTATION CONTENT (ADSENSE COMPLIANCE) ========== -->
+  <section class="educational-seo-section">
+    <div class="seo-container">
+      <div class="seo-grid">
+        <div class="seo-card">
+          <div class="seo-card-header">
+            <i data-lucide="cpu" style="width:18px;height:18px;color:#38bdf8"></i>
+            <h3>High-Speed WebAssembly Compilers</h3>
+          </div>
+          <p>VAB-CODE runs code directly in your browser using client-side WebAssembly technology. Practice Python 3.11 with full support for scientific packages (NumPy, Pandas, Matplotlib), ANSI C99, ISO C++17 with STL, and Java 17 OOP without needing any desktop installation or remote server dependencies.</p>
+        </div>
+        <div class="seo-card">
+          <div class="seo-card-header">
+            <i data-lucide="layers" style="width:18px;height:18px;color:#a855f7"></i>
+            <h3>DSA & Algorithm Curriculum</h3>
+          </div>
+          <p>Designed for computer science students and developers. Includes coding challenges covering Data Structures (Linked Lists, Binary Trees, Stacks, Queues), Sorting Algorithms (Quick Sort, Merge Sort, Bubble Sort), and Computer Graphics with <code>graphics.h</code> canvas rendering.</p>
+        </div>
+        <div class="seo-card">
+          <div class="seo-card-header">
+            <i data-lucide="shield-check" style="width:18px;height:18px;color:#22c55e"></i>
+            <h3>Zero-Data Logging & Privacy First</h3>
+          </div>
+          <p>Your academic code and projects remain 100% private on your own device. VAB-CODE operates with zero backend code logging, storing your snippets only in browser <code>localStorage</code>. Export printable Lab Record PDFs and share code with peers effortlessly.</p>
+        </div>
+      </div>
+
+      <!-- FAQ Section for Search Engine Quality & AdSense Review -->
+      <div class="seo-faq-section">
+        <h2 class="seo-faq-title">Frequently Asked Questions (FAQ)</h2>
+        <div class="seo-faq-list">
+          <div class="seo-faq-item">
+            <h4>Is VAB-CODE completely free for students?</h4>
+            <p>Yes. VAB-CODE is 100% free forever for all college students, faculty members, and self-taught developers. There are no subscriptions, paywalls, or hidden compile limits.</p>
+          </div>
+          <div class="seo-faq-item">
+            <h4>Can I use VAB-CODE for my college practical exams and lab records?</h4>
+            <p>Absolutely. You can write, test, and debug code directly, and use the "Lab PDF" button to export a university-formatted experiment sheet complete with Aim, Algorithm, Source Code, Output, and Evaluation marks table ready to print.</p>
+          </div>
+          <div class="seo-faq-item">
+            <h4>How does VAB-CODE execute code without backend servers?</h4>
+            <p>VAB-CODE compiles Python via Pyodide WebAssembly, runs web applications in isolated sandbox iframes, and transpiles C, C++, and Java syntax through client-side simulation engines directly on your machine's CPU.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========== OFFICIAL ADSENSE-COMPLIANT FOOTER ========== -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <i data-lucide="code-2" style="width:20px;height:20px;color:#38bdf8"></i>
+            <span>VAB-CODE</span>
+          </div>
+          <p class="footer-desc">
+            Empowering students and developers with zero-cost, high-speed in-browser code compilation and university lab practice tools.
+          </p>
+          <div class="footer-meta">
+            <span>Powered by WebAssembly &bull; $0 Server Footprint</span>
+          </div>
+        </div>
+
+        <div class="footer-links-group">
+          <h4>Supported Compilers</h4>
+          <ul>
+            <li><a href="/">Python 3.11 WASM</a></li>
+            <li><a href="/">C Compiler (C99)</a></li>
+            <li><a href="/">C++ Compiler (C++17)</a></li>
+            <li><a href="/">Java 17 OOP Engine</a></li>
+            <li><a href="/">HTML5 / CSS / JavaScript</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-group">
+          <h4>Academic Resources</h4>
+          <ul>
+            <li><a href="/index.html?view=problems">Practice Problems</a></li>
+            <li><a href="/about.html">Architecture & Mission</a></li>
+            <li><a href="/contact.html">Support & Feedback</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-group">
+          <h4>Legal & Policies</h4>
+          <ul>
+            <li><a href="/privacy.html"><strong>Privacy Policy</strong></a></li>
+            <li><a href="/terms.html"><strong>Terms of Service</strong></a></li>
+            <li><a href="/about.html"><strong>About Us</strong></a></li>
+            <li><a href="/contact.html"><strong>Contact Us</strong></a></li>
+            <li><a href="/ads.txt">ads.txt Authorization</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-copyright">
+          &copy; 2026 VAB-CODE. All rights reserved. Built for engineering students and educators.
+        </div>
+        <div class="footer-legal-inline">
+          <a href="/privacy.html">Privacy Policy</a> &bull;
+          <a href="/terms.html">Terms of Service</a> &bull;
+          <a href="/about.html">About Us</a> &bull;
+          <a href="/contact.html">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== PROBLEMS OVERLAY ========== -->
+  <div class="overlay" id="problemsOverlay" style="display:none">
+    <div class="overlay-content">
+      <div class="overlay-header">
+        <div>
+          <h2>Practice Problems</h2>
+          <p>Curated challenges to sharpen your skills</p>
+        </div>
+        <button class="icon-btn" id="closeProblemsBtn" aria-label="Close Problems">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="problems-list" id="problemsList"></div>
+    </div>
+  </div>
+
+  <!-- ========== 1. COMPILER LAZY LOADING INITIALIZATION OVERLAY ========== -->
+  <div class="compiler-init-overlay" id="compilerInitOverlay" style="display:none">
+    <div class="compiler-init-card">
+      <div class="init-glow"></div>
+      <div class="init-icon-wrapper">
+        <div class="init-spin-ring"></div>
+        <i data-lucide="cpu" class="init-icon"></i>
+      </div>
+      <h3 class="init-title">Configuring your local sandbox environment (Takes a few seconds on first visit)...</h3>
+      <p class="init-subtitle">(Takes a few seconds on first visit • Cached locally for instant future loads)</p>
+      
+      <div class="init-progress-bar">
+        <div class="init-progress-fill" id="initProgressFill"></div>
+      </div>
+
+      <div class="init-step-list">
+        <div class="init-step done" id="stepWasm">
+          <span class="step-icon">✓</span>
+          <span>Allocating browser WebAssembly memory sandbox</span>
+        </div>
+        <div class="init-step active" id="stepRuntime">
+          <span class="step-icon">⏳</span>
+          <span id="stepRuntimeText">Downloading Pyodide core runtime (6–10 MB, $0 server cost)</span>
+        </div>
+        <div class="init-step" id="stepCache">
+          <span class="step-icon">○</span>
+          <span>Pre-caching B.Tech standard headers & math packages</span>
+        </div>
+      </div>
+
+      <div class="init-footer">
+        <span class="pulse-dot"></span>
+        <span>Zero-Cost Client-Side Engine • Unlimited Free Execution</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========== 3. SAVED CODE & HISTORY DRAWER (with LocalStorage Warning) ========== -->
+  <div class="overlay" id="historyOverlay" style="display:none">
+    <div class="overlay-content history-modal-content">
+      <div class="overlay-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <h2>Saved Code & Browser History</h2>
+            <span class="badge-mini-green">Client-Side</span>
+          </div>
+          <p>Access and manage your locally saved scripts</p>
+        </div>
+        <button class="icon-btn" id="closeHistoryBtn">
+          <i data-lucide="x" style="width:20px;height:20px"></i>
+        </button>
+      </div>
+
+      <!-- Warning Banner (Problem 5 Fix: Local Storage Fragility) -->
+      <!-- 100% Client-Side Private Storage Banner -->
+      <div class="storage-warning-banner">
+        <div class="warning-icon-box">
+          <i data-lucide="shield-check" style="width:20px;height:20px;color:#34d399"></i>
+        </div>
+        <div class="warning-text">
+          <div class="warning-title">🔒 100% Private Client-Side Storage</div>
+          <div class="warning-desc">All code is saved directly in your browser's local memory. Zero server uploads, zero external tracking, always accessible offline.</div>
+        </div>
+      </div>
+
+      <!-- Storage Usage Meter Bar -->
+      <div class="storage-quota-bar" id="storageQuotaBar">
+        <div class="storage-quota-info">
+          <span class="storage-quota-label">
+            <i data-lucide="hard-drive" style="width:14px;height:14px;color:#38bdf8"></i>
+            <span>Local Storage Used: <strong id="storageUsedText">0 B</strong> across <strong id="storageCountText">0 scripts</strong></span>
+          </span>
+          <span class="storage-quota-available" id="storageQuotaText">Browser Quota: ~5 MB (0.0% used)</span>
+        </div>
+        <div class="storage-quota-track">
+          <div class="storage-quota-fill" id="storageQuotaFill" style="width: 0.2%"></div>
+        </div>
+      </div>
+
+      <!-- Save Current Code Form -->
+      <div class="save-snippet-bar">
+        <input type="text" id="saveSnippetName" placeholder="Enter title for current snippet (e.g. My Linked List Lab)..." maxlength="50">
+        <button class="save-submit-btn" id="confirmSaveSnippetBtn">
+          <i data-lucide="save" style="width:14px;height:14px"></i>
+          <span>Save Current Code</span>
+        </button>
+      </div>
+
+      <!-- Saved Snippets List -->
+      <div class="history-list" id="historyList">
+        <!-- Rendered dynamically from localStorage -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 5. DSA TEMPLATES & ALGORITHMS MODAL ========== -->
+  <div class="overlay" id="templatesOverlay" style="display:none">
+    <div class="overlay-content templates-modal-content">
+      <div class="overlay-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <h2>DSA & Algorithm Starter Templates</h2>
+            <span class="badge-mini-blue">1-Click Starter</span>
+          </div>
+          <p>Production-ready data structures & algorithms for interviews, college labs, and practice</p>
+        </div>
+        <button class="icon-btn" id="closeTemplatesBtn">
+          <i data-lucide="x" style="width:20px;height:20px"></i>
+        </button>
+      </div>
+
+      <!-- Category Filter Tabs -->
+      <div class="templates-filter-bar">
+        <button class="template-filter-btn active" data-category="all">All</button>
+        <button class="template-filter-btn" data-category="search-sort">Search & Sort</button>
+        <button class="template-filter-btn" data-category="data-structures">Data Structures</button>
+        <button class="template-filter-btn" data-category="trees-graphs">Trees & Graphs</button>
+        <button class="template-filter-btn" data-category="dp">Dynamic Programming</button>
+      </div>
+
+      <!-- Templates Grid -->
+      <div class="templates-grid" id="templatesGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== TOAST ========== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js?v=5.4"></script>
+</body>
+</html>

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Programming Guides & Tutorials — VAB-CODE</title>
+  <meta name="description" content="Explore essential programming guides for Python, C, C++, Java, and algorithms. In-depth tutorials designed for engineering students and developers using VAB-CODE online compiler.">
+  <meta name="keywords" content="python tutorial, c programming guide, java essentials, data structures, big o notation, vab-code guides, online compiler tutorials">
+  <link rel="canonical" href="https://vab-code.in/guides.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/logo-icon.png">
+  <meta property="og:image" content="https://vab-code.in/assets/brand-logo-original.png">
+  <link rel="stylesheet" href="style.css?v=5.3">
+
+  <!-- Google tag (gtag.js) Firebase Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3ZFZLNQ9WZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-3ZFZLNQ9WZ');
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6387245631770824"
+       crossorigin="anonymous"></script>
+
+  <!-- Schema.org Educational & Article Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "VAB-CODE Programming Guides & Tutorials",
+    "url": "https://vab-code.in/guides.html",
+    "description": "Comprehensive engineering programming guides for Python, C, C++, Java, and algorithm complexity.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "VAB-CODE",
+      "url": "https://vab-code.in/"
+    },
+    "creator": {
+      "@type": "Person",
+      "name": "Varun Reddy",
+      "alternateName": "Yeduguri Varun Kumar Reddy",
+      "jobTitle": "Founder & Creator",
+      "sameAs": [
+        "https://github.com/varun1271",
+        "https://www.linkedin.com/in/yeduguri-varun-kumar-reddy-45a808384"
+      ]
+    }
+  }
+  </script>
+
+  <style>
+    html, body {
+      height: auto !important;
+      min-height: 100% !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      background: #080a12;
+    }
+    .guides-container {
+      max-width: 920px;
+      margin: 40px auto 80px auto;
+      padding: 0 24px;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.7;
+    }
+    .legal-nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      transition: gap 0.15s;
+    }
+    .legal-nav-back:hover {
+      gap: 10px;
+      text-decoration: underline;
+    }
+    .guides-card {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .guides-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+    .guides-badge {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 99px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .guides-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 8px 0;
+      letter-spacing: -0.02em;
+    }
+    .guides-subtitle {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .toc-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 24px 0 32px 0;
+      padding: 16px;
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+    }
+    .toc-link {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      transition: all 0.15s ease;
+    }
+    .toc-link:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #38bdf8;
+      color: #ffffff;
+    }
+    .guide-article {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 36px;
+      margin-bottom: 36px;
+    }
+    .guide-article:last-of-type {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .guide-article h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .guide-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .pill-py { background: rgba(250, 204, 21, 0.15); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.3); }
+    .pill-c { background: rgba(34, 211, 238, 0.15); color: #22d3ee; border: 1px solid rgba(34, 211, 238, 0.3); }
+    .pill-java { background: rgba(251, 146, 60, 0.15); color: #fb923c; border: 1px solid rgba(251, 146, 60, 0.3); }
+    .pill-dsa { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .pill-tip { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+
+    .guide-article p {
+      color: #cbd5e1;
+      font-size: 14.5px;
+      margin: 0 0 14px 0;
+      line-height: 1.7;
+    }
+    .code-box {
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 16px;
+      margin: 16px 0;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+    .code-box .kw { color: #f43f5e; font-weight: 600; }
+    .code-box .fn { color: #38bdf8; }
+    .code-box .str { color: #34d399; }
+    .code-box .com { color: #64748b; font-style: italic; }
+    .code-box .num { color: #fb923c; }
+
+    .callout {
+      background: rgba(56, 189, 248, 0.06);
+      border-left: 3px solid #38bdf8;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 13.5px;
+      color: #93c5fd;
+    }
+    .complexity-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13.5px;
+    }
+    .complexity-table th {
+      background: #090d16;
+      color: #94a3b8;
+      text-align: left;
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-weight: 600;
+    }
+    .complexity-table td {
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: #cbd5e1;
+    }
+    .complexity-table tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .cta-banner {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(129, 140, 248, 0.15));
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      margin-top: 36px;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: #0284c7;
+      color: #ffffff;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      margin-top: 12px;
+      transition: background 0.15s;
+    }
+    .cta-btn:hover {
+      background: #0369a1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="guides-container">
+    <a href="/" class="legal-nav-back">&larr; Back to VAB-CODE Editor</a>
+
+    <div class="guides-card">
+      <div class="guides-header">
+        <span class="guides-badge">Educational Resource</span>
+        <h1 class="guides-title">VAB-CODE Learning & Programming Handbook</h1>
+        <div class="guides-subtitle">Essential technical guides, compiler walkthroughs, and algorithm fundamentals for engineering students</div>
+      </div>
+
+      <!-- Quick Navigation Table of Contents -->
+      <div class="toc-bar">
+        <a href="#guide-pyodide" class="toc-link">1. Python in Browser (WASM)</a>
+        <a href="#guide-c-cpp" class="toc-link">2. C & C++ Memory & I/O</a>
+        <a href="#guide-java" class="toc-link">3. Java Lab Essentials</a>
+        <a href="#guide-big-o" class="toc-link">4. Big-O Complexity</a>
+        <a href="#guide-debugging" class="toc-link">5. Top 10 Syntax Errors</a>
+      </div>
+
+      <!-- ================= GUIDE 1 ================= -->
+      <article class="guide-article" id="guide-pyodide">
+        <h2>
+          <span>1. Running Python In-Browser with Pyodide & WebAssembly</span>
+          <span class="guide-pill pill-py">Python WASM</span>
+        </h2>
+        <p>
+          Traditional online code compilers rely on remote backend servers with containerized Docker sandboxes. While effective, this creates server latency, queues, and security restrictions. <strong>VAB-CODE</strong> leverages <strong>Pyodide</strong>, an official WebAssembly (WASM) port of the CPython 3 core that runs completely inside your browser client.
+        </p>
+        <p>
+          Because code runs in your local browser sandbox, you get near-instant execution speed without timeouts or rate limits. Here is how standard input and computations work in browser Python:
+        </p>
+        <div class="code-box">
+<span class="com"># Standard Python execution in VAB-CODE</span>
+<span class="kw">import</span> math
+
+<span class="kw">def</span> <span class="fn">compute_circle_metrics</span>(radius):
+    area = math.pi * (radius ** <span class="num">2</span>)
+    circumference = <span class="num">2</span> * math.pi * radius
+    <span class="kw">return</span> area, circumference
+
+<span class="com"># Interactive user inputs are seamlessly captured in the IDE</span>
+r = <span class="fn">float</span>(<span class="num">7.5</span>)
+a, c = <span class="fn">compute_circle_metrics</span>(r)
+<span class="fn">print</span>(<span class="str">f"Radius: {r} | Area: {a:.2f} | Circumference: {c:.2f}"</span>)
+        </div>
+        <div class="callout">
+          <strong>Tip for College Labs:</strong> Python in VAB-CODE supports standard modules including <code>math</code>, <code>random</code>, <code>collections</code>, <code>heapq</code>, <code>itertools</code>, and <code>sys</code> directly out of the box with zero pip installation required.
+        </div>
+      </article>
+
+      <!-- ================= GUIDE 2 ================= -->
+      <article class="guide-article" id="guide-c-cpp">
+        <h2>
+          <span>2. C & C++ Fundamentals: Memory, Pointers, and Fast I/O</span>
+          <span class="guide-pill pill-c">C / C++</span>
+        </h2>
+        <p>
+          C and C++ are foundational languages for engineering curricula, operating systems, and competitive programming. When compiling C code, understanding memory allocation and buffer management is critical to prevent segmentation faults.
+        </p>
+        <p>
+          Always ensure format specifiers match the variable data types exactly when using <code>scanf</code> and <code>printf</code>:
+        </p>
+        <div class="code-box">
+<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;stdlib.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> n = <span class="num">5</span>;
+    <span class="com">// Dynamic memory allocation on the heap</span>
+    <span class="kw">int</span> *arr = (<span class="kw">int</span> *)<span class="fn">malloc</span>(n * <span class="kw">sizeof</span>(<span class="kw">int</span>));
+    
+    <span class="kw">if</span> (arr == <span class="kw">NULL</span>) {
+        <span class="fn">printf</span>(<span class="str">"Memory allocation failed!\n"</span>);
+        <span class="kw">return</span> <span class="num">1</span>;
+    }
+    
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+        arr[i] = (i + <span class="num">1</span>) * <span class="num">10</span>;
+        <span class="fn">printf</span>(<span class="str">"arr[%d] = %d\n"</span>, i, arr[i]);
+    }
+    
+    <span class="com">// Always free dynamically allocated memory to avoid memory leaks</span>
+    <span class="fn">free</span>(arr);
+    <span class="kw">return</span> <span class="num">0</span>;
+}
+        </div>
+        <div class="callout">
+          <strong>Key Rule:</strong> Whenever using <code>scanf</code> in C for primitives, always pass the address-of operator (e.g. <code>&amp;n</code>), except for string char arrays which already decay to pointers.
+        </div>
+      </article>
+
+      <!-- ================= GUIDE 3 ================= -->
+      <article class="guide-article" id="guide-java">
+        <h2>
+          <span>3. Core Java Lab Handbook: Structure, Scanner, and OOP</span>
+          <span class="guide-pill pill-java">Java</span>
+        </h2>
+        <p>
+          In university examinations and lab tests, Java questions test your understanding of Object-Oriented Programming (OOP): encapsulation, inheritance, polymorphism, and abstraction.
+        </p>
+        <p>
+          In online environments like VAB-CODE, your primary class must contain the entry method <code>public static void main(String[] args)</code>:
+        </p>
+        <div class="code-box">
+<span class="kw">import</span> java.util.Scanner;
+
+<span class="kw">class</span> <span class="fn">Student</span> {
+    <span class="kw">private</span> String name;
+    <span class="kw">private int</span> marks;
+
+    <span class="kw">public</span> <span class="fn">Student</span>(String name, <span class="kw">int</span> marks) {
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.marks = marks;
+    }
+
+    <span class="kw">public void</span> <span class="fn">displayGrade</span>() {
+        String grade = marks &gt;= <span class="num">90</span> ? <span class="str">"A"</span> : marks &gt;= <span class="num">75</span> ? <span class="str">"B"</span> : <span class="str">"C"</span>;
+        System.out.println(name + <span class="str">" received Grade: "</span> + grade);
+    }
+}
+
+<span class="kw">public class</span> <span class="fn">Main</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        Student s1 = <span class="kw">new</span> <span class="fn">Student</span>(<span class="str">"Varun"</span>, <span class="num">94</span>);
+        s1.displayGrade();
+    }
+}
+        </div>
+      </article>
+
+      <!-- ================= GUIDE 4 ================= -->
+      <article class="guide-article" id="guide-big-o">
+        <h2>
+          <span>4. Understanding Big-O Time & Space Complexity</span>
+          <span class="guide-pill pill-dsa">Algorithms</span>
+        </h2>
+        <p>
+          Algorithm efficiency is universally evaluated using Big-O notation. It describes the upper bound of execution time or memory usage as the input size ($n$) scales towards infinity.
+        </p>
+        <table class="complexity-table">
+          <thead>
+            <tr>
+              <th>Notation</th>
+              <th>Name</th>
+              <th>Example Operation</th>
+              <th>Performance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>O(1)</code></td>
+              <td>Constant Time</td>
+              <td>Array index access, Hash map lookup</td>
+              <td>⚡ Excellent</td>
+            </tr>
+            <tr>
+              <td><code>O(log n)</code></td>
+              <td>Logarithmic</td>
+              <td>Binary Search, Balanced BST lookup</td>
+              <td>🟢 Great</td>
+            </tr>
+            <tr>
+              <td><code>O(n)</code></td>
+              <td>Linear Time</td>
+              <td>Single loop through array, Linear search</td>
+              <td>🟡 Fair</td>
+            </tr>
+            <tr>
+              <td><code>O(n log n)</code></td>
+              <td>Linearithmic</td>
+              <td>Merge Sort, Quick Sort (average), Heap Sort</td>
+              <td>🟠 Good for sorting</td>
+            </tr>
+            <tr>
+              <td><code>O(n²)</code></td>
+              <td>Quadratic Time</td>
+              <td>Nested loops, Bubble Sort, Selection Sort</td>
+              <td>🔴 Avoid for large n</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          When solving challenges in VAB-CODE's <strong>Problems</strong> section, always aim for $O(n \log n)$ or $O(n)$ solutions when $n \ge 10^5$ to avoid time limit exceeded errors.
+        </p>
+      </article>
+
+      <!-- ================= GUIDE 5 ================= -->
+      <article class="guide-article" id="guide-debugging">
+        <h2>
+          <span>5. Top 10 Beginner Syntax & Runtime Errors (And Solutions)</span>
+          <span class="guide-pill pill-tip">Debugging</span>
+        </h2>
+        <p>
+          Below are the most frequent runtime errors encountered by students in lab practice:
+        </p>
+        <ul style="color:#cbd5e1; font-size:14px; padding-left: 20px; line-height: 1.8;">
+          <li><strong>IndentationError (Python):</strong> Mixing tabs and spaces. Configure your editor to use 4 consistent spaces.</li>
+          <li><strong>Segmentation Fault (C/C++):</strong> Accessing memory out of bounds (e.g. index <code>arr[n]</code> on size <code>n</code> array) or dereferencing a NULL pointer.</li>
+          <li><strong>NullPointerException (Java):</strong> Invoking a method on an object reference that hasn't been instantiated with <code>new</code>.</li>
+          <li><strong>Off-by-One Loop Error:</strong> Using <code>i &lt;= n</code> instead of <code>i &lt; n</code> in zero-indexed array iterations.</li>
+          <li><strong>Missing Semicolon:</strong> The classic C/C++/Java error that halts compilation at the following line.</li>
+          <li><strong>Undefined Symbol / Header:</strong> Forgetting to include <code>#include &lt;string.h&gt;</code> when using <code>strlen</code> or <code>strcpy</code>.</li>
+          <li><strong>Integer Division Truncation:</strong> In C and Java, <code>5 / 2</code> evaluates to <code>2</code>. Use <code>5.0 / 2</code> to get <code>2.5</code>.</li>
+          <li><strong>Infinite Recursion:</strong> Missing base condition in recursive functions causing call-stack exhaustion (StackOverflowError).</li>
+          <li><strong>Type Mismatch / Implicit Conversion:</strong> Assigning a floating-point calculation directly into an integer variable without explicit casting.</li>
+          <li><strong>Uninitialized Variables:</strong> In C/C++, local variables hold garbage values until explicitly assigned a default value (e.g. <code>int sum = 0;</code>).</li>
+        </ul>
+      </article>
+
+      <!-- CTA -->
+      <div class="cta-banner">
+        <h3 style="color:#ffffff; margin:0 0 6px 0; font-size:18px;">Ready to Write & Test Code?</h3>
+        <p style="color:#94a3b8; font-size:13.5px; margin:0;">Open the compiler, select your language, and run your code instantly in your browser.</p>
+        <a href="/" class="cta-btn">Launch VAB-CODE Online IDE &rarr;</a>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
