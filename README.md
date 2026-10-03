@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://vab-code.in/"><img src="https://img.shields.io/badge/Live%20Demo-vab--code.in-38bdf8?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Live Demo" /></a>
   <a href="https://vab-code.web.app/"><img src="https://img.shields.io/badge/Firebase%20Mirror-vab--code.web.app-f59e0b?style=for-the-badge&logo=firebase&logoColor=white" alt="Firebase Mirror" /></a>
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" />
+  <img src="https://img.shields.io/badge/License-All%20Rights%20Reserved-red?style=for-the-badge" alt="License" />
 </p>
 
 ---
@@ -89,6 +89,9 @@ Access the live compiler anytime at:
 
 ---
 
-## 📄 License
+## 📄 License & Copyright
 
-This project is licensed under the [MIT License](LICENSE).
+Copyright © 2026 **Varun Reddy (Yeduguri Varun Kumar Reddy)**. All Rights Reserved.
+
+This source code and design are protected by copyright law. Viewing the code for educational and portfolio demonstration purposes is permitted; copying, modifying, reproducing, re-hosting, or redistributing this software without explicit prior written authorization is strictly prohibited. For inquiries, contact [vabcode.official@gmail.com](mailto:vabcode.official@gmail.com).
+
