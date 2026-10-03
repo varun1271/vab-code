@@ -1764,7 +1764,72 @@ matplotlib.use('agg')
   },
 
   // ──── C Output Engine ────
+  simulateCExecution(code) {
+    try {
+      const mainMatch = code.match(/int\s+main\s*\([^)]*\)\s*\{([\s\S]*)\}/);
+      if (!mainMatch) return null;
+      let body = mainMatch[1];
+      if (body.includes('malloc(') || body.includes('free(') || body.includes('->') || body.includes('struct ')) {
+        return null;
+      }
+      body = body.replace(/return\s+0\s*;/g, '');
+
+      // Sanitize C syntax to executable JS
+      let jsCode = body
+        .replace(/\b(?:int|long|double|float|bool|char\*|char)\s+/g, 'let ')
+        .replace(/\bNULL\b/g, 'null')
+        .replace(/\btrue\b/g, 'true')
+        .replace(/\bfalse\b/g, 'false');
+
+      jsCode = jsCode.replace(/printf\s*\(/g, '__emitPrintf(');
+
+      const captured = [];
+      const emitPrintf = (fmt, ...args) => {
+        if (typeof fmt !== 'string') {
+          captured.push(String(fmt));
+          return;
+        }
+
+        // Handle case where first arg is a string literal (e.g. from printf("%d\n", "Factorial =", fact))
+        if (args.length >= 2 && typeof args[0] === 'string' && fmt.includes('%d') && !fmt.includes('%s')) {
+          const prefix = args[0].replace(/^["']|["']$/g, '');
+          const val = args.slice(1).join(' ');
+          captured.push(`${prefix} ${val}`.replace(/=\s+/g, '= '));
+          return;
+        }
+
+        let argIdx = 0;
+        let out = fmt.replace(/%(-?\d*\.?\d*)(lld|ld|d|i|u|f|lf|s|c|x|o|p)/g, (match, flags, spec) => {
+          if (argIdx >= args.length) return match;
+          const val = args[argIdx++];
+          if (spec === 'f' || spec === 'lf') {
+            const prec = flags.match(/\.(\d+)/);
+            return prec ? Number(val).toFixed(parseInt(prec[1])) : Number(val).toFixed(6);
+          }
+          return String(val);
+        });
+        out = out.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+        for (const seg of out.split('\n')) {
+          if (seg !== '') captured.push(seg);
+        }
+      };
+
+      const runner = new Function('__emitPrintf', jsCode);
+      runner(emitPrintf);
+
+      if (captured.length > 0) return captured;
+    } catch (e) {
+      // Fallback to pattern matcher
+    }
+    return null;
+  },
+
   extractCOutput(code) {
+    const simResult = this.simulateCExecution(code);
+    if (simResult && simResult.length > 0) {
+      return simResult;
+    }
+
     const results = [];
     const lines = code.split('\n');
 
@@ -1861,7 +1926,61 @@ matplotlib.use('agg')
   },
 
   // ──── C++ Output Engine ────
+  simulateCppExecution(code) {
+    try {
+      const mainMatch = code.match(/int\s+main\s*\([^)]*\)\s*\{([\s\S]*)\}/);
+      if (!mainMatch) return null;
+      let body = mainMatch[1];
+      if (body.includes('new ') || body.includes('delete ') || body.includes('->') || body.includes('struct ')) {
+        return null;
+      }
+      body = body.replace(/return\s+0\s*;/g, '');
+
+      let jsCode = body
+        .replace(/\b(?:int|long|double|float|bool|string|auto)\s+/g, 'let ')
+        .replace(/\btrue\b/g, 'true')
+        .replace(/\bfalse\b/g, 'false');
+
+      // Convert cout << a << b << endl; to __emitCout(a, b, "\n");
+      jsCode = jsCode.replace(/cout\s*<<\s*([^;]+);/g, (m, exprs) => {
+        const parts = exprs.split('<<').map(p => {
+          let s = p.trim();
+          if (s === 'endl' || s === 'std::endl') return '"\\n"';
+          return s;
+        });
+        return `__emitCout(${parts.join(', ')});`;
+      });
+
+      const captured = [];
+      let buffer = '';
+      const emitCout = (...args) => {
+        for (const a of args) {
+          if (a === '\n' || a === '\\n') {
+            captured.push(buffer);
+            buffer = '';
+          } else {
+            buffer += String(a);
+          }
+        }
+      };
+
+      const runner = new Function('__emitCout', jsCode);
+      runner(emitCout);
+      if (buffer.trim()) captured.push(buffer);
+
+      if (captured.length > 0) return captured;
+    } catch (e) {
+      // Fallback
+    }
+    return null;
+  },
+
   extractCppOutput(code) {
+    const simResult = this.simulateCppExecution(code);
+    if (simResult && simResult.length > 0) {
+      return simResult;
+    }
+
     const results = [];
     const lines = code.split('\n');
     const vars = {};
@@ -2293,11 +2412,30 @@ CRITICAL INSTRUCTIONS:
     );
   },
 
+  splitArgs(str) {
+    const args = [];
+    let current = '', depth = 0, inStr = false, strCh = '';
+    for (let i = 0; i < str.length; i++) {
+      const ch = str[i];
+      if ((ch === '"' || ch === "'") && (i === 0 || str[i - 1] !== '\\')) {
+        if (!inStr) { inStr = true; strCh = ch; }
+        else if (ch === strCh) inStr = false;
+      }
+      if (!inStr) {
+        if (ch === '(') depth++;
+        if (ch === ')') depth--;
+        if (ch === ',' && depth === 0) { args.push(current); current = ''; continue; }
+      }
+      current += ch;
+    }
+    if (current.trim()) args.push(current);
+    return args;
+  },
+
   // ── Phase 1: Local Rule-Based Transpiler (Fast, 0ms, zero server cost) ──
   translatePythonToCLocal(pythonCode) {
     const lines = pythonCode.split('\n');
     const cLines = [
-      "/* Translated with Local Rule Transpiler (0ms latency, $0 cost) */",
       "#include <stdio.h>",
       "#include <stdbool.h>",
       "#include <stdlib.h>",
@@ -2338,12 +2476,42 @@ CRITICAL INSTRUCTIONS:
         } else if ((inner.startsWith('"') && inner.endsWith('"')) || (inner.startsWith("'") && inner.endsWith("'"))) {
           const text = inner.slice(1, -1).replace(/"/g, '\\"');
           cLines.push(`${pad}printf("${text}\\n");`);
-        } else if (declaredVars.has(inner)) {
-          const type = declaredVars.get(inner);
-          const spec = type === 'double' ? '%f' : type === 'const char*' ? '%s' : '%d';
-          cLines.push(`${pad}printf("${spec}\\n", ${inner});`);
         } else {
-          cLines.push(`${pad}printf("%d\\n", ${inner});`);
+          const args = this.splitArgs(inner);
+          if (args.length === 1) {
+            const a = args[0].trim();
+            if (declaredVars.has(a)) {
+              const type = declaredVars.get(a);
+              const spec = type === 'double' ? '%f' : type === 'const char*' ? '%s' : '%d';
+              cLines.push(`${pad}printf("${spec}\\n", ${a});`);
+            } else {
+              cLines.push(`${pad}printf("%d\\n", ${a});`);
+            }
+          } else {
+            let fmtParts = [];
+            let valArgs = [];
+            for (let a of args) {
+              a = a.trim();
+              if (/^["'].*["']$/.test(a)) {
+                let s = a.slice(1, -1).replace(/"/g, '\\"');
+                fmtParts.push(s);
+              } else {
+                let spec = '%d';
+                if (declaredVars.has(a)) {
+                  const type = declaredVars.get(a);
+                  spec = type === 'double' ? '%f' : type === 'const char*' ? '%s' : '%d';
+                }
+                fmtParts.push(spec);
+                valArgs.push(a);
+              }
+            }
+            let fmt = fmtParts.join(' ').replace(/=\s+/g, '= ').replace(/\s{2,}/g, ' ');
+            if (valArgs.length > 0) {
+              cLines.push(`${pad}printf("${fmt}\\n", ${valArgs.join(', ')});`);
+            } else {
+              cLines.push(`${pad}printf("${fmt}\\n");`);
+            }
+          }
         }
         continue;
       }
@@ -3019,12 +3187,17 @@ CRITICAL INSTRUCTIONS:
       }
     }
 
-    const args = content.split(',').map(s => s.trim());
+    const args = this.splitArgs ? this.splitArgs(content) : content.split(',').map(s => s.trim());
     if (targetLang === 'cpp') {
       let cppOut = 'cout';
       for (let i = 0; i < args.length; i++) {
-        if (i > 0) cppOut += ' << " "';
-        cppOut += ` << ${args[i]}`;
+        const a = args[i].trim();
+        const prev = i > 0 ? args[i - 1].trim() : '';
+        const prevEndsWithSpace = /^["'].*[\s=]["']$/.test(prev);
+        if (i > 0 && !prevEndsWithSpace && !/^["']\s/.test(a)) {
+          cppOut += ' << " "';
+        }
+        cppOut += ` << ${a}`;
       }
       if (!isInline) cppOut += ' << endl;';
       else if (endChar) cppOut += ` << "${endChar}";`;
@@ -3034,23 +3207,37 @@ CRITICAL INSTRUCTIONS:
       const method = isInline ? 'System.out.print' : 'System.out.println';
       let javaArgs = [];
       for (let i = 0; i < args.length; i++) {
-        javaArgs.push(args[i]);
+        javaArgs.push(args[i].trim());
       }
-      return `${method}(${javaArgs.join(' + " " + ')}${endChar ? ' + "' + endChar + '"' : ''});`;
+      return `${method}(${javaArgs.join(' + " " + ').replace(/(["'])\s*\+\s*" "\s*\+/g, '$1 +')}${endChar ? ' + "' + endChar + '"' : ''});`;
     } else {
       if (args.length === 1) {
-        if (/^["'].*["']$/.test(args[0])) {
-          let str = args[0].slice(1, -1);
+        const a = args[0].trim();
+        if (/^["'].*["']$/.test(a)) {
+          let str = a.slice(1, -1);
           if (!isInline) str += '\\n';
           else if (endChar) str += endChar;
           return `printf("${str}");`;
         } else {
-          return isInline ? `printf("%d${endChar}", ${args[0]});` : `printf("%d\\n", ${args[0]});`;
+          return isInline ? `printf("%d${endChar}", ${a});` : `printf("%d\\n", ${a});`;
         }
       } else {
-        const text = args[0].replace(/^["']|["']$/g, '');
-        const val = args.slice(1).join(', ');
-        return isInline ? `printf("${text} %d${endChar}", ${val});` : `printf("${text} %d\\n", ${val});`;
+        let fmtParts = [];
+        let valArgs = [];
+        for (let a of args) {
+          a = a.trim();
+          if (/^["'].*["']$/.test(a)) {
+            let s = a.slice(1, -1).replace(/"/g, '\\"');
+            fmtParts.push(s);
+          } else {
+            fmtParts.push('%d');
+            valArgs.push(a);
+          }
+        }
+        let fmt = fmtParts.join(' ').replace(/=\s+/g, '= ').replace(/\s{2,}/g, ' ');
+        if (!isInline) fmt += '\\n';
+        else if (endChar) fmt += endChar;
+        return valArgs.length > 0 ? `printf("${fmt}", ${valArgs.join(', ')});` : `printf("${fmt}");`;
       }
     }
   },
@@ -3076,8 +3263,7 @@ CRITICAL INSTRUCTIONS:
 
     const transpiledMain = this.transpilePyBlock(mainCode, 'c', '    ');
 
-    return `/* Translated from Python to C (B.Tech Lab Engine) */
-#include <stdio.h>
+    return `#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
@@ -3113,8 +3299,7 @@ ${transpiledMain}
 
     const transpiledMain = this.transpilePyBlock(mainCode, 'cpp', '    ');
 
-    return `/* Translated from Python to C++ (STL & DSA Lab Engine) */
-#include <iostream>
+    return `#include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -3155,8 +3340,7 @@ ${transpiledMain}
 
     const transpiledMain = this.transpilePyBlock(mainCode, 'java', '        ');
 
-    return `/* Translated from Python to Java (OOP Lab Engine) */
-import java.util.*;
+    return `import java.util.*;
 import java.io.*;
 
 public class Main {
@@ -3244,8 +3428,7 @@ ${transpiledMain}
 
     const pyMainBody = this.transpileCStatementsToPython(currentMainLines.join('\n'));
 
-    return `# Translated from ${sourceLang.toUpperCase()} to Python (Client-side Engine)
-import math
+    return `import math
 import sys
 
 ${pyClasses.join('\n')}${pyFunctions.join('\n')}def main():
@@ -3536,7 +3719,7 @@ if __name__ == "__main__":
     s = s.replace(/printf\s*\(\s*"%d\\n"\s*,\s*(.*?)\);/g, 'cout << $1 << endl;');
     s = s.replace(/printf\s*\(\s*"%d "\s*,\s*(.*?)\);/g, 'cout << $1 << " ";');
 
-    return `/* Translated from C to C++ (Core Systems & STL) */\n` + s.replace(/\n{3,}/g, '\n\n');
+    return s.replace(/\n{3,}/g, '\n\n');
   },
 
   cppToC(code) {
@@ -3558,7 +3741,7 @@ if __name__ == "__main__":
 
     s = s.replace(/vector<int>\s+(\w+)\s*=\s*\{([^}]*)\};/g, 'int $1[] = {$2};\n    int $1_len = sizeof($1) / sizeof($1[0]);');
 
-    return `/* Translated from C++ to C (C99 / B.Tech Lab) */\n` + s.replace(/\n{3,}/g, '\n\n');
+    return s.replace(/\n{3,}/g, '\n\n');
   },
 
   cFamilyToJava(code, sourceLang) {
@@ -3617,8 +3800,7 @@ if __name__ == "__main__":
       return '    ' + line;
     }).join('\n');
 
-    return `/* Translated from ${sourceLang.toUpperCase()} to Java (OOP Lab Engine) */
-import java.util.*;
+    return `import java.util.*;
 import java.io.*;
 
 public class Main {
@@ -3653,8 +3835,7 @@ ${indented}
       s = s.slice(0, -1).trim();
     }
 
-    return `/* Translated from Java to C (C99 / B.Tech Lab) */
-#include <stdio.h>
+    return `#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
@@ -3698,8 +3879,7 @@ ${s}
       s = s.slice(0, -1).trim();
     }
 
-    return `/* Translated from Java to C++ (STL & OOP Lab) */
-#include <iostream>
+    return `#include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
