@@ -18,10 +18,21 @@
   <meta property="og:image" content="https://vab-code.in/assets/brand-logo-original.png">
   <meta name="twitter:image" content="https://vab-code.in/assets/brand-logo-original.png">
 
-  <!-- Favicon & Touch Icons -->
-  <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+  <!-- Favicon & Brand Icons (Optimized for Google Search & All Browsers) -->
+  <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
   <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" href="/assets/logo-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <!-- Progressive Web App (PWA) Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0a0c12">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="VAB-CODE">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,17 +51,36 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6387245631770824"
        crossorigin="anonymous"></script>
 
-  <!-- Google Schema.org Structured Data (Site Name & WebApplication for Google Search) -->
+  <!-- Google Schema.org Structured Data (Organization, Site Name & WebApplication for Google Search) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://vab-code.in/#organization",
+        "name": "VAB-CODE",
+        "url": "https://vab-code.in/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://vab-code.in/favicon-192x192.png",
+          "width": 192,
+          "height": 192
+        },
+        "sameAs": [
+          "https://github.com/varun1271",
+          "https://www.linkedin.com/in/yeduguri-varun-kumar-reddy-45a808384"
+        ]
+      },
       {
         "@type": "WebSite",
         "@id": "https://vab-code.in/#website",
         "url": "https://vab-code.in/",
         "name": "VAB-CODE",
         "alternateName": ["vab-code", "VAB CODE", "vabcode", "vab code", "VAB"],
+        "publisher": {
+          "@id": "https://vab-code.in/#organization"
+        },
         "description": "Online code editor and compiler for engineering students and programmers."
       },
       {
@@ -103,7 +133,7 @@
     }
   </script>
 
-  <link rel="stylesheet" href="style.css?v=5.4">
+  <link rel="stylesheet" href="style.css?v=5.6">
 </head>
 <body>
 
@@ -147,6 +177,11 @@
     </div>
 
     <div class="header-right">
+      <!-- PWA Install App Button (Auto-reveals when installable) -->
+      <button class="header-action-btn install-app-btn" id="installAppBtn" title="Install VAB-CODE App to your Device" style="display:none">
+        <i data-lucide="download" style="width:14px;height:14px;color:#38bdf8"></i>
+        <span>Install App</span>
+      </button>
       <button class="header-action-btn" id="historyBtn" title="Saved Code & Local Storage History">
         <i data-lucide="folder-clock" style="width:15px;height:15px;color:#a78bfa"></i>
         <span>Saved Code</span>
@@ -242,6 +277,34 @@
                 <span class="save-status-dot saved" id="saveStatusDot"></span>
                 <span class="save-status-text" id="saveStatusText">Saved</span>
               </div>
+              <!-- Practice Programs (20 Questions - 80 Codes) Dropdown Slot -->
+              <div class="practice-programs-wrapper" id="practiceProgramsWrapper">
+                <button class="practice-programs-btn" id="practiceProgramsBtn" title="20 Essential Practice Programs (Python, C, C++, Java) - 1-Click Load into Editor">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+                  <span class="btn-text">Practice Programs</span>
+                  <span class="practice-count-badge">20</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.7"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="practice-dropdown-menu" id="practiceProgramsMenu" style="display:none">
+                  <div class="practice-menu-header">
+                    <div class="practice-menu-title-box">
+                      <div class="practice-menu-title-left">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+                        <span>20 Practice Programs</span>
+                      </div>
+                      <span class="practice-lang-pill" id="practiceMenuLangPill">Python</span>
+                    </div>
+                    <div class="practice-search-wrapper">
+                      <input type="text" class="practice-search-input" id="practiceSearchInput" placeholder="Filter questions (e.g. prime, fibonacci, sort)...">
+                    </div>
+                  </div>
+                  <div class="practice-menu-list" id="practiceProgramsMenuList"></div>
+                  <div class="practice-menu-footer">
+                    <span>💡 80 Codes (Python • C • C++ • Java) • Click to load into editor</span>
+                  </div>
+                </div>
+              </div>
+
               <!-- DSA Templates Starter Button -->
               <button class="templates-btn" id="templatesBtn" title="1-Click DSA & Algorithm Starter Templates">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
@@ -320,6 +383,11 @@
               <!-- Download Code File -->
               <button class="icon-btn" id="downloadCodeBtn" title="Download Code File" aria-label="Download Code">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+              </button>
+
+              <!-- Export All Project Codes as ZIP -->
+              <button class="icon-btn" id="toolbarZipBtn" title="Export All Saved Codes as ZIP (.zip)" aria-label="Export ZIP Package">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
               </button>
 
               <!-- Copy Code to Clipboard -->
@@ -806,9 +874,15 @@ print(append_item(2))</code></pre>
           </div>
           <p>Access and manage your locally saved scripts</p>
         </div>
-        <button class="icon-btn" id="closeHistoryBtn">
-          <i data-lucide="x" style="width:20px;height:20px"></i>
-        </button>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="export-zip-btn" id="exportAllZipBtn" title="Export all saved codes as a single .ZIP file">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+            <span>Export All (.ZIP)</span>
+          </button>
+          <button class="icon-btn" id="closeHistoryBtn">
+            <i data-lucide="x" style="width:20px;height:20px"></i>
+          </button>
+        </div>
       </div>
 
       <!-- Warning Banner (Problem 5 Fix: Local Storage Fragility) -->
@@ -888,6 +962,6 @@ print(append_item(2))</code></pre>
   <!-- ========== TOAST ========== -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <script src="app.js?v=5.4"></script>
+  <script src="app.js?v=5.7"></script>
 </body>
 </html>

@@ -885,62 +885,303 @@ const WorkoutSlotManager = {
 
 
 
-const PROBLEMS = [
+// ──────────────────────────────────────────────
+// 20 ESSENTIAL PRACTICE PROGRAMS (80 CODES: PYTHON, C, C++, JAVA)
+// ──────────────────────────────────────────────
+const PRACTICE_PROGRAMS = [
   {
-    id: 'two-sum', title: 'Two Sum', difficulty: 'Easy', tags: ['Array', 'Hash Map'],
+    num: 1,
+    id: "check-positive-negative-zero",
+    title: "Check positive, negative or zero",
+    difficulty: "Easy",
+    tags: ["Basics","Conditionals"],
+    defaultStdin: "15",
     code: {
-      python: `def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        if target - n in seen:\n            return [seen[target - n], i]\n        seen[n] = i\n    return []\n\nprint(two_sum([2, 7, 11, 15], 9))   # [0, 1]\nprint(two_sum([3, 2, 4], 6))         # [1, 2]\nprint(two_sum([3, 3], 6))            # [0, 1]\n`,
-      cpp: `#include <iostream>\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nvector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int,int> seen;\n    for (int i = 0; i < nums.size(); i++) {\n        int comp = target - nums[i];\n        if (seen.count(comp)) return {seen[comp], i};\n        seen[nums[i]] = i;\n    }\n    return {};\n}\n\nint main() {\n    vector<int> nums = {2,7,11,15};\n    auto r = twoSum(nums, 9);\n    cout << "[" << r[0] << ", " << r[1] << "]" << endl;\n    return 0;\n}\n`,
-      java: `import java.util.*;\npublic class Main {\n    public static int[] twoSum(int[] nums, int target) {\n        Map<Integer,Integer> map = new HashMap<>();\n        for (int i = 0; i < nums.length; i++) {\n            int comp = target - nums[i];\n            if (map.containsKey(comp)) return new int[]{map.get(comp), i};\n            map.put(nums[i], i);\n        }\n        return new int[]{};\n    }\n    public static void main(String[] args) {\n        int[] r = twoSum(new int[]{2,7,11,15}, 9);\n        System.out.println("[" + r[0] + ", " + r[1] + "]");\n    }\n}\n`,
-      c: `#include <stdio.h>\nint main() {\n    int nums[] = {2, 7, 11, 15};\n    int target = 9, n = 4;\n    for (int i = 0; i < n; i++)\n        for (int j = i+1; j < n; j++)\n            if (nums[i] + nums[j] == target)\n                printf("[%d, %d]\\n", i, j);\n    return 0;\n}\n`
+      python: "n = int(input(\"Enter number: \"))\nif n > 0:\n    print(\"Positive\")\nelif n < 0:\n    print(\"Negative\")\nelse:\n    print(\"Zero\")\n",
+      c: "#include <stdio.h>\nint main() {\n    int n; scanf(\"%d\", &n);\n    if(n > 0) printf(\"Positive\\n\");\n    else if(n < 0) printf(\"Negative\\n\");\n    else printf(\"Zero\\n\");\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int n; cin >> n;\n    if(n > 0) cout << \"Positive\";\n    else if(n < 0) cout << \"Negative\";\n    else cout << \"Zero\";\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int n = s.nextInt();\n        if(n > 0) System.out.println(\"Positive\");\n        else if(n < 0) System.out.println(\"Negative\");\n        else System.out.println(\"Zero\");\n    }\n}\n"
     }
   },
   {
-    id: 'palindrome', title: 'Palindrome Check', difficulty: 'Easy', tags: ['String', 'Two Pointers'],
+    num: 2,
+    id: "find-largest-three-numbers",
+    title: "Find the largest of three numbers",
+    difficulty: "Easy",
+    tags: ["Basics","Math"],
+    defaultStdin: "10 25 7",
     code: {
-      python: `def is_palindrome(s):\n    cleaned = ''.join(c.lower() for c in s if c.isalnum())\n    return cleaned == cleaned[::-1]\n\ntests = ["racecar", "A man, a plan, a canal: Panama", "hello"]\nfor t in tests:\n    print(f'"{t}" → {is_palindrome(t)}')\n`,
-      cpp: `#include <iostream>\n#include <string>\n#include <cctype>\nusing namespace std;\n\nbool isPalindrome(string s) {\n    int l = 0, r = s.size()-1;\n    while (l < r) {\n        while (l < r && !isalnum(s[l])) l++;\n        while (l < r && !isalnum(s[r])) r--;\n        if (tolower(s[l]) != tolower(s[r])) return false;\n        l++; r--;\n    }\n    return true;\n}\n\nint main() {\n    cout << boolalpha;\n    cout << "racecar: " << isPalindrome("racecar") << endl;\n    cout << "hello: " << isPalindrome("hello") << endl;\n    return 0;\n}\n`
+      python: "a = int(input(\"Enter a: \"))\nb = int(input(\"Enter b: \"))\nc = int(input(\"Enter c: \"))\nprint(\"Largest:\", max(a, b, c))\n",
+      c: "#include <stdio.h>\nint main() {\n    int a, b, c; scanf(\"%d%d%d\", &a, &b, &c);\n    int max = a;\n    if(b > max) max = b;\n    if(c > max) max = c;\n    printf(\"Largest: %d\\n\", max);\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int a, b, c; cin >> a >> b >> c;\n    int m = a;\n    if(b > m) m = b; if(c > m) m = c;\n    cout << \"Largest: \" << m;\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int a = s.nextInt(), b = s.nextInt(), c = s.nextInt();\n        System.out.println(\"Largest: \" + Math.max(a, Math.max(b, c)));\n    }\n}\n"
     }
   },
   {
-    id: 'fibonacci', title: 'Fibonacci Series', difficulty: 'Easy', tags: ['Math', 'DP'],
+    num: 3,
+    id: "check-even-or-odd",
+    title: "Check whether a number is even or odd",
+    difficulty: "Easy",
+    tags: ["Basics","Conditionals"],
+    defaultStdin: "8",
     code: {
-      python: `def fibonacci(n):\n    fib = [0, 1]\n    for _ in range(2, n):\n        fib.append(fib[-1] + fib[-2])\n    return fib[:n]\n\nprint("First 15:", fibonacci(15))\n\nfrom functools import lru_cache\n\n@lru_cache\ndef fib(n):\n    if n < 2: return n\n    return fib(n-1) + fib(n-2)\n\nprint(f"fib(30) = {fib(30)}")\nprint(f"fib(40) = {fib(40)}")\n`,
-      c: `#include <stdio.h>\nint main() {\n    int n = 15;\n    long long a = 0, b = 1;\n    printf("Fibonacci: ");\n    for (int i = 0; i < n; i++) {\n        printf("%lld ", a);\n        long long t = a + b;\n        a = b; b = t;\n    }\n    printf("\\n");\n    return 0;\n}\n`,
-      java: `public class Main {\n    public static void main(String[] args) {\n        int n = 15;\n        long[] fib = new long[n];\n        fib[0] = 0; fib[1] = 1;\n        for (int i = 2; i < n; i++) fib[i] = fib[i-1] + fib[i-2];\n        System.out.print("Fibonacci: ");\n        for (long f : fib) System.out.print(f + " ");\n        System.out.println();\n    }\n}\n`
+      python: "n = int(input(\"Enter number: \"))\nif n % 2 == 0:\n    print(\"Even\")\nelse:\n    print(\"Odd\")\n",
+      c: "#include <stdio.h>\nint main() {\n    int n; scanf(\"%d\", &n);\n    printf(\"%s\\n\", n % 2 == 0 ? \"Even\" : \"Odd\");\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int n; cin >> n;\n    cout << (n % 2 == 0 ? \"Even\" : \"Odd\");\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int n = s.nextInt();\n        System.out.println(n % 2 == 0 ? \"Even\" : \"Odd\");\n    }\n}\n"
     }
   },
   {
-    id: 'linked-list', title: 'Linked List Operations', difficulty: 'Medium', tags: ['DSA', 'Pointers'],
+    num: 4,
+    id: "factorial-of-number",
+    title: "Find factorial of a number",
+    difficulty: "Easy",
+    tags: ["Math","Loops"],
+    defaultStdin: "5",
     code: {
-      python: `class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\nclass LinkedList:\n    def __init__(self):\n        self.head = None\n\n    def append(self, data):\n        node = Node(data)\n        if not self.head:\n            self.head = node\n            return\n        curr = self.head\n        while curr.next:\n            curr = curr.next\n        curr.next = node\n\n    def display(self):\n        nodes = []\n        curr = self.head\n        while curr:\n            nodes.append(str(curr.data))\n            curr = curr.next\n        print(" -> ".join(nodes) + " -> NULL")\n\nll = LinkedList()\nfor val in [10, 20, 30, 40, 50]:\n    ll.append(val)\n\nprint("Linked List:")\nll.display()\n`,
-      c: `#include <stdio.h>\n#include <stdlib.h>\n\nstruct Node {\n    int data;\n    struct Node* next;\n};\n\nstruct Node* createNode(int val) {\n    struct Node* n = (struct Node*)malloc(sizeof(struct Node));\n    n->data = val;\n    n->next = NULL;\n    return n;\n}\n\nvoid printList(struct Node* head) {\n    while (head) {\n        printf("%d -> ", head->data);\n        head = head->next;\n    }\n    printf("NULL\\n");\n}\n\nint main() {\n    struct Node* head = createNode(10);\n    head->next = createNode(20);\n    head->next->next = createNode(30);\n    head->next->next->next = createNode(40);\n    printf("Linked List: ");\n    printList(head);\n    return 0;\n}\n`
+      python: "n = int(input(\"Enter number: \"))\nfact = 1\nfor i in range(1, n + 1):\n    fact *= i\nprint(\"Factorial:\", fact)\n",
+      c: "#include <stdio.h>\nint main() {\n    int n; long long f = 1;\n    scanf(\"%d\", &n);\n    for(int i = 1; i <= n; i++) f *= i;\n    printf(\"%lld\\n\", f);\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int n; long long f = 1; cin >> n;\n    for(int i = 1; i <= n; i++) f *= i;\n    cout << f;\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int n = s.nextInt();\n        long f = 1;\n        for(int i = 1; i <= n; i++) f *= i;\n        System.out.println(f);\n    }\n}\n"
     }
   },
   {
-    id: 'bubble-sort', title: 'Bubble Sort', difficulty: 'Medium', tags: ['Sorting', 'Array'],
+    num: 5,
+    id: "fibonacci-series-n-terms",
+    title: "Print Fibonacci series for n terms",
+    difficulty: "Easy",
+    tags: ["Math","Loops"],
+    defaultStdin: "10",
     code: {
-      python: `def bubble_sort(arr):\n    n = len(arr)\n    for i in range(n):\n        for j in range(n - i - 1):\n            if arr[j] > arr[j+1]:\n                arr[j], arr[j+1] = arr[j+1], arr[j]\n    return arr\n\ndata = [64, 34, 25, 12, 22, 11, 90]\nprint("Before:", data)\nprint("After: ", bubble_sort(data.copy()))\n`,
-      cpp: `#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> arr = {64, 34, 25, 12, 22, 11, 90};\n    int n = arr.size();\n    cout << "Before: ";\n    for (int x : arr) cout << x << " ";\n    cout << endl;\n\n    for (int i = 0; i < n-1; i++)\n        for (int j = 0; j < n-i-1; j++)\n            if (arr[j] > arr[j+1]) swap(arr[j], arr[j+1]);\n\n    cout << "After:  ";\n    for (int x : arr) cout << x << " ";\n    cout << endl;\n    return 0;\n}\n`,
-      java: `import java.util.Arrays;\npublic class Main {\n    public static void main(String[] args) {\n        int[] arr = {64, 34, 25, 12, 22, 11, 90};\n        System.out.println("Before: " + Arrays.toString(arr));\n        int n = arr.length;\n        for (int i = 0; i < n-1; i++)\n            for (int j = 0; j < n-i-1; j++)\n                if (arr[j] > arr[j+1]) {\n                    int t = arr[j]; arr[j] = arr[j+1]; arr[j+1] = t;\n                }\n        System.out.println("After:  " + Arrays.toString(arr));\n    }\n}\n`
+      python: "n = int(input(\"Enter terms: \"))\na, b = 0, 1\nfor i in range(n):\n    print(a, end=\" \")\n    a, b = b, a + b\nprint()\n",
+      c: "#include <stdio.h>\nint main() {\n    int n, a = 0, b = 1, c;\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) {\n        printf(\"%d \", a);\n        c = a + b; a = b; b = c;\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int n, a = 0, b = 1, c; cin >> n;\n    for(int i = 0; i < n; i++) {\n        cout << a << \" \"; c = a + b; a = b; b = c;\n    }\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int n = s.nextInt(), a = 0, b = 1;\n        for(int i = 0; i < n; i++) {\n            System.out.print(a + \" \");\n            int c = a + b; a = b; b = c;\n        }\n        System.out.println();\n    }\n}\n"
     }
   },
   {
-    id: 'numpy-stats', title: 'NumPy Statistics', difficulty: 'Easy', tags: ['NumPy', 'Data Science'],
+    num: 6,
+    id: "check-prime-number",
+    title: "Check whether a number is prime",
+    difficulty: "Easy",
+    tags: ["Math","Loops"],
+    defaultStdin: "17",
     code: {
-      python: `import numpy as np\n\n# Create arrays\narr = np.array([23, 45, 12, 67, 34, 89, 56, 78])\nprint("Array:", arr)\nprint("Mean:", np.mean(arr))\nprint("Median:", np.median(arr))\nprint("Std Dev:", np.std(arr).round(2))\nprint("Min:", np.min(arr), "Max:", np.max(arr))\nprint("Sorted:", np.sort(arr))\n\n# Matrix operations\nA = np.array([[1, 2], [3, 4]])\nB = np.array([[5, 6], [7, 8]])\nprint("\\nMatrix A:\\n", A)\nprint("Matrix B:\\n", B)\nprint("A × B:\\n", A @ B)\nprint("Determinant of A:", np.linalg.det(A).round(2))\n`
+      python: "n = int(input(\"Enter number: \"))\nprime = n > 1\nfor i in range(2, int(n ** 0.5) + 1):\n    if n % i == 0:\n        prime = False\n        break\nprint(\"Prime\" if prime else \"Not Prime\")\n",
+      c: "#include <stdio.h>\nint main() {\n    int n, prime = 1;\n    scanf(\"%d\", &n);\n    if(n < 2) prime = 0;\n    for(int i = 2; i * i <= n; i++) {\n        if(n % i == 0) { prime = 0; break; }\n    }\n    printf(\"%s\\n\", prime ? \"Prime\" : \"Not Prime\");\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int n; cin >> n;\n    bool prime = n > 1;\n    for(int i = 2; i * i <= n; i++) {\n        if(n % i == 0) { prime = false; break; }\n    }\n    cout << (prime ? \"Prime\" : \"Not Prime\");\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int n = s.nextInt();\n        boolean prime = n > 1;\n        for(int i = 2; i * i <= n; i++) {\n            if(n % i == 0) { prime = false; break; }\n        }\n        System.out.println(prime ? \"Prime\" : \"Not Prime\");\n    }\n}\n"
     }
   },
   {
-    id: 'graphics-bresenham', title: 'Bresenham Line (graphics.h)', difficulty: 'Medium', tags: ['Graphics', 'Canvas'],
+    num: 7,
+    id: "reverse-number",
+    title: "Reverse a number",
+    difficulty: "Easy",
+    tags: ["Math","Loops"],
+    defaultStdin: "12345",
     code: {
-      c: `#include <stdio.h>\n#include <graphics.h>\n\n/* Bresenham's Line Drawing Algorithm */\n/* graphics.h calls auto-translate to HTML5 Canvas! */\n\nint main() {\n    int gd = DETECT, gm;\n    initgraph(&gd, &gm, "");\n\n    setbkcolor(0);\n    cleardevice();\n\n    /* Draw axes */\n    setcolor(WHITE);\n    line(50, 250, 450, 250);  /* X axis */\n    line(50, 250, 50, 50);    /* Y axis */\n\n    /* Draw shapes */\n    setcolor(YELLOW);\n    circle(250, 150, 60);\n\n    setcolor(GREEN);\n    rectangle(100, 100, 200, 200);\n\n    setcolor(CYAN);\n    line(50, 250, 400, 80);\n\n    setcolor(RED);\n    circle(350, 150, 40);\n\n    /* Labels */\n    setcolor(WHITE);\n    outtextxy(150, 270, "graphics.h -> Canvas!");\n    outtextxy(60, 40, "Bresenham Demo");\n\n    printf("Graphics rendered on HTML5 Canvas\\n");\n\n    closegraph();\n    return 0;\n}\n`,
-      cpp: `#include <iostream>\n#include <graphics.h>\nusing namespace std;\n\nint main() {\n    int gd = DETECT, gm;\n    initgraph(&gd, &gm, "");\n\n    setbkcolor(0);\n    cleardevice();\n\n    // Draw a house\n    setcolor(WHITE);\n    rectangle(150, 200, 350, 350);  // walls\n\n    setcolor(YELLOW);\n    line(150, 200, 250, 100);       // roof left\n    line(350, 200, 250, 100);       // roof right\n\n    setcolor(CYAN);\n    rectangle(200, 250, 260, 350);  // door\n\n    setcolor(GREEN);\n    circle(310, 250, 20);           // window\n\n    setcolor(RED);\n    circle(250, 100, 8);            // chimney smoke\n\n    outtextxy(170, 370, "My House - graphics.h");\n\n    closegraph();\n    return 0;\n}\n`
+      python: "n = int(input(\"Enter number: \"))\nrev = 0\nwhile n > 0:\n    rev = rev * 10 + n % 10\n    n //= 10\nprint(\"Reverse:\", rev)\n",
+      c: "#include <stdio.h>\nint main() {\n    int n, rev = 0;\n    scanf(\"%d\", &n);\n    while(n > 0) { rev = rev * 10 + n % 10; n /= 10; }\n    printf(\"%d\\n\", rev);\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int n, rev = 0; cin >> n;\n    while(n > 0) { rev = rev * 10 + n % 10; n /= 10; }\n    cout << rev;\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int n = s.nextInt(), rev = 0;\n        while(n > 0) { rev = rev * 10 + n % 10; n /= 10; }\n        System.out.println(rev);\n    }\n}\n"
     }
-  }
+  },
+  {
+    num: 8,
+    id: "check-palindrome-number",
+    title: "Check whether a number is a palindrome",
+    difficulty: "Easy",
+    tags: ["Math","Conditionals"],
+    defaultStdin: "12321",
+    code: {
+      python: "n = input(\"Enter number: \")\nif n == n[::-1]:\n    print(\"Palindrome\")\nelse:\n    print(\"Not Palindrome\")\n",
+      c: "#include <stdio.h>\nint main() {\n    int n, t, rev = 0;\n    scanf(\"%d\", &n); t = n;\n    while(t > 0) { rev = rev * 10 + t % 10; t /= 10; }\n    printf(\"%s\\n\", n == rev ? \"Palindrome\" : \"Not Palindrome\");\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int n, t, rev = 0; cin >> n; t = n;\n    while(t > 0) { rev = rev * 10 + t % 10; t /= 10; }\n    cout << (n == rev ? \"Palindrome\" : \"Not Palindrome\");\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int n = s.nextInt(), t = n, rev = 0;\n        while(t > 0) { rev = rev * 10 + t % 10; t /= 10; }\n        System.out.println(n == rev ? \"Palindrome\" : \"Not Palindrome\");\n    }\n}\n"
+    }
+  },
+  {
+    num: 9,
+    id: "sum-of-digits",
+    title: "Find the sum of digits",
+    difficulty: "Easy",
+    tags: ["Math","Loops"],
+    defaultStdin: "54321",
+    code: {
+      python: "n = int(input(\"Enter number: \"))\ntotal = 0\nwhile n > 0:\n    total += n % 10\n    n //= 10\nprint(\"Sum:\", total)\n",
+      c: "#include <stdio.h>\nint main() {\n    int n, sum = 0;\n    scanf(\"%d\", &n);\n    while(n > 0) { sum += n % 10; n /= 10; }\n    printf(\"%d\\n\", sum);\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int n, sum = 0; cin >> n;\n    while(n > 0) { sum += n % 10; n /= 10; }\n    cout << sum;\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int n = s.nextInt(), sum = 0;\n        while(n > 0) { sum += n % 10; n /= 10; }\n        System.out.println(sum);\n    }\n}\n"
+    }
+  },
+  {
+    num: 10,
+    id: "count-digits-in-number",
+    title: "Count the digits in a number",
+    difficulty: "Easy",
+    tags: ["Math","Loops"],
+    defaultStdin: "987654",
+    code: {
+      python: "n = input(\"Enter number: \")\nprint(\"Digits:\", len(n.lstrip(\"-\")))\n",
+      c: "#include <stdio.h>\nint main() {\n    int n, count = 0;\n    scanf(\"%d\", &n);\n    if(n == 0) count = 1;\n    while(n != 0) { count++; n /= 10; }\n    printf(\"Digits: %d\\n\", count);\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int n, c = 0; cin >> n;\n    if(n == 0) c = 1;\n    while(n != 0) { c++; n /= 10; }\n    cout << \"Digits: \" << c;\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int n = s.nextInt(), c = 0;\n        if(n == 0) c = 1;\n        while(n != 0) { c++; n /= 10; }\n        System.out.println(\"Digits: \" + c);\n    }\n}\n"
+    }
+  },
+  {
+    num: 11,
+    id: "largest-smallest-in-array",
+    title: "Find largest and smallest number in an array",
+    difficulty: "Easy",
+    tags: ["Array","Search"],
+    defaultStdin: "23 45 12 89 5",
+    code: {
+      python: "a = list(map(int, input(\"Enter numbers: \").split()))\nprint(\"Largest:\", max(a))\nprint(\"Smallest:\", min(a))\n",
+      c: "#include <stdio.h>\nint main() {\n    int a[5], max, min;\n    for(int i = 0; i < 5; i++) scanf(\"%d\", &a[i]);\n    max = min = a[0];\n    for(int i = 1; i < 5; i++) {\n        if(a[i] > max) max = a[i];\n        if(a[i] < min) min = a[i];\n    }\n    printf(\"Largest=%d Smallest=%d\\n\", max, min);\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int a[5], mx, mn;\n    for(int i = 0; i < 5; i++) cin >> a[i];\n    mx = mn = a[0];\n    for(int i = 1; i < 5; i++) {\n        if(a[i] > mx) mx = a[i];\n        if(a[i] < mn) mn = a[i];\n    }\n    cout << \"Largest=\" << mx << \" Smallest=\" << mn;\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        int[] a = new int[5];\n        Scanner s = new Scanner(System.in);\n        for(int i = 0; i < 5; i++) a[i] = s.nextInt();\n        int max = a[0], min = a[0];\n        for(int x : a) {\n            if(x > max) max = x;\n            if(x < min) min = x;\n        }\n        System.out.println(\"Largest=\" + max + \" Smallest=\" + min);\n    }\n}\n"
+    }
+  },
+  {
+    num: 12,
+    id: "remove-duplicates-from-array",
+    title: "Remove duplicate values from an array",
+    difficulty: "Medium",
+    tags: ["Array","Algorithm"],
+    defaultStdin: "6\n10 20 20 30 40 40",
+    code: {
+      python: "a = list(map(int, input(\"Enter numbers: \").split()))\nb = []\nfor x in a:\n    if x not in b:\n        b.append(x)\nprint(b)\n",
+      c: "#include <stdio.h>\nint main() {\n    int a[10], n, b[10], k = 0;\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    for(int i = 0; i < n; i++) {\n        int found = 0;\n        for(int j = 0; j < k; j++) if(a[i] == b[j]) found = 1;\n        if(!found) b[k++] = a[i];\n    }\n    for(int i = 0; i < k; i++) printf(\"%d \", b[i]);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int a[10], n, b[10], k = 0; cin >> n;\n    for(int i = 0; i < n; i++) cin >> a[i];\n    for(int i = 0; i < n; i++) {\n        bool found = false;\n        for(int j = 0; j < k; j++) if(a[i] == b[j]) found = true;\n        if(!found) b[k++] = a[i];\n    }\n    for(int i = 0; i < k; i++) cout << b[i] << \" \";\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int n = s.nextInt(); int[] a = new int[n];\n        for(int i = 0; i < n; i++) a[i] = s.nextInt();\n        for(int i = 0; i < n; i++) {\n            boolean duplicate = false;\n            for(int j = 0; j < i; j++) if(a[i] == a[j]) duplicate = true;\n            if(!duplicate) System.out.print(a[i] + \" \");\n        }\n        System.out.println();\n    }\n}\n"
+    }
+  },
+  {
+    num: 13,
+    id: "sort-array-ascending",
+    title: "Sort an array without using sort()",
+    difficulty: "Medium",
+    tags: ["Array","Sorting"],
+    defaultStdin: "5\n64 25 12 22 11",
+    code: {
+      python: "a = list(map(int, input(\"Enter numbers: \").split()))\nfor i in range(len(a)):\n    for j in range(i + 1, len(a)):\n        if a[i] > a[j]:\n            a[i], a[j] = a[j], a[i]\nprint(a)\n",
+      c: "#include <stdio.h>\nint main() {\n    int a[10], n, t;\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    for(int i = 0; i < n - 1; i++)\n        for(int j = i + 1; j < n; j++)\n            if(a[i] > a[j]) { t = a[i]; a[i] = a[j]; a[j] = t; }\n    for(int i = 0; i < n; i++) printf(\"%d \", a[i]);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int a[10], n, t; cin >> n;\n    for(int i = 0; i < n; i++) cin >> a[i];\n    for(int i = 0; i < n - 1; i++)\n        for(int j = i + 1; j < n; j++)\n            if(a[i] > a[j]) { t = a[i]; a[i] = a[j]; a[j] = t; }\n    for(int i = 0; i < n; i++) cout << a[i] << \" \";\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int n = s.nextInt(); int[] a = new int[n];\n        for(int i = 0; i < n; i++) a[i] = s.nextInt();\n        for(int i = 0; i < n - 1; i++)\n            for(int j = i + 1; j < n; j++)\n                if(a[i] > a[j]) { int t = a[i]; a[i] = a[j]; a[j] = t; }\n        for(int x : a) System.out.print(x + \" \");\n        System.out.println();\n    }\n}\n"
+    }
+  },
+  {
+    num: 14,
+    id: "count-frequency-array-elements",
+    title: "Count frequency of each element in an array",
+    difficulty: "Medium",
+    tags: ["Array","Hash Map"],
+    defaultStdin: "5\n1 2 2 3 1",
+    code: {
+      python: "a = input(\"Enter values: \").split()\nfreq = {}\nfor x in a:\n    freq[x] = freq.get(x, 0) + 1\nprint(freq)\n",
+      c: "#include <stdio.h>\nint main() {\n    int a[10], n, used[10] = {0};\n    scanf(\"%d\", &n);\n    for(int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    for(int i = 0; i < n; i++) {\n        if(used[i]) continue;\n        int count = 1;\n        for(int j = i + 1; j < n; j++)\n            if(a[i] == a[j]) { count++; used[j] = 1; }\n        printf(\"%d = %d\\n\", a[i], count);\n    }\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int a[10], n, used[10] = {0}; cin >> n;\n    for(int i = 0; i < n; i++) cin >> a[i];\n    for(int i = 0; i < n; i++) {\n        if(used[i]) continue;\n        int c = 1;\n        for(int j = i + 1; j < n; j++)\n            if(a[i] == a[j]) { c++; used[j] = 1; }\n        cout << a[i] << \" = \" << c << \"\\n\";\n    }\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int n = s.nextInt(); int[] a = new int[n];\n        boolean[] used = new boolean[n];\n        for(int i = 0; i < n; i++) a[i] = s.nextInt();\n        for(int i = 0; i < n; i++) {\n            if(used[i]) continue;\n            int c = 1;\n            for(int j = i + 1; j < n; j++)\n                if(a[i] == a[j]) { c++; used[j] = true; }\n            System.out.println(a[i] + \" = \" + c);\n        }\n    }\n}\n"
+    }
+  },
+  {
+    num: 15,
+    id: "count-vowels-consonants-digits",
+    title: "Count vowels, consonants, digits and spaces",
+    difficulty: "Easy",
+    tags: ["String","Parsing"],
+    defaultStdin: "Hello World 123",
+    code: {
+      python: "s = input(\"Enter text: \")\nv = c = d = sp = 0\nfor x in s.lower():\n    if x in \"aeiou\": v += 1\n    elif x.isalpha(): c += 1\n    elif x.isdigit(): d += 1\n    elif x == \" \": sp += 1\nprint(\"Vowels:\", v, \"Consonants:\", c, \"Digits:\", d, \"Spaces:\", sp)\n",
+      c: "#include <stdio.h>\n#include <ctype.h>\nint main() {\n    char s[100]; int v = 0, c = 0, d = 0, sp = 0;\n    fgets(s, 100, stdin);\n    for(int i = 0; s[i] != '\\0'; i++) {\n        char x = tolower(s[i]);\n        if(x >= 'a' && x <= 'z') {\n            if(x == 'a' || x == 'e' || x == 'i' || x == 'o' || x == 'u') v++;\n            else c++;\n        } else if(isdigit(x)) d++;\n        else if(x == ' ') sp++;\n    }\n    printf(\"Vowels=%d Consonants=%d Digits=%d Spaces=%d\\n\", v, c, d, sp);\n    return 0;\n}\n",
+      cpp: "#include <iostream>\n#include <cctype>\nusing namespace std;\nint main() {\n    string s; getline(cin, s);\n    int v = 0, c = 0, d = 0, sp = 0;\n    for(char x : s) {\n        x = tolower(x);\n        if(isalpha(x)) {\n            if(string(\"aeiou\").find(x) != string::npos) v++;\n            else c++;\n        } else if(isdigit(x)) d++;\n        else if(x == ' ') sp++;\n    }\n    cout << \"Vowels=\" << v << \" Consonants=\" << c << \" Digits=\" << d << \" Spaces=\" << sp;\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        String s = new Scanner(System.in).nextLine();\n        int v = 0, c = 0, d = 0, sp = 0;\n        for(char x : s.toLowerCase().toCharArray()) {\n            if(\"aeiou\".indexOf(x) >= 0) v++;\n            else if(x >= 'a' && x <= 'z') c++;\n            else if(Character.isDigit(x)) d++;\n            else if(x == ' ') sp++;\n        }\n        System.out.println(\"Vowels=\" + v + \" Consonants=\" + c + \" Digits=\" + d + \" Spaces=\" + sp);\n    }\n}\n"
+    }
+  },
+  {
+    num: 16,
+    id: "check-string-palindrome",
+    title: "Check whether a string is a palindrome",
+    difficulty: "Easy",
+    tags: ["String","Two Pointers"],
+    defaultStdin: "racecar",
+    code: {
+      python: "s = input(\"Enter string: \")\nprint(\"Palindrome\" if s == s[::-1] else \"Not Palindrome\")\n",
+      c: "#include <stdio.h>\n#include <string.h>\nint main() {\n    char s[100]; scanf(\"%s\", s);\n    int n = strlen(s), ok = 1;\n    for(int i = 0; i < n / 2; i++)\n        if(s[i] != s[n - 1 - i]) ok = 0;\n    printf(\"%s\\n\", ok ? \"Palindrome\" : \"Not Palindrome\");\n    return 0;\n}\n",
+      cpp: "#include <iostream>\n#include <algorithm>\nusing namespace std;\nint main() {\n    string s; cin >> s;\n    string r = s;\n    reverse(r.begin(), r.end());\n    cout << (s == r ? \"Palindrome\" : \"Not Palindrome\");\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        String s = new Scanner(System.in).nextLine();\n        String r = new StringBuilder(s).reverse().toString();\n        System.out.println(s.equals(r) ? \"Palindrome\" : \"Not Palindrome\");\n    }\n}\n"
+    }
+  },
+  {
+    num: 17,
+    id: "simple-calculator-functions",
+    title: "Create a simple calculator using functions",
+    difficulty: "Easy",
+    tags: ["Functions","Basics"],
+    defaultStdin: "12 4 +",
+    code: {
+      python: "def add(a, b): return a + b\ndef sub(a, b): return a - b\ndef mul(a, b): return a * b\ndef div(a, b): return a / b\n\na = float(input(\"Enter a: \"))\nb = float(input(\"Enter b: \"))\nop = input(\"Enter + - * /: \")\nif op == \"+\": print(add(a, b))\nelif op == \"-\": print(sub(a, b))\nelif op == \"*\": print(mul(a, b))\nelif op == \"/\": print(div(a, b))\n",
+      c: "#include <stdio.h>\nint main() {\n    float a, b; char op;\n    scanf(\"%f %c %f\", &a, &op, &b);\n    switch(op) {\n        case '+': printf(\"%.2f\\n\", a + b); break;\n        case '-': printf(\"%.2f\\n\", a - b); break;\n        case '*': printf(\"%.2f\\n\", a * b); break;\n        case '/': printf(\"%.2f\\n\", a / b); break;\n        default: printf(\"Invalid\\n\");\n    }\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    float a, b; char op; cin >> a >> op >> b;\n    switch(op) {\n        case '+': cout << a + b; break;\n        case '-': cout << a - b; break;\n        case '*': cout << a * b; break;\n        case '/': cout << a / b; break;\n        default: cout << \"Invalid\";\n    }\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        double a = s.nextDouble(), b = s.nextDouble();\n        char op = s.next().charAt(0);\n        switch(op) {\n            case '+': System.out.println(a + b); break;\n            case '-': System.out.println(a - b); break;\n            case '*': System.out.println(a * b); break;\n            case '/': System.out.println(a / b); break;\n            default: System.out.println(\"Invalid\");\n        }\n    }\n}\n"
+    }
+  },
+  {
+    num: 18,
+    id: "student-total-average-grade",
+    title: "Calculate student total, average and grade",
+    difficulty: "Easy",
+    tags: ["Basics","Arrays"],
+    defaultStdin: "85 92 78 88 95",
+    code: {
+      python: "marks = [int(input(\"Mark: \")) for i in range(5)]\ntotal = sum(marks)\navg = total / 5\ngrade = \"A\" if avg >= 80 else \"B\" if avg >= 60 else \"C\" if avg >= 50 else \"F\"\nprint(\"Total:\", total)\nprint(\"Average:\", avg)\nprint(\"Grade:\", grade)\n",
+      c: "#include <stdio.h>\nint main() {\n    int m[5], total = 0; float avg;\n    for(int i = 0; i < 5; i++) { scanf(\"%d\", &m[i]); total += m[i]; }\n    avg = total / 5.0;\n    printf(\"Total=%d Average=%.2f\\n\", total, avg);\n    printf(\"Grade=%c\\n\", avg >= 80 ? 'A' : avg >= 60 ? 'B' : avg >= 50 ? 'C' : 'F');\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int m[5], total = 0;\n    for(int i = 0; i < 5; i++) { cin >> m[i]; total += m[i]; }\n    float avg = total / 5.0;\n    cout << \"Total=\" << total << \" Average=\" << avg << \"\\n\";\n    cout << \"Grade=\" << (avg >= 80 ? 'A' : avg >= 60 ? 'B' : avg >= 50 ? 'C' : 'F');\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int total = 0;\n        for(int i = 0; i < 5; i++) total += s.nextInt();\n        double avg = total / 5.0;\n        char grade = avg >= 80 ? 'A' : avg >= 60 ? 'B' : avg >= 50 ? 'C' : 'F';\n        System.out.println(\"Total=\" + total);\n        System.out.println(\"Average=\" + avg);\n        System.out.println(\"Grade=\" + grade);\n    }\n}\n"
+    }
+  },
+  {
+    num: 19,
+    id: "create-student-class",
+    title: "Create a Student class / struct",
+    difficulty: "Medium",
+    tags: ["OOP","Classes"],
+    defaultStdin: "",
+    code: {
+      python: "class Student:\n    def __init__(self, name, roll, mark):\n        self.name = name\n        self.roll = roll\n        self.mark = mark\n\ns = Student(\"Varun\", 101, 85)\nprint(s.name, s.roll, s.mark)\n",
+      c: "#include <stdio.h>\nstruct Student { char name[30]; int roll, mark; };\nint main() {\n    struct Student s = {\"Varun\", 101, 85};\n    printf(\"Name: %s\\nRoll: %d\\nMark: %d\\n\", s.name, s.roll, s.mark);\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nclass Student {\npublic:\n    string name; int roll, mark;\n    void show() { cout << name << \" \" << roll << \" \" << mark; }\n};\nint main() {\n    Student s; s.name = \"Varun\"; s.roll = 101; s.mark = 85; s.show();\n    return 0;\n}\n",
+      java: "class Main {\n    static class Student {\n        String name; int roll, mark;\n        Student(String n, int r, int m) { name = n; roll = r; mark = m; }\n        void show() { System.out.println(name + \" \" + roll + \" \" + mark); }\n    }\n    public static void main(String[] args) {\n        Student s = new Student(\"Varun\", 101, 85);\n        s.show();\n    }\n}\n"
+    }
+  },
+  {
+    num: 20,
+    id: "simple-atm-menu",
+    title: "Create a simple ATM menu",
+    difficulty: "Medium",
+    tags: ["Basics","Control Flow"],
+    defaultStdin: "1",
+    code: {
+      python: "balance = 1000\nprint(\"1. Balance 2. Deposit 3. Withdraw\")\nch = int(input(\"Choice: \"))\nif ch == 1:\n    print(\"Balance:\", balance)\nelif ch == 2:\n    balance += int(input(\"Amount: \"))\n    print(\"Balance:\", balance)\nelif ch == 3:\n    amount = int(input(\"Amount: \"))\n    if amount <= balance:\n        balance -= amount\n        print(\"Balance:\", balance)\n    else:\n        print(\"Insufficient balance\")\n",
+      c: "#include <stdio.h>\nint main() {\n    int choice, amount, balance = 1000;\n    scanf(\"%d\", &choice);\n    switch(choice) {\n        case 1: printf(\"Balance=%d\\n\", balance); break;\n        case 2: scanf(\"%d\", &amount); balance += amount; printf(\"Balance=%d\\n\", balance); break;\n        case 3: scanf(\"%d\", &amount);\n            if(amount <= balance) { balance -= amount; printf(\"Balance=%d\\n\", balance); }\n            else printf(\"Insufficient balance\\n\"); break;\n        default: printf(\"Exit\\n\");\n    }\n    return 0;\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\nint main() {\n    int choice, amount, balance = 1000; cin >> choice;\n    switch(choice) {\n        case 1: cout << \"Balance=\" << balance; break;\n        case 2: cin >> amount; balance += amount; cout << balance; break;\n        case 3: cin >> amount;\n            if(amount <= balance) { balance -= amount; cout << balance; }\n            else cout << \"Insufficient balance\"; break;\n        default: cout << \"Exit\";\n    }\n    return 0;\n}\n",
+      java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        int balance = 1000, choice = s.nextInt();\n        switch(choice) {\n            case 1: System.out.println(\"Balance=\" + balance); break;\n            case 2: balance += s.nextInt(); System.out.println(balance); break;\n            case 3: int a = s.nextInt();\n                if(a <= balance) { balance -= a; System.out.println(balance); }\n                else System.out.println(\"Insufficient balance\"); break;\n            default: System.out.println(\"Exit\");\n        }\n    }\n}\n"
+    }
+  },
 ];
 
-// ──────────────────────────────────────────────
+const PROBLEMS = PRACTICE_PROGRAMS.map(p => ({
+  id: p.id,
+  num: p.num,
+  title: "Q" + p.num + ": " + p.title,
+  difficulty: p.difficulty,
+  tags: p.tags,
+  defaultStdin: p.defaultStdin,
+  code: p.code
+}));
+
+
 // 2B. UNIVERSITY LAB MANUAL & GUIDES (AdSense High-Value Content)
 // ──────────────────────────────────────────────
 
@@ -4906,6 +5147,108 @@ public class Main {
 
 
 // ──────────────────────────────────────────────
+// CLIENT-SIDE PKZIP GENERATOR (Zero dependencies, 100% Offline)
+// ──────────────────────────────────────────────
+class SimpleZip {
+  constructor() {
+    this.files = [];
+  }
+
+  addFile(filename, content) {
+    const encoder = new TextEncoder();
+    const data = typeof content === 'string' ? encoder.encode(content) : content;
+    this.files.push({ filename, data, crc: this.crc32(data) });
+  }
+
+  crc32(buf) {
+    let crc = -1;
+    for (let i = 0; i < buf.length; i++) {
+      let byte = buf[i];
+      for (let j = 0; j < 8; j++) {
+        const bit = (crc ^ byte) & 1;
+        crc = (crc >>> 1) ^ (bit ? 0xEDB88320 : 0);
+        byte >>>= 1;
+      }
+    }
+    return (crc ^ -1) >>> 0;
+  }
+
+  generate() {
+    const encoder = new TextEncoder();
+    const chunks = [];
+    const centralHeaders = [];
+    let offset = 0;
+
+    for (const f of this.files) {
+      const nameBuf = encoder.encode(f.filename);
+      const size = f.data.length;
+      const crc = f.crc;
+
+      // Local File Header (30 bytes + name length)
+      const lh = new Uint8Array(30 + nameBuf.length);
+      const view = new DataView(lh.buffer);
+      view.setUint32(0, 0x04034b50, true);
+      view.setUint16(4, 20, true);
+      view.setUint16(6, 0, true);
+      view.setUint16(8, 0, true);
+      view.setUint16(10, 0, true);
+      view.setUint16(12, 0, true);
+      view.setUint32(14, crc, true);
+      view.setUint32(18, size, true);
+      view.setUint32(22, size, true);
+      view.setUint16(26, nameBuf.length, true);
+      view.setUint16(28, 0, true);
+      lh.set(nameBuf, 30);
+
+      chunks.push(lh);
+      chunks.push(f.data);
+
+      // Central Directory Header (46 bytes + name length)
+      const ch = new Uint8Array(46 + nameBuf.length);
+      const cview = new DataView(ch.buffer);
+      cview.setUint32(0, 0x02014b50, true);
+      cview.setUint16(4, 20, true);
+      cview.setUint16(6, 20, true);
+      cview.setUint16(8, 0, true);
+      cview.setUint16(10, 0, true);
+      cview.setUint16(12, 0, true);
+      cview.setUint16(14, 0, true);
+      cview.setUint32(16, crc, true);
+      cview.setUint32(20, size, true);
+      cview.setUint32(24, size, true);
+      cview.setUint16(28, nameBuf.length, true);
+      cview.setUint16(30, 0, true);
+      cview.setUint16(32, 0, true);
+      cview.setUint16(34, 0, true);
+      cview.setUint16(36, 0, true);
+      cview.setUint32(38, 0, true);
+      cview.setUint32(42, offset, true);
+      ch.set(nameBuf, 46);
+
+      centralHeaders.push(ch);
+      offset += lh.length + size;
+    }
+
+    const centralDirSize = centralHeaders.reduce((acc, h) => acc + h.length, 0);
+    const centralDirOffset = offset;
+
+    // End of Central Directory Record (22 bytes)
+    const eocd = new Uint8Array(22);
+    const eview = new DataView(eocd.buffer);
+    eview.setUint32(0, 0x06054b50, true);
+    eview.setUint16(4, 0, true);
+    eview.setUint16(6, 0, true);
+    eview.setUint16(8, this.files.length, true);
+    eview.setUint16(10, this.files.length, true);
+    eview.setUint32(12, centralDirSize, true);
+    eview.setUint32(16, centralDirOffset, true);
+    eview.setUint16(20, 0, true);
+
+    return new Blob([...chunks, ...centralHeaders, eocd], { type: 'application/zip' });
+  }
+}
+
+// ──────────────────────────────────────────────
 // 4. APP CONTROLLER
 // ──────────────────────────────────────────────
 
@@ -4935,6 +5278,8 @@ const App = {
     this.updateTranslateButtonState();
     this.initUnsavedTracker();
     this.initTemplatesModal();
+    this.initPracticeProgramsSlot();
+    this.initPWAInstall();
     this.initEnhancedConsole();
     QuizManager.init();
     WorkoutSlotManager.init();
@@ -5022,22 +5367,217 @@ const App = {
     });
     el.addEventListener('scroll', syncScroll);
     el.addEventListener('keydown', (e) => {
+      // 1. Run shortcut (Ctrl+Enter or Cmd+Enter)
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { 
         e.preventDefault(); 
         this.run(); 
+        return;
       }
+
+      // 2. Format shortcut (Ctrl+Shift+F or Cmd+Shift+F)
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'F' || e.key === 'f')) {
         e.preventDefault();
         this.formatCode();
+        return;
       }
+
+      const isPython = this.currentLang === 'python';
+      const start = el.selectionStart;
+      const end = el.selectionEnd;
+      const value = el.value;
+
+      // 3. Tab & Shift+Tab (Smart 4-space Indent & Dedent)
       if (e.key === 'Tab') {
         e.preventDefault();
-        const s = el.selectionStart;
-        const ePos = el.selectionEnd;
-        el.value = el.value.substring(0, s) + '    ' + el.value.substring(ePos);
-        el.selectionStart = el.selectionEnd = s + 4;
+        if (e.shiftKey) {
+          // Dedent: find line(s) and remove up to 4 spaces from line start
+          const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+          let lineEnd = value.indexOf('\n', end);
+          if (lineEnd === -1) lineEnd = value.length;
+
+          const selectedText = value.substring(lineStart, lineEnd);
+          const lines = selectedText.split('\n');
+          let removedTotal = 0;
+          let firstLineRemoved = 0;
+
+          const newLines = lines.map((l, idx) => {
+            let removed = 0;
+            if (l.startsWith('    ')) {
+              removed = 4;
+            } else {
+              const m = l.match(/^( {1,3}|\t)/);
+              if (m) removed = m[0].length;
+            }
+            removedTotal += removed;
+            if (idx === 0) firstLineRemoved = removed;
+            return l.slice(removed);
+          });
+
+          el.value = value.substring(0, lineStart) + newLines.join('\n') + value.substring(lineEnd);
+          el.selectionStart = Math.max(lineStart, start - firstLineRemoved);
+          el.selectionEnd = Math.max(el.selectionStart, end - removedTotal);
+        } else {
+          // Indent: if multiple lines selected, indent all lines by 4 spaces; else insert 4 spaces
+          if (start !== end && value.substring(start, end).includes('\n')) {
+            const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+            let lineEnd = value.indexOf('\n', end);
+            if (lineEnd === -1) lineEnd = value.length;
+
+            const selectedText = value.substring(lineStart, lineEnd);
+            const lines = selectedText.split('\n');
+            const newLines = lines.map(l => '    ' + l);
+
+            el.value = value.substring(0, lineStart) + newLines.join('\n') + value.substring(lineEnd);
+            el.selectionStart = start + 4;
+            el.selectionEnd = end + (lines.length * 4);
+          } else {
+            el.value = value.substring(0, start) + '    ' + value.substring(end);
+            el.selectionStart = el.selectionEnd = start + 4;
+          }
+        }
         this.codeBuffers[this.currentLang] = el.value;
         updateGutter();
+        this.checkUnsavedChanges();
+        return;
+      }
+
+      // 4. Smart Enter key (Automatic Line Formatting & Indentation)
+      if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+        const currentLine = value.substring(lineStart, start);
+        const indentMatch = currentLine.match(/^(\s*)/);
+        const currentIndent = indentMatch ? indentMatch[1] : '';
+        const trimmed = currentLine.trim();
+
+        let nextIndent = currentIndent;
+
+        if (isPython) {
+          // If previous line ends with colon (block opener in Python), auto-indent +4 spaces
+          if (trimmed.endsWith(':') && !trimmed.startsWith('#')) {
+            nextIndent = currentIndent + '    ';
+          }
+          // If pressing enter on an already blank indented line, dedent by 4 spaces to exit block
+          else if (currentLine.length > 0 && trimmed === '') {
+            if (currentIndent.length >= 4) {
+              const newIndent = currentIndent.slice(4);
+              el.value = value.substring(0, lineStart) + newIndent + value.substring(end);
+              el.selectionStart = el.selectionEnd = lineStart + newIndent.length;
+              this.codeBuffers[this.currentLang] = el.value;
+              updateGutter();
+              this.checkUnsavedChanges();
+              return;
+            } else {
+              nextIndent = '';
+            }
+          }
+        } else {
+          // C, C++, Java, JS: if line ends with '{', indent +4
+          if (trimmed.endsWith('{')) {
+            nextIndent = currentIndent + '    ';
+          }
+        }
+
+        // Check if cursor is between matching braces/brackets like () or {} or []
+        const charBefore = value[start - 1];
+        const charAfter = value[end];
+        let insertion = '\n' + nextIndent;
+        let newCursorOffset = insertion.length;
+
+        if ((charBefore === '{' && charAfter === '}') ||
+            (charBefore === '(' && charAfter === ')') ||
+            (charBefore === '[' && charAfter === ']')) {
+          insertion = '\n' + nextIndent + '\n' + currentIndent;
+          newCursorOffset = '\n'.length + nextIndent.length;
+        }
+
+        el.value = value.substring(0, start) + insertion + value.substring(end);
+        el.selectionStart = el.selectionEnd = start + newCursorOffset;
+        this.codeBuffers[this.currentLang] = el.value;
+        updateGutter();
+        this.checkUnsavedChanges();
+        return;
+      }
+
+      // 5. Smart Backspace for Python (delete 4 spaces in 1 keypress)
+      if (e.key === 'Backspace' && !e.ctrlKey && !e.metaKey && isPython) {
+        if (start === end && start >= 4) {
+          const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+          const linePrefix = value.substring(lineStart, start);
+          if (/^ {4,}$/.test(linePrefix) && linePrefix.endsWith('    ')) {
+            e.preventDefault();
+            el.value = value.substring(0, start - 4) + value.substring(start);
+            el.selectionStart = el.selectionEnd = start - 4;
+            this.codeBuffers[this.currentLang] = el.value;
+            updateGutter();
+            this.checkUnsavedChanges();
+            return;
+          }
+        }
+      }
+
+      // 6. Colon (:) Auto-Dedent for Python (elif, else, except, finally)
+      if (e.key === ':' && isPython) {
+        const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+        const lineBeforeCursor = value.substring(lineStart, start);
+        const trimmedBefore = lineBeforeCursor.trim();
+        if (/^(else|elif\b.*|except\b.*|finally)$/.test(trimmedBefore)) {
+          const indentMatch = lineBeforeCursor.match(/^(\s*)/);
+          const curIndent = indentMatch ? indentMatch[1] : '';
+          if (curIndent.length >= 4) {
+            e.preventDefault();
+            const newIndent = curIndent.slice(4);
+            const newLine = newIndent + trimmedBefore + ':';
+            el.value = value.substring(0, lineStart) + newLine + value.substring(end);
+            el.selectionStart = el.selectionEnd = lineStart + newLine.length;
+            this.codeBuffers[this.currentLang] = el.value;
+            updateGutter();
+            this.checkUnsavedChanges();
+            return;
+          }
+        }
+      }
+
+      // 7. Auto-pairing brackets and quotes for clean writing
+      const pairs = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
+      if (pairs[e.key] && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        if (start === end) {
+          // If typing quote and next char is same quote, step over
+          if ((e.key === '"' || e.key === "'") && value[start] === e.key) {
+            e.preventDefault();
+            el.selectionStart = el.selectionEnd = start + 1;
+            return;
+          }
+          const nextCh = value[start] || '';
+          if (!nextCh || /\s|[)\]},;:]/.test(nextCh)) {
+            e.preventDefault();
+            const closeChar = pairs[e.key];
+            el.value = value.substring(0, start) + e.key + closeChar + value.substring(end);
+            el.selectionStart = el.selectionEnd = start + 1;
+            this.codeBuffers[this.currentLang] = el.value;
+            updateGutter();
+            this.checkUnsavedChanges();
+            return;
+          }
+        } else {
+          // Wrap selected text
+          e.preventDefault();
+          const selected = value.substring(start, end);
+          el.value = value.substring(0, start) + e.key + selected + pairs[e.key] + value.substring(end);
+          el.selectionStart = start + 1;
+          el.selectionEnd = end + 1;
+          this.codeBuffers[this.currentLang] = el.value;
+          updateGutter();
+          this.checkUnsavedChanges();
+          return;
+        }
+      }
+
+      // 8. Step-over closing brackets
+      if (['}', ')', ']'].includes(e.key) && start === end && value[start] === e.key) {
+        e.preventDefault();
+        el.selectionStart = el.selectionEnd = start + 1;
+        return;
       }
     });
   },
@@ -5106,6 +5646,13 @@ const App = {
     // Lab PDF Export
     const pdfBtn = document.getElementById('exportPdfBtn');
     if (pdfBtn) pdfBtn.addEventListener('click', () => this.exportLabRecordPdf());
+
+    // ZIP Multi-file Project Export
+    const toolbarZipBtn = document.getElementById('toolbarZipBtn');
+    if (toolbarZipBtn) toolbarZipBtn.addEventListener('click', () => this.downloadAllSavedCodesAsZip());
+
+    const exportAllZipBtn = document.getElementById('exportAllZipBtn');
+    if (exportAllZipBtn) exportAllZipBtn.addEventListener('click', () => this.downloadAllSavedCodesAsZip());
 
     // Run All Test Cases
     const runTestsBtn = document.getElementById('btnRunTests');
@@ -5274,6 +5821,7 @@ const App = {
     const currentCode = this.getCode();
     const hasCode = currentCode && currentCode.trim().length > 0;
 
+    this.updatePracticeLangPill();
     // Trigger translator ONLY when switching between Python, Java, C, and C++
     if (isCoreToCore && (hasCode || forceTranslate)) {
       await this.translateAndSwitch(prevLang, lang, currentCode);
@@ -5288,6 +5836,7 @@ const App = {
       document.getElementById('runtimeLabel').textContent = cfg.runtime;
 
       this.updateTranslateButtonState();
+      this.updatePracticeLangPill();
       this.hideTranslationBanner();
       this.setCode(this.codeBuffers[lang] !== undefined ? this.codeBuffers[lang] : '', cfg.mode);
 
@@ -5390,7 +5939,7 @@ const App = {
     if (tab === 'testcases') this.renderTestCases();
   },
 
-  // ── Run Code ──
+  // ── Run Code with 7-Second Infinite Loop Guard ──
   async run() {
     const code = this.getCode();
     const lang = this.currentLang;
@@ -5402,37 +5951,65 @@ const App = {
     document.getElementById('consoleOutput').innerHTML = '';
     this.hasRunError = false;
 
+    // 7-second execution timeout guard (Prevents browser tab freezing on infinite loops)
+    const TIMEOUT_MS = 7000;
+    let timeoutTimer = null;
+    const timeoutPromise = new Promise((_, reject) => {
+      timeoutTimer = setTimeout(() => {
+        reject(new Error("EXECUTION_TIMEOUT"));
+      }, TIMEOUT_MS);
+    });
+
     let ms;
     try {
-      if (lang === 'python') {
-        this.switchOutputTab('console');
-        ms = await Engine.runPython(code, (t, tx) => this.log(t, tx));
-      } else if (lang === 'javascript') {
-        this.switchOutputTab('console');
-        ms = Engine.runJavaScript(code, (t, tx) => this.log(t, tx));
-      } else if (lang === 'html') {
-        this.switchOutputTab('preview');
-        Engine.runHTML(code, document.getElementById('previewFrame'), (t, tx) => this.log(t, tx));
-        ms = '0';
-      } else if (lang === 'css') {
-        this.switchOutputTab('preview');
-        Engine.runCSS(code, document.getElementById('previewFrame'), (t, tx) => this.log(t, tx));
-        ms = '0';
-      } else {
-        // C, C++, Java — with graphics.h canvas support
-        this.switchOutputTab('console');
-        ms = await Engine.runCompiled(lang, code, (t, tx) => this.log(t, tx), () => this.switchOutputTab('preview'));
-      }
+      const execPromise = (async () => {
+        if (lang === 'python') {
+          if (this.needsPythonAutoFormat(code)) {
+            code = this.formatPythonCode(code);
+            this.setCode(code, LANGUAGES[lang].mode);
+            this.toast('⚡ Auto-formatted Python block indentation for clean run', 'info');
+          }
+          this.switchOutputTab('console');
+          return await Engine.runPython(code, (t, tx) => this.log(t, tx));
+        } else if (lang === 'javascript') {
+          this.switchOutputTab('console');
+          return Engine.runJavaScript(code, (t, tx) => this.log(t, tx));
+        } else if (lang === 'html') {
+          this.switchOutputTab('preview');
+          Engine.runHTML(code, document.getElementById('previewFrame'), (t, tx) => this.log(t, tx));
+          return '0';
+        } else if (lang === 'css') {
+          this.switchOutputTab('preview');
+          Engine.runCSS(code, document.getElementById('previewFrame'), (t, tx) => this.log(t, tx));
+          return '0';
+        } else {
+          // C, C++, Java — with graphics.h canvas support
+          this.switchOutputTab('console');
+          return await Engine.runCompiled(lang, code, (t, tx) => this.log(t, tx), () => this.switchOutputTab('preview'));
+        }
+      })();
+
+      ms = await Promise.race([ execPromise, timeoutPromise ]);
     } catch (err) {
       this.hasRunError = true;
-      this.log('stderr', `Unexpected error: ${err.message}`);
-      ms = '0';
+      if (err.message === "EXECUTION_TIMEOUT") {
+        this.log('stderr', `\n⚠️ [Execution Timeout] Run halted after 7.0 seconds.`);
+        this.log('warn', `   Possible infinite loop or runaway recursion detected in your code.`);
+        this.log('dim', `   Tip: Check your 'while' or 'for' loops to ensure loop counters increment and termination conditions are met.`);
+        this.toast('Execution timed out (Possible infinite loop)', 'warn');
+        ms = (TIMEOUT_MS).toString();
+      } else {
+        this.log('stderr', `Unexpected error: ${err.message}`);
+        ms = '0';
+      }
+    } finally {
+      if (timeoutTimer) clearTimeout(timeoutTimer);
     }
 
     btn.classList.remove('running');
     btn.innerHTML = `<i data-lucide="play" style="width:16px;height:16px;fill:currentColor"></i>Run Code<span class="run-shortcut">Ctrl+Enter</span>`;
     lucide.createIcons();
-    this.setStatus('Ready', 'green');
+    this.setStatus(this.hasRunError ? 'Error' : 'Ready', this.hasRunError ? 'red' : 'green');
     document.getElementById('statusTime').textContent = `${ms}ms`;
 
     if (!['html', 'css'].includes(lang)) {
@@ -5479,6 +6056,18 @@ const App = {
           code = prob.code[avail];
         }
         this.setCode(code, LANGUAGES[this.currentLang].mode);
+        if (prob.defaultStdin) {
+          const stdinArea = document.getElementById('customStdin');
+          if (stdinArea) {
+            stdinArea.value = prob.defaultStdin;
+            const stdinBody = document.getElementById('customStdinBody');
+            const toggleLabel = document.getElementById('stdinToggleLabel');
+            if (stdinBody && stdinBody.style.display === 'none') {
+              stdinBody.style.display = 'block';
+              if (toggleLabel) toggleLabel.textContent = 'Close';
+            }
+          }
+        }
         document.getElementById('problemsOverlay').style.display = 'none';
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
         document.querySelector('.nav-tab[data-view="practice"]').classList.add('active');
@@ -7036,32 +7625,7 @@ const App = {
       }
       formatted = resultLines.join('\n');
     } else if (lang === 'python') {
-      const lines = code.split('\n');
-      let indentLevel = 0;
-      const indentStr = '    ';
-      const resultLines = [];
-
-      for (let rawLine of lines) {
-        const trimmed = rawLine.trim();
-        if (!trimmed) {
-          resultLines.push('');
-          continue;
-        }
-
-        if (trimmed.startsWith('elif ') || trimmed.startsWith('else:') || trimmed.startsWith('except') || trimmed.startsWith('finally:')) {
-          const prevIndent = Math.max(0, indentLevel - 1);
-          resultLines.push(indentStr.repeat(prevIndent) + trimmed);
-        } else {
-          const leadingSpaces = (rawLine.match(/^(\s*)/) || ['', ''])[1].length;
-          const calcLevel = Math.round(leadingSpaces / 4);
-          resultLines.push(indentStr.repeat(calcLevel) + trimmed);
-        }
-
-        if (trimmed.endsWith(':')) {
-          indentLevel++;
-        }
-      }
-      formatted = resultLines.join('\n');
+      formatted = this.formatPythonCode(code);
     } else {
       formatted = code.split('\n').map(l => l.trimEnd()).join('\n');
     }
@@ -7069,6 +7633,110 @@ const App = {
     this.setCode(formatted, LANGUAGES[this.currentLang].mode);
     this.notifyCodeSaved();
     this.toast('✨ Code auto-formatted & beautified!', 'success');
+  },
+
+  // ── Intelligent Python Formatter (PEP 8 Indentation & Block Alignment) ──
+  formatPythonCode(code) {
+    if (!code || !code.trim()) return code;
+    const lines = code.split('\n');
+    const result = [];
+    const indentStr = '    ';
+    let stack = [0];
+    let inDocstring = null;
+
+    for (let i = 0; i < lines.length; i++) {
+      const rawLine = lines[i];
+      const trimmed = rawLine.trim();
+
+      // Preserve empty lines
+      if (!trimmed) {
+        result.push('');
+        continue;
+      }
+
+      // Handle multiline docstrings / comments
+      if (inDocstring) {
+        result.push(rawLine);
+        if (trimmed.includes(inDocstring)) {
+          inDocstring = null;
+        }
+        continue;
+      }
+      const docMatch = trimmed.match(/^("""|''')/);
+      if (docMatch && (trimmed.length === 3 || !trimmed.slice(3).includes(docMatch[1]))) {
+        inDocstring = docMatch[1];
+        const curLvl = stack[stack.length - 1];
+        result.push(indentStr.repeat(curLvl) + trimmed);
+        continue;
+      }
+
+      const isDedentWord = /^(elif\b|else\s*:|except\b|finally\s*:)/.test(trimmed);
+      const isTopLevelWord = /^(def\b|class\b)/.test(trimmed);
+
+      const leadingSpaces = (rawLine.match(/^(\s*)/) || ['', ''])[1].length;
+      const declaredLevel = Math.round(leadingSpaces / 4);
+
+      let currentLevel = stack[stack.length - 1];
+
+      if (isTopLevelWord && declaredLevel === 0) {
+        stack = [0];
+        currentLevel = 0;
+      } else if (isDedentWord) {
+        if (stack.length > 1) {
+          stack.pop();
+          currentLevel = stack[stack.length - 1];
+        }
+      } else if (declaredLevel > 0 && declaredLevel < currentLevel) {
+        while (stack.length > 1 && stack[stack.length - 1] > declaredLevel) {
+          stack.pop();
+        }
+        currentLevel = stack[stack.length - 1];
+      }
+
+      result.push(indentStr.repeat(currentLevel) + trimmed);
+
+      if (trimmed.endsWith(':') && !trimmed.startsWith('#')) {
+        stack.push(currentLevel + 1);
+      } else if (/^(return\b|pass\b|break\b|continue\b|raise\b)/.test(trimmed)) {
+        let nextDeclared = null;
+        for (let j = i + 1; j < lines.length; j++) {
+          const nt = lines[j].trim();
+          if (nt) {
+            const nl = (lines[j].match(/^(\s*)/) || ['', ''])[1].length;
+            nextDeclared = Math.round(nl / 4);
+            break;
+          }
+        }
+        if (nextDeclared !== null && nextDeclared < currentLevel && stack.length > 1) {
+          while (stack.length > 1 && stack[stack.length - 1] > nextDeclared) {
+            stack.pop();
+          }
+        }
+      }
+    }
+    return result.join('\n');
+  },
+
+  needsPythonAutoFormat(code) {
+    if (!code) return false;
+    const lines = code.split('\n');
+    for (let i = 0; i < lines.length - 1; i++) {
+      const trimmed = lines[i].trim();
+      if (trimmed.endsWith(':') && !trimmed.startsWith('#')) {
+        for (let j = i + 1; j < lines.length; j++) {
+          const nextTrimmed = lines[j].trim();
+          if (nextTrimmed) {
+            const curIndent = (lines[i].match(/^(\s*)/) || ['', ''])[1].length;
+            const nextIndent = (lines[j].match(/^(\s*)/) || ['', ''])[1].length;
+            if (nextIndent <= curIndent) {
+              return true;
+            }
+            break;
+          }
+        }
+      }
+    }
+    return false;
   },
 
   // ──────────────────────────────────────────────
@@ -7304,8 +7972,268 @@ const App = {
         });
       }
     }
-  }
+  },
 
+  // ── Practice Programs (20 Questions - 80 Codes) Dropdown Slot ──
+  initPracticeProgramsSlot() {
+    const btn = document.getElementById('practiceProgramsBtn');
+    const menu = document.getElementById('practiceProgramsMenu');
+    const searchInput = document.getElementById('practiceSearchInput');
+
+    if (!btn || !menu) return;
+
+    this.renderPracticeProgramsList();
+
+    // Toggle dropdown menu
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isVisible = menu.style.display === 'flex';
+      menu.style.display = isVisible ? 'none' : 'flex';
+      if (!isVisible) {
+        this.updatePracticeLangPill();
+        if (searchInput) {
+          searchInput.value = '';
+          this.renderPracticeProgramsList('');
+          setTimeout(() => searchInput.focus(), 60);
+        }
+      }
+    });
+
+    // Prevent clicks inside menu from closing it
+    menu.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+
+    // Close on outside click
+    document.addEventListener('click', () => {
+      if (menu.style.display === 'flex') {
+        menu.style.display = 'none';
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.style.display === 'flex') {
+        menu.style.display = 'none';
+      }
+    });
+
+    // Search filter input
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        this.renderPracticeProgramsList(e.target.value.trim().toLowerCase());
+      });
+    }
+
+    this.updatePracticeLangPill();
+  },
+
+  updatePracticeLangPill() {
+    const pill = document.getElementById('practiceMenuLangPill');
+    if (!pill) return;
+    const name = LANGUAGES[this.currentLang]?.name || this.currentLang;
+    pill.textContent = name;
+  },
+
+  renderPracticeProgramsList(query = '') {
+    const listEl = document.getElementById('practiceProgramsMenuList');
+    if (!listEl) return;
+
+    const filtered = query
+      ? PRACTICE_PROGRAMS.filter(p =>
+          p.title.toLowerCase().includes(query) ||
+          p.tags.some(t => t.toLowerCase().includes(query)) ||
+          p.num.toString() === query ||
+          p.id.toLowerCase().includes(query)
+        )
+      : PRACTICE_PROGRAMS;
+
+    if (filtered.length === 0) {
+      listEl.innerHTML = '<div style="padding:18px;text-align:center;font-size:12px;color:var(--text-muted)">No matching practice questions found</div>';
+      return;
+    }
+
+    listEl.innerHTML = filtered.map(p => `
+      <button class="practice-menu-item${this.activePracticeProgramId === p.id ? ' active' : ''}" data-id="${p.id}" type="button">
+        <span class="practice-menu-item-num">${p.num}</span>
+        <div class="practice-menu-item-content">
+          <div class="practice-menu-item-title">${p.title}</div>
+          <div class="practice-menu-item-tag">${p.tags.join(' • ')} • <span style="color:${p.difficulty === 'Medium' ? 'var(--amber)' : 'var(--green)'}">${p.difficulty}</span></div>
+        </div>
+      </button>
+    `).join('');
+
+    listEl.querySelectorAll('.practice-menu-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const id = item.dataset.id;
+        this.loadPracticeProgram(id);
+      });
+    });
+  },
+
+  loadPracticeProgram(id) {
+    const prob = PRACTICE_PROGRAMS.find(p => p.id === id);
+    if (!prob) return;
+
+    // Supported core languages for these 20 practice questions
+    const supportedLangs = ['python', 'c', 'cpp', 'java'];
+    let targetLang = this.currentLang;
+
+    if (!supportedLangs.includes(targetLang)) {
+      this.switchLang('python');
+      targetLang = 'python';
+    }
+
+    const code = prob.code[targetLang] || prob.code.python;
+    if (code) {
+      this.setCode(code, LANGUAGES[targetLang]?.mode || 'python');
+      this.activePracticeProgramId = prob.id;
+
+      // Pre-fill Custom Input (stdin) if the program expects user inputs
+      if (prob.defaultStdin) {
+        const stdinArea = document.getElementById('customStdin');
+        if (stdinArea) {
+          stdinArea.value = prob.defaultStdin;
+          const stdinBody = document.getElementById('customStdinBody');
+          const toggleLabel = document.getElementById('stdinToggleLabel');
+          if (stdinBody && stdinBody.style.display === 'none') {
+            stdinBody.style.display = 'block';
+            if (toggleLabel) toggleLabel.textContent = 'Close';
+          }
+        }
+      }
+
+      // Close menu
+      const menu = document.getElementById('practiceProgramsMenu');
+      if (menu) menu.style.display = 'none';
+
+      // Update file name in toolbar
+      const fileNameEl = document.getElementById('fileName');
+      if (fileNameEl) {
+        const extMap = { python: 'py', c: 'c', cpp: 'cpp', java: 'java', html: 'html', css: 'css', javascript: 'js' };
+        const ext = extMap[targetLang] || 'txt';
+        fileNameEl.textContent = `q${prob.num}_${prob.id.replace(/-/g, '_')}.${ext}`;
+      }
+
+      this.updatePracticeLangPill();
+      this.renderPracticeProgramsList();
+      this.toast(`✅ Loaded Program #${prob.num}: ${prob.title} (${LANGUAGES[targetLang]?.name || targetLang})`, 'success');
+
+      // Track in GA4 if available
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'practice_program_load', {
+          program_num: prob.num,
+          program_id: prob.id,
+          language: targetLang
+        });
+      }
+    }
+  },
+
+  // ── PWA Install App Manager ──
+  deferredInstallPrompt: null,
+
+  initPWAInstall() {
+    const installBtn = document.getElementById('installAppBtn');
+    if (!installBtn) return;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      this.deferredInstallPrompt = e;
+      installBtn.style.display = 'inline-flex';
+      if (window.lucide) lucide.createIcons();
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (this.deferredInstallPrompt) {
+        this.deferredInstallPrompt.prompt();
+        const { outcome } = await this.deferredInstallPrompt.userChoice;
+        if (outcome === 'accepted') {
+          this.toast('🎉 VAB-CODE installed successfully! Launch it anytime from your desktop or phone.', 'success');
+        }
+        this.deferredInstallPrompt = null;
+        installBtn.style.display = 'none';
+      } else {
+        this.toast('PWA is installable from your browser address bar (⊕ icon).', 'info');
+      }
+    });
+
+    window.addEventListener('appinstalled', () => {
+      this.deferredInstallPrompt = null;
+      installBtn.style.display = 'none';
+      this.toast('🎉 VAB-CODE App installed on your device!', 'success');
+    });
+  },
+
+  // ── ZIP Multi-File / Semester Lab Project Export ──
+  downloadAllSavedCodesAsZip() {
+    const zip = new SimpleZip();
+    const count = this.savedSnippets ? this.savedSnippets.length : 0;
+    const extMap = { python: 'py', c: 'c', cpp: 'cpp', java: 'java', html: 'html', css: 'css', javascript: 'js' };
+
+    if (count > 0) {
+      this.savedSnippets.forEach((s, idx) => {
+        const ext = extMap[s.lang] || 'txt';
+        const safeName = (s.name || `snippet_${idx + 1}`)
+          .toLowerCase()
+          .replace(/[^a-z0-9_-]/g, '_')
+          .replace(/_+/g, '_')
+          .substring(0, 40);
+        const fileName = `${String(idx + 1).padStart(2, '0')}_${safeName}.${ext}`;
+        zip.addFile(fileName, s.code || '');
+      });
+
+      const dateStr = new Date().toLocaleString();
+      const readmeContent = `================================================================
+VAB-CODE (vab-code) — University Lab & Practice Project Export
+================================================================
+Generated: ${dateStr}
+Total Scripts: ${count}
+Platform: https://vab-code.in/
+Client-side Zero-Cost WebAssembly IDE & Compiler
+
+Files Included:
+${this.savedSnippets.map((s, i) => `  ${i + 1}. [${(s.lang || 'code').toUpperCase()}] ${s.name} (${s.date || 'Saved'})`).join('\n')}
+
+================================================================
+Run & Test your code instantly at https://vab-code.in/
+================================================================`;
+      zip.addFile('README.txt', readmeContent);
+
+      const blob = zip.generate();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `VAB-CODE-Lab-Projects-${new Date().toISOString().slice(0, 10)}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      this.toast(`📦 Exported ${count} saved codes to ZIP package!`, 'success');
+    } else {
+      // Export current active code
+      const currentCode = this.getCode();
+      const lang = this.currentLang;
+      const ext = extMap[lang] || 'py';
+      const fileName = document.getElementById('fileName')?.textContent || `main.${ext}`;
+
+      zip.addFile(fileName, currentCode);
+      zip.addFile('README.txt', `VAB-CODE Project Export\nFile: ${fileName}\nLanguage: ${lang}\nExported: ${new Date().toLocaleString()}\nPlatform: https://vab-code.in/\n`);
+
+      const blob = zip.generate();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `VAB-CODE-${fileName.replace(/\.[^/.]+$/, '')}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      this.toast(`📦 Exported active code as ZIP! (Save more codes to bundle all into one ZIP)`, 'info');
+    }
+  }
 };
 
 if (document.readyState === 'loading') {
