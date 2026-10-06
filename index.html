@@ -15,16 +15,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="VAB-CODE — Online Code Editor & Compiler">
   <meta name="twitter:description" content="Practice coding online. Run Python, C, C++, Java instantly in your browser.">
-  <meta property="og:image" content="https://vab-code.in/assets/brand-logo-original.png">
-  <meta name="twitter:image" content="https://vab-code.in/assets/brand-logo-original.png">
+  <meta property="og:image" content="https://vab-code.in/assets/brand-logo-original.png?v=6.0">
+  <meta name="twitter:image" content="https://vab-code.in/assets/brand-logo-original.png?v=6.0">
 
   <!-- Favicon & Brand Icons (Optimized for Google Search & All Browsers) -->
-  <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">
-  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon.ico?v=6.0" sizes="48x48 32x32 16x16">
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=6.0">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png?v=6.0">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png?v=6.0">
+  <link rel="shortcut icon" href="/favicon.ico?v=6.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=6.0">
 
   <!-- Progressive Web App (PWA) Manifest -->
   <link rel="manifest" href="/manifest.json">
@@ -144,7 +144,7 @@
     }
   </script>
 
-  <link rel="stylesheet" href="style.css?v=5.6">
+  <link rel="stylesheet" href="style.css?v=6.2">
 </head>
 <body>
 
@@ -153,7 +153,7 @@
     <div class="header-left">
       <div class="logo">
         <div class="logo-icon">
-          <img src="assets/logo-icon.png?v=5.4" alt="VAB-CODE Logo" style="width:26px;height:26px;object-fit:contain;display:block">
+          <img src="assets/logo-icon.png?v=6.0" alt="VAB-CODE Logo">
         </div>
         <div>
           <span class="logo-text">VAB-CODE</span>
@@ -205,8 +205,24 @@
     </div>
   </header>
 
-  <!-- ========== MAIN WORKSPACE (3-COLUMN LAYOUT) ========== -->
+  <!-- ========== MAIN WORKSPACE ========== -->
   <main class="workspace">
+    <!-- Mobile View Switcher (Visible only on screens <= 868px) -->
+    <div class="mobile-view-bar" id="mobileViewBar">
+      <button class="mobile-view-btn active" data-view="editor" id="mobileViewEditorBtn" title="Switch to Code Editor">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        <span>Editor</span>
+      </button>
+      <button class="mobile-view-btn" data-view="split" id="mobileViewSplitBtn" title="Switch to Split View">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+        <span>Split</span>
+      </button>
+      <button class="mobile-view-btn" data-view="output" id="mobileViewOutputBtn" title="Switch to Output Console">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+        <span>Output</span>
+      </button>
+    </div>
+
     <div class="workspace-body-split">
 
       <!-- ==================================================== -->
@@ -320,6 +336,13 @@
               <button class="templates-btn" id="templatesBtn" title="1-Click DSA & Algorithm Starter Templates">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
                 <span class="btn-text">DSA Templates</span>
+              </button>
+
+              <!-- Computer Vision Lab (40 Experiments) Starter Button -->
+              <button class="cv-lab-btn" id="cvLabBtn" title="Computer Vision Lab — 40 University Syllabus Experiments (OpenCV & Python) - 1-Click Load into Editor">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
+                <span class="btn-text">CV Lab</span>
+                <span class="cv-count-badge">40</span>
               </button>
               <!-- Cross-Translate Toolbar Button -->
               <div class="translate-dropdown-wrapper" id="translateDropdownWrapper">
@@ -460,7 +483,7 @@
           <!-- Full Height Code Editor from Top to Bottom -->
           <div class="code-editor-wrapper" id="codeEditorWrapper">
             <div class="editor-gutter" id="editorGutter">1</div>
-            <textarea id="fallbackEditor" class="fallback-editor" spellcheck="false" placeholder="Write or paste your code here... (or click 'Load Starter Code' from the left challenge panel)"></textarea>
+            <textarea id="fallbackEditor" class="fallback-editor" spellcheck="false" autocapitalize="none" autocomplete="off" autocorrect="off" placeholder="Write or paste your code here... (or click 'Load Starter Code' from the left challenge panel)"></textarea>
           </div>
         </div>
       </div>
@@ -482,6 +505,11 @@
             <button class="output-tab active" data-tab="console">
               <i data-lucide="terminal" style="width:14px;height:14px"></i>
               Console Output
+            </button>
+            <button class="output-tab" data-tab="vision" id="tabVisionBtn" title="Computer Vision & OpenCV Image Canvas">
+              <i data-lucide="eye" style="width:14px;height:14px;color:#06b6d4"></i>
+              <span>Vision Output</span>
+              <span class="vision-tab-badge" id="visionTabBadge" style="display:none">0</span>
             </button>
             <button class="output-tab" data-tab="testcases">
               <i data-lucide="check-circle-2" style="width:14px;height:14px;color:#22c55e"></i>
@@ -579,6 +607,53 @@
           <!-- Web preview (hidden by default) -->
           <div class="web-preview" id="webPreview" style="display:none">
             <iframe id="previewFrame" sandbox="allow-scripts allow-modals"></iframe>
+          </div>
+
+          <!-- Vision Output Panel (OpenCV, Matplotlib, Image Handling) -->
+          <div class="vision-output" id="visionOutput" style="display:none">
+            <div class="vision-output-header">
+              <div class="vision-header-left">
+                <div class="vision-title-group">
+                  <i data-lucide="camera" style="width:14px;height:14px;color:#06b6d4"></i>
+                  <span class="vision-title">Computer Vision Canvas</span>
+                </div>
+                <span class="vision-count-pill" id="visionImageCount">0 Images</span>
+              </div>
+              <div class="vision-header-actions">
+                <label class="vision-upload-label" title="Upload custom image file (JPG, PNG) to process in Python via cv2.imread('input.jpg')">
+                  <i data-lucide="upload" style="width:12px;height:12px"></i>
+                  <span>Upload Image</span>
+                  <input type="file" id="visionUploadInput" accept="image/*" style="display:none">
+                </label>
+                <button class="vision-action-btn" id="visionResetSampleBtn" title="Reset virtual filesystem to default test image">
+                  <i data-lucide="rotate-ccw" style="width:12px;height:12px"></i>
+                  <span>Reset Sample</span>
+                </button>
+                <button class="vision-action-btn" id="visionClearBtn" title="Clear generated vision images">
+                  <i data-lucide="trash-2" style="width:12px;height:12px"></i>
+                  <span>Clear</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Vision Empty State -->
+            <div class="vision-empty-state" id="visionEmptyState">
+              <div class="vision-empty-glow"></div>
+              <div class="vision-empty-icon">
+                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
+              </div>
+              <h4 class="vision-empty-heading">No Processed Images Yet</h4>
+              <p class="vision-empty-text">Run any Python OpenCV script using <code>cv2.imshow()</code> or <code>plt.show()</code>. Results render live here with 1-click HD downloads!</p>
+              <div class="vision-hint-card">
+                <div class="vision-hint-row">
+                  <span class="vision-hint-badge">💡 CV LAB (40)</span>
+                  <span>Click the <b>CV Lab</b> button in the top toolbar to load all 40 ready-to-run university syllabus experiments.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rendered Images List -->
+            <div class="vision-images-list" id="visionImagesList"></div>
           </div>
 
           <!-- Status bar -->
@@ -762,7 +837,7 @@ print(append_item(2))</code></pre>
       <div class="footer-top">
         <div class="footer-brand">
           <div class="footer-logo">
-            <i data-lucide="code-2" style="width:20px;height:20px;color:#38bdf8"></i>
+            <img src="assets/logo-icon.png?v=6.0" alt="VAB-CODE Logo" class="footer-logo-img">
             <span>VAB-CODE</span>
           </div>
           <p class="footer-desc">
@@ -844,7 +919,7 @@ print(append_item(2))</code></pre>
       <div class="init-glow"></div>
       <div class="init-icon-wrapper">
         <div class="init-spin-ring"></div>
-        <i data-lucide="cpu" class="init-icon"></i>
+        <img src="assets/logo-icon.png?v=6.0" alt="VAB-CODE" class="init-brand-icon" style="width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(56, 189, 248, 0.6));">
       </div>
       <h3 class="init-title">Configuring your local sandbox environment (Takes a few seconds on first visit)...</h3>
       <p class="init-subtitle">(Takes a few seconds on first visit • Cached locally for instant future loads)</p>
@@ -972,9 +1047,50 @@ print(append_item(2))</code></pre>
     </div>
   </div>
 
+  <!-- ========== 6. COMPUTER VISION LAB (40 EXPERIMENTS) MODAL ========== -->
+  <div class="overlay" id="cvLabOverlay" style="display:none">
+    <div class="overlay-content cv-modal-content">
+      <div class="overlay-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <h2>Computer Vision Lab — 40 Experiments</h2>
+            <span class="badge-mini-cyan">OpenCV & Python</span>
+          </div>
+          <p>Complete university syllabus laboratory questions • 100% in-browser WebAssembly execution ($0 Server Cost)</p>
+        </div>
+        <button class="icon-btn" id="closeCvLabBtn" title="Close Modal">
+          <i data-lucide="x" style="width:20px;height:20px"></i>
+        </button>
+      </div>
+
+      <!-- Search & Category Filters -->
+      <div class="cv-filter-wrapper">
+        <div class="cv-search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="cvSearchInput" placeholder="Filter questions (e.g. Canny, Sobel, Laplacian, DLT, Watermark, Face, Video, Morphology)...">
+        </div>
+        <div class="cv-categories-bar" id="cvCategoriesBar">
+          <button class="cv-cat-btn active" data-cat="all">All (40)</button>
+          <button class="cv-cat-btn" data-cat="basic">Basic (8)</button>
+          <button class="cv-cat-btn" data-cat="video">Video & Camera (4)</button>
+          <button class="cv-cat-btn" data-cat="transform">Transform (4)</button>
+          <button class="cv-cat-btn" data-cat="edge">Edge Detection (5)</button>
+          <button class="cv-cat-btn" data-cat="sharpen">Sharpening (6)</button>
+          <button class="cv-cat-btn" data-cat="morphology">Morphology (7)</button>
+          <button class="cv-cat-btn" data-cat="roi">ROI & Marks (3)</button>
+          <button class="cv-cat-btn" data-cat="detection">Detection (3)</button>
+        </div>
+      </div>
+
+      <!-- CV Experiments Grid -->
+      <div class="cv-experiments-grid" id="cvExperimentsGrid"></div>
+    </div>
+  </div>
+
   <!-- ========== TOAST ========== -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <script src="app.js?v=5.7"></script>
+  <script src="cvExperiments.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

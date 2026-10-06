@@ -1530,6 +1530,8 @@ const Engine = {
       'PIL':          'Pillow',
       'networkx':     'networkx',
       'regex':        'regex',
+      'cv2':          'opencv-python',
+      'opencv':       'opencv-python',
     };
 
     const needed = new Set();
@@ -1548,6 +1550,9 @@ const Engine = {
         const pkgName = PACKAGE_MAP[moduleName];
         if (pkgName && !this.loadedPackages.has(pkgName)) {
           needed.add(pkgName);
+          if (pkgName === 'opencv-python' && !this.loadedPackages.has('numpy')) {
+            needed.add('numpy');
+          }
         }
       }
     }
@@ -1577,6 +1582,24 @@ const Engine = {
     }
   },
 
+  // ──── Ensure sample test images exist in Pyodide virtual filesystem ────
+  ensureVirtualLabImages(py) {
+    try {
+      if (!py || !py.FS || py._vab_images_initialized) return;
+      if (typeof window.generateDefaultLabImageBytes === 'function') {
+        const imgBytes = window.generateDefaultLabImageBytes();
+        py.FS.writeFile('/input.jpg', imgBytes);
+        py.FS.writeFile('/sample.jpg', imgBytes);
+        py.FS.writeFile('/watch.jpg', imgBytes);
+        py.FS.writeFile('/face.jpg', imgBytes);
+        py.FS.writeFile('/shapes.jpg', imgBytes);
+        py._vab_images_initialized = true;
+      }
+    } catch (e) {
+      console.warn('Virtual image FS init:', e);
+    }
+  },
+
   // ──── Run Python with auto-package loading and STDIN support ────
   async runPython(code, log, stdinOverride = null) {
     const t0 = performance.now();
@@ -1588,19 +1611,129 @@ const Engine = {
       return performance.now() - t0;
     }
 
-    // Auto-detect and load packages (numpy, pandas, matplotlib, sklearn, etc.)
+    // Auto-detect and load packages (numpy, pandas, matplotlib, sklearn, cv2, etc.)
     await this.autoLoadPackages(code, py, log);
 
-    // For matplotlib: redirect output to a PNG and display instruction
+    // Initialize virtual test images
+    this.ensureVirtualLabImages(py);
+
+    // For matplotlib: redirect output to non-interactive backend
     const usesMpl = /import\s+matplotlib|from\s+matplotlib|plt\./m.test(code);
     if (usesMpl) {
-      // Set non-interactive backend before user code runs
       try {
         await py.runPythonAsync(`
 import matplotlib
 matplotlib.use('agg')
 `);
       } catch (e) { /* ignore if already set */ }
+    }
+
+    // Inject OpenCV & Matplotlib Vision Bridges
+    const usesCv = /import\s+cv2|from\s+cv2/m.test(code);
+    if (usesCv || usesMpl) {
+      try {
+        await py.runPythonAsync(`
+import sys
+import base64
+import os
+
+try:
+    import cv2
+    import numpy as np
+
+    def _vab_imshow(winname, mat):
+        if mat is None:
+            print(f"[OpenCV Warning] Cannot display '{winname}': Image matrix is None.")
+            return
+        try:
+            m = mat
+            if m.dtype != np.uint8:
+                if m.max() <= 1.0:
+                    m = (m * 255).astype(np.uint8)
+                else:
+                    m = np.clip(m, 0, 255).astype(np.uint8)
+            success, encoded = cv2.imencode('.png', m)
+            if success:
+                b64 = base64.b64encode(encoded.tobytes()).decode('ascii')
+                h, w = m.shape[:2]
+                channels = 1 if len(m.shape) == 2 else m.shape[2]
+                import js
+                if hasattr(js, 'renderVisionImage'):
+                    js.renderVisionImage(str(winname), b64, int(w), int(h), int(channels))
+            else:
+                print(f"[OpenCV Error] Failed to encode '{winname}' for display.")
+        except Exception as e:
+            print(f"[OpenCV Display Error] {e}")
+
+    cv2.imshow = _vab_imshow
+    cv2.waitKey = lambda *args, **kwargs: 0
+    cv2.destroyAllWindows = lambda *args, **kwargs: None
+    cv2.destroyWindow = lambda *args, **kwargs: None
+
+    if not hasattr(cv2, '_vab_orig_imread'):
+        cv2._vab_orig_imread = cv2.imread
+    def _vab_safe_imread(filename, flags=cv2.IMREAD_COLOR):
+        res = cv2._vab_orig_imread(filename, flags)
+        if res is not None:
+            return res
+        if os.path.exists('/input.jpg'):
+            fb = cv2._vab_orig_imread('/input.jpg', flags)
+            if fb is not None:
+                return fb
+        syn = np.zeros((300, 400, 3), dtype=np.uint8)
+        cv2.rectangle(syn, (30, 30), (370, 270), (0, 140, 255), -1)
+        cv2.circle(syn, (200, 150), 70, (255, 255, 0), -1)
+        cv2.putText(syn, "VAB-CODE LAB", (60, 160), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
+        return syn
+    cv2.imread = _vab_safe_imread
+
+    class _VabVideoCapture:
+        def __init__(self, *args, **kwargs):
+            self.frame_count = 0
+            self.max_frames = 25
+            self.w, self.h = 400, 300
+        def isOpened(self):
+            return True
+        def read(self):
+            if self.frame_count >= self.max_frames:
+                return False, None
+            frame = np.zeros((self.h, self.w, 3), dtype=np.uint8)
+            cv2.rectangle(frame, (0, 180), (self.w, self.h), (45, 45, 45), -1)
+            x_pos = int((self.frame_count / self.max_frames) * (self.w - 90)) + 10
+            cv2.rectangle(frame, (x_pos, 195), (x_pos + 70, 245), (0, 165, 255), -1)
+            cv2.circle(frame, (x_pos + 18, 248), 8, (200, 200, 200), -1)
+            cv2.circle(frame, (x_pos + 52, 248), 8, (200, 200, 200), -1)
+            cv2.putText(frame, f"Video Frame {self.frame_count+1}/25", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 1)
+            self.frame_count += 1
+            return True, frame
+        def get(self, propId):
+            return 30.0
+        def release(self):
+            pass
+    cv2.VideoCapture = _VabVideoCapture
+except ImportError:
+    pass
+
+try:
+    import matplotlib
+    import matplotlib.pyplot as plt
+    import io
+    def _vab_plt_show(*args, **kwargs):
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', bbox_inches='tight', dpi=100)
+        buf.seek(0)
+        b64 = base64.b64encode(buf.read()).decode('ascii')
+        import js
+        if hasattr(js, 'renderVisionImage'):
+            js.renderVisionImage('Matplotlib Figure', b64, 0, 0, 0)
+        plt.close('all')
+    plt.show = _vab_plt_show
+except ImportError:
+    pass
+`);
+      } catch (e) {
+        console.warn('Vision bridge injection warning:', e);
+      }
     }
 
     // Configure STDIN for input() / sys.stdin
@@ -5279,6 +5412,8 @@ const App = {
     this.initUnsavedTracker();
     this.initTemplatesModal();
     this.initPracticeProgramsSlot();
+    this.initCvLabModal();
+    this.initVisionOutput();
     this.initPWAInstall();
     this.initEnhancedConsole();
     QuizManager.init();
@@ -5739,6 +5874,7 @@ const App = {
 
     this.initResizer();
     this.initProblemPanel();
+    this.initMobileViews();
 
     window.addEventListener('message', (e) => {
       if (e.data?.src === 'codepulse') this.log(e.data.type, `[WebConsole] ${e.data.text}`);
@@ -5936,6 +6072,8 @@ const App = {
     document.getElementById('webPreview').style.display = tab === 'preview' ? 'block' : 'none';
     const tcPanel = document.getElementById('testcasesPanel');
     if (tcPanel) tcPanel.style.display = tab === 'testcases' ? 'flex' : 'none';
+    const visPanel = document.getElementById('visionOutput');
+    if (visPanel) visPanel.style.display = tab === 'vision' ? 'flex' : 'none';
     if (tab === 'testcases') this.renderTestCases();
   },
 
@@ -5950,6 +6088,15 @@ const App = {
     this.setStatus('Running...', 'amber');
     document.getElementById('consoleOutput').innerHTML = '';
     this.hasRunError = false;
+
+    // Mobile: automatically switch view or scroll to output console
+    if (window.innerWidth <= 868) {
+      const splitContainer = document.querySelector('.workspace-body-split');
+      if (splitContainer && splitContainer.getAttribute('data-mobile-view') === 'editor') {
+        const outBtn = document.getElementById('mobileViewOutputBtn');
+        if (outBtn) outBtn.click();
+      }
+    }
 
     // 7-second execution timeout guard (Prevents browser tab freezing on infinite loops)
     const TIMEOUT_MS = 7000;
@@ -6290,6 +6437,36 @@ const App = {
           if (this.editor && typeof this.editor.layout === 'function') this.editor.layout();
         }
       });
+    }
+  },
+
+  // ── Mobile Responsive View Switcher ──
+  initMobileViews() {
+    const bar = document.getElementById('mobileViewBar');
+    if (!bar) return;
+
+    const splitContainer = document.querySelector('.workspace-body-split');
+    const btns = bar.querySelectorAll('.mobile-view-btn');
+
+    const setView = (view) => {
+      btns.forEach(b => b.classList.toggle('active', b.dataset.view === view));
+      if (splitContainer) {
+        splitContainer.setAttribute('data-mobile-view', view);
+      }
+      if (this.editor && typeof this.editor.layout === 'function') {
+        setTimeout(() => this.editor.layout(), 100);
+      }
+    };
+
+    btns.forEach(b => {
+      b.addEventListener('click', (e) => {
+        e.preventDefault();
+        setView(b.dataset.view);
+      });
+    });
+
+    if (window.innerWidth <= 868 && splitContainer) {
+      splitContainer.setAttribute('data-mobile-view', 'editor');
     }
   },
 
@@ -8232,6 +8409,382 @@ Run & Test your code instantly at https://vab-code.in/
       setTimeout(() => URL.revokeObjectURL(url), 1000);
 
       this.toast(`📦 Exported active code as ZIP! (Save more codes to bundle all into one ZIP)`, 'info');
+    }
+  },
+
+  // ── Computer Vision Lab (40 Experiments) & Vision Canvas ──
+  cvExperimentsCategory: 'all',
+  cvExperimentsQuery: '',
+  visionImages: [],
+
+  initCvLabModal() {
+    const btn = document.getElementById('cvLabBtn');
+    const overlay = document.getElementById('cvLabOverlay');
+    const closeBtn = document.getElementById('closeCvLabBtn');
+    const searchInput = document.getElementById('cvSearchInput');
+    const categoriesBar = document.getElementById('cvCategoriesBar');
+
+    if (!btn || !overlay) return;
+
+    btn.addEventListener('click', () => {
+      overlay.style.display = 'flex';
+      this.renderCvExperimentsGrid();
+      if (searchInput) {
+        searchInput.value = '';
+        this.cvExperimentsQuery = '';
+        setTimeout(() => searchInput.focus(), 80);
+      }
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        overlay.style.display = 'none';
+      });
+    }
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.style.display === 'flex') {
+        overlay.style.display = 'none';
+      }
+    });
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        this.cvExperimentsQuery = e.target.value.trim().toLowerCase();
+        this.renderCvExperimentsGrid();
+      });
+    }
+
+    if (categoriesBar) {
+      categoriesBar.querySelectorAll('.cv-cat-btn').forEach(catBtn => {
+        catBtn.addEventListener('click', () => {
+          categoriesBar.querySelectorAll('.cv-cat-btn').forEach(b => b.classList.remove('active'));
+          catBtn.classList.add('active');
+          this.cvExperimentsCategory = catBtn.dataset.cat || 'all';
+          this.renderCvExperimentsGrid();
+        });
+      });
+    }
+
+    this.renderCvExperimentsGrid();
+  },
+
+  renderCvExperimentsGrid() {
+    const grid = document.getElementById('cvExperimentsGrid');
+    if (!grid) return;
+
+    const allExps = window.CV_EXPERIMENTS || [];
+    const cat = this.cvExperimentsCategory || 'all';
+    const query = this.cvExperimentsQuery || '';
+
+    const filtered = allExps.filter(exp => {
+      const matchCat = cat === 'all' || exp.category === cat;
+      const matchQuery = !query ||
+        exp.title.toLowerCase().includes(query) ||
+        exp.aim.toLowerCase().includes(query) ||
+        exp.num.toString() === query ||
+        exp.functions.some(f => f.toLowerCase().includes(query));
+      return matchCat && matchQuery;
+    });
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;padding:30px;text-align:center;color:var(--text-muted);font-size:13px">No matching experiments found for this filter.</div>';
+      return;
+    }
+
+    grid.innerHTML = filtered.map(exp => `
+      <div class="cv-exp-card" data-id="${exp.id}">
+        <div class="cv-exp-header">
+          <div class="cv-exp-title-box">
+            <span class="cv-exp-num">Ex ${exp.num}</span>
+            <span class="cv-exp-title">${exp.title}</span>
+          </div>
+          <span class="cv-exp-cat">${exp.categoryLabel}</span>
+        </div>
+        <div class="cv-exp-aim">${exp.aim}</div>
+        <div class="cv-exp-footer">
+          <div class="cv-exp-tags">
+            ${exp.functions.slice(0, 3).map(fn => `<span class="cv-exp-tag">${fn}</span>`).join('')}
+          </div>
+          <button class="cv-exp-load-btn" data-id="${exp.id}" type="button">
+            <span>Load Code</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    `).join('');
+
+    grid.querySelectorAll('.cv-exp-load-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.loadCvExperiment(btn.dataset.id);
+      });
+    });
+
+    grid.querySelectorAll('.cv-exp-card').forEach(card => {
+      card.addEventListener('click', () => {
+        this.loadCvExperiment(card.dataset.id);
+      });
+    });
+  },
+
+  loadCvExperiment(id) {
+    const allExps = window.CV_EXPERIMENTS || [];
+    const exp = allExps.find(e => e.id === id);
+    if (!exp) return;
+
+    if (this.currentLang !== 'python') {
+      this.switchLang('python');
+    }
+
+    this.setCode(exp.code, 'python');
+
+    const fileNameEl = document.getElementById('fileName');
+    if (fileNameEl) {
+      fileNameEl.textContent = `exp${exp.num}_${exp.title.toLowerCase().replace(/[^a-z0-9]/g, '_')}.py`;
+    }
+
+    const overlay = document.getElementById('cvLabOverlay');
+    if (overlay) overlay.style.display = 'none';
+
+    this.switchOutputTab('vision');
+    this.toast(`🔬 Loaded Experiment #${exp.num}: ${exp.title} (OpenCV Python)`, 'success');
+  },
+
+  // ──── Vision Output Canvas Manager ────
+  initVisionOutput() {
+    // Clear button
+    const clearBtn = document.getElementById('visionClearBtn');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => this.clearVisionOutput());
+    }
+
+    // Reset to default sample
+    const resetBtn = document.getElementById('visionResetSampleBtn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => this.resetSampleVisionImage());
+    }
+
+    // Custom image upload
+    const uploadInput = document.getElementById('visionUploadInput');
+    if (uploadInput) {
+      uploadInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          this.handleVisionImageUpload(e.target.files[0]);
+          e.target.value = '';
+        }
+      });
+    }
+
+    // Global bridge for Pyodide cv2.imshow & plt.show
+    window.renderVisionImage = (title, base64, w, h, channels) => {
+      this.addVisionImage(title, base64, w, h, channels);
+    };
+
+    window.generateDefaultLabImageBytes = () => this.generateDefaultLabImageBytes();
+  },
+
+  generateDefaultLabImageBytes() {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 480;
+      canvas.height = 360;
+      const ctx = canvas.getContext('2d');
+
+      // Gradient background
+      const grad = ctx.createLinearGradient(0, 0, 480, 360);
+      grad.addColorStop(0, '#0f172a');
+      grad.addColorStop(0.5, '#1e293b');
+      grad.addColorStop(1, '#0f172a');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 480, 360);
+
+      // Geometric shapes
+      ctx.beginPath();
+      ctx.arc(130, 180, 75, 0, Math.PI * 2);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fill();
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#0284c7';
+      ctx.stroke();
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(250, 110, 160, 100);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#d97706';
+      ctx.strokeRect(250, 110, 160, 100);
+
+      ctx.beginPath();
+      ctx.moveTo(330, 240);
+      ctx.lineTo(250, 320);
+      ctx.lineTo(410, 320);
+      ctx.closePath();
+      ctx.fillStyle = '#10b981';
+      ctx.fill();
+
+      // Contrasting typography
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 22px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('VAB-CODE VISION LAB', 240, 50);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '13px system-ui, sans-serif';
+      ctx.fillText('OpenCV Python Virtual Sandbox (480x360)', 240, 75);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+      const base64 = dataUrl.split(',')[1];
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    } catch (e) {
+      console.warn('Canvas generator fallback:', e);
+      return new Uint8Array(0);
+    }
+  },
+
+  addVisionImage(title, base64, w, h, channels) {
+    const imageObj = {
+      id: 'img_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+      title: title || 'Processed Image',
+      src: `data:image/png;base64,${base64}`,
+      w: w || 0,
+      h: h || 0,
+      channels: channels || 3,
+      time: new Date().toLocaleTimeString()
+    };
+
+    this.visionImages.push(imageObj);
+
+    // Hide empty state
+    const emptyState = document.getElementById('visionEmptyState');
+    if (emptyState) emptyState.style.display = 'none';
+
+    // Update count pill and badge
+    const countPill = document.getElementById('visionImageCount');
+    if (countPill) countPill.textContent = `${this.visionImages.length} Image${this.visionImages.length === 1 ? '' : 's'}`;
+
+    const tabBadge = document.getElementById('visionTabBadge');
+    if (tabBadge) {
+      tabBadge.textContent = this.visionImages.length;
+      tabBadge.style.display = 'inline-block';
+    }
+
+    // Append image card
+    const list = document.getElementById('visionImagesList');
+    if (list) {
+      const card = document.createElement('div');
+      card.className = 'vision-image-card';
+      card.id = imageObj.id;
+
+      const dimLabel = (w && h) ? `${w} × ${h} px${channels === 1 ? ' · Grayscale' : ' · RGB'}` : 'HD Graphic';
+
+      card.innerHTML = `
+        <div class="vision-image-card-header">
+          <div class="vision-image-card-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
+            <span>${imageObj.title}</span>
+          </div>
+          <span class="vision-image-meta">${dimLabel}</span>
+        </div>
+        <div class="vision-img-wrapper">
+          <img src="${imageObj.src}" alt="${imageObj.title}" class="vision-rendered-img">
+        </div>
+        <div class="vision-card-footer">
+          <span style="font-size:11px;color:var(--text-muted)">Rendered at ${imageObj.time}</span>
+          <button class="vision-download-btn" type="button" data-src="${imageObj.src}" data-name="${imageObj.title}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <span>Download PNG</span>
+          </button>
+        </div>
+      `;
+
+      const dlBtn = card.querySelector('.vision-download-btn');
+      if (dlBtn) {
+        dlBtn.addEventListener('click', () => {
+          const a = document.createElement('a');
+          a.href = imageObj.src;
+          const safeName = (imageObj.title || 'vision_output').replace(/[^a-zA-Z0-9_-]/g, '_');
+          a.download = `${safeName}.png`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          this.toast(`📥 Downloaded ${imageObj.title}.png`, 'success');
+        });
+      }
+
+      list.appendChild(card);
+      card.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+
+    // Switch to vision output tab
+    this.switchOutputTab('vision');
+  },
+
+  clearVisionOutput() {
+    this.visionImages = [];
+    const list = document.getElementById('visionImagesList');
+    if (list) list.innerHTML = '';
+
+    const emptyState = document.getElementById('visionEmptyState');
+    if (emptyState) emptyState.style.display = 'flex';
+
+    const countPill = document.getElementById('visionImageCount');
+    if (countPill) countPill.textContent = '0 Images';
+
+    const tabBadge = document.getElementById('visionTabBadge');
+    if (tabBadge) tabBadge.style.display = 'none';
+
+    this.toast('Vision canvas cleared', 'info');
+  },
+
+  async handleVisionImageUpload(file) {
+    if (!file) return;
+    try {
+      const buffer = await file.arrayBuffer();
+      const uint8 = new Uint8Array(buffer);
+
+      if (Engine.pyodide && Engine.pyodide.FS) {
+        Engine.pyodide.FS.writeFile('/input.jpg', uint8);
+        Engine.pyodide.FS.writeFile('/sample.jpg', uint8);
+      }
+
+      // Also render thumbnail card
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        const base64 = dataUrl.split(',')[1];
+        this.addVisionImage(`Uploaded: ${file.name}`, base64, 0, 0, 3);
+        this.toast(`📷 Uploaded '${file.name}' to virtual filesystem (/input.jpg)!`, 'success');
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      this.toast(`Failed to load image: ${err.message}`, 'error');
+    }
+  },
+
+  resetSampleVisionImage() {
+    try {
+      if (Engine.pyodide && Engine.pyodide.FS) {
+        const bytes = this.generateDefaultLabImageBytes();
+        Engine.pyodide.FS.writeFile('/input.jpg', bytes);
+        Engine.pyodide.FS.writeFile('/sample.jpg', bytes);
+        Engine.pyodide.FS.writeFile('/watch.jpg', bytes);
+        Engine.pyodide.FS.writeFile('/face.jpg', bytes);
+        Engine.pyodide.FS.writeFile('/shapes.jpg', bytes);
+        this.toast('🔄 Reset virtual filesystem to default test image (/input.jpg)', 'success');
+      } else {
+        this.toast('Virtual filesystem will initialize on next Python run', 'info');
+      }
+    } catch (e) {
+      this.toast(`Reset error: ${e.message}`, 'error');
     }
   }
 };

@@ -9,15 +9,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <!-- Favicon & Brand Icons (Optimized for Google Search & All Browsers) -->
-  <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">
-  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon.ico?v=6.0" sizes="48x48 32x32 16x16">
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=6.0">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png?v=6.0">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png?v=6.0">
+  <link rel="shortcut icon" href="/favicon.ico?v=6.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=6.0">
   <link rel="manifest" href="/manifest.json">
-  <meta property="og:image" content="https://vab-code.in/assets/brand-logo-original.png">
-  <link rel="stylesheet" href="style.css?v=5.6">
+  <meta property="og:image" content="https://vab-code.in/assets/brand-logo-original.png?v=6.0">
+  <link rel="stylesheet" href="style.css?v=6.0">
   <!-- Google tag (gtag.js) Firebase Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-3ZFZLNQ9WZ"></script>
   <script>
@@ -144,11 +144,24 @@
 <body style="background: #080a12;">
 
   <div class="legal-container">
-    <a href="/" class="legal-nav-back">&larr; Back to VAB-CODE Editor</a>
+    <header class="page-brand-bar">
+      <a href="/" class="page-brand-logo" title="Back to VAB-CODE Editor">
+        <div class="logo-icon">
+          <img src="assets/logo-icon.png?v=6.0" alt="VAB-CODE Logo">
+        </div>
+        <span class="brand-title">VAB-CODE</span>
+      </a>
+      <a href="/" class="page-brand-back">&larr; Back to Editor</a>
+    </header>
 
     <div class="legal-card">
       <div class="legal-header">
-        <span class="legal-badge">Terms of Use</span>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div class="logo-icon" style="width:38px;height:38px">
+            <img src="assets/logo-icon.png?v=6.0" alt="VAB-CODE" style="width:28px;height:28px">
+          </div>
+          <span class="legal-badge" style="margin-bottom:0">Terms of Use</span>
+        </div>
         <h1 class="legal-title">Terms of Service</h1>
         <div class="legal-subtitle">Effective Date: September 30, 2026</div>
       </div>
