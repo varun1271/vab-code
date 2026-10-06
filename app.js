@@ -1585,16 +1585,23 @@ const Engine = {
   // ──── Ensure sample test images exist in Pyodide virtual filesystem ────
   ensureVirtualLabImages(py) {
     try {
-      if (!py || !py.FS || py._vab_images_initialized) return;
-      if (typeof window.generateDefaultLabImageBytes === 'function') {
-        const imgBytes = window.generateDefaultLabImageBytes();
-        py.FS.writeFile('/input.jpg', imgBytes);
-        py.FS.writeFile('/sample.jpg', imgBytes);
-        py.FS.writeFile('/watch.jpg', imgBytes);
-        py.FS.writeFile('/face.jpg', imgBytes);
-        py.FS.writeFile('/shapes.jpg', imgBytes);
-        py._vab_images_initialized = true;
+      if (!py || !py.FS) return;
+      // If student uploaded a custom photo, write it to /input.jpg and /sample.jpg!
+      if (typeof App !== 'undefined' && App.uploadedImageBytes && App.uploadedImageBytes.length > 0) {
+        py.FS.writeFile('/input.jpg', App.uploadedImageBytes);
+        py.FS.writeFile('/sample.jpg', App.uploadedImageBytes);
+        py.FS.writeFile('/watch.jpg', App.uploadedImageBytes);
+      } else if (!py._vab_images_initialized) {
+        if (typeof window.generateDefaultLabImageBytes === 'function') {
+          const imgBytes = window.generateDefaultLabImageBytes();
+          py.FS.writeFile('/input.jpg', imgBytes);
+          py.FS.writeFile('/sample.jpg', imgBytes);
+          py.FS.writeFile('/watch.jpg', imgBytes);
+          py.FS.writeFile('/face.jpg', imgBytes);
+          py.FS.writeFile('/shapes.jpg', imgBytes);
+        }
       }
+      py._vab_images_initialized = true;
     } catch (e) {
       console.warn('Virtual image FS init:', e);
     }
@@ -6098,8 +6105,11 @@ const App = {
       }
     }
 
-    // 7-second execution timeout guard (Prevents browser tab freezing on infinite loops)
-    const TIMEOUT_MS = 7000;
+    // Execution timeout guard (Prevents browser tab freezing on infinite loops)
+    // When downloading and initializing heavy packages (OpenCV, NumPy, Matplotlib, Pandas),
+    // first-time download from CDN can take 15-30s. Grant 60 seconds so it never false-timeouts.
+    const isHeavyPackage = lang === 'python' && /(import\s+(cv2|opencv|matplotlib|plt|pandas|pd|sklearn|scipy|sympy)|from\s+(cv2|matplotlib|pandas|sklearn|scipy))/m.test(code);
+    const TIMEOUT_MS = isHeavyPackage ? 60000 : 12000;
     let timeoutTimer = null;
     const timeoutPromise = new Promise((_, reject) => {
       timeoutTimer = setTimeout(() => {
@@ -6116,7 +6126,12 @@ const App = {
             this.setCode(code, LANGUAGES[lang].mode);
             this.toast('⚡ Auto-formatted Python block indentation for clean run', 'info');
           }
-          this.switchOutputTab('console');
+          const isVisionCode = /(import\s+cv2|from\s+cv2|plt\.)/m.test(code);
+          if (isVisionCode) {
+            this.clearGeneratedVisionImages();
+          } else {
+            this.switchOutputTab('console');
+          }
           return await Engine.runPython(code, (t, tx) => this.log(t, tx));
         } else if (lang === 'javascript') {
           this.switchOutputTab('console');
@@ -6140,7 +6155,8 @@ const App = {
     } catch (err) {
       this.hasRunError = true;
       if (err.message === "EXECUTION_TIMEOUT") {
-        this.log('stderr', `\n⚠️ [Execution Timeout] Run halted after 7.0 seconds.`);
+        const sec = (TIMEOUT_MS / 1000).toFixed(0);
+        this.log('stderr', `\n⚠️ [Execution Timeout] Run halted after ${sec} seconds.`);
         this.log('warn', `   Possible infinite loop or runaway recursion detected in your code.`);
         this.log('dim', `   Tip: Check your 'while' or 'for' loops to ensure loop counters increment and termination conditions are met.`);
         this.toast('Execution timed out (Possible infinite loop)', 'warn');
@@ -8728,8 +8744,36 @@ Run & Test your code instantly at https://vab-code.in/
     this.switchOutputTab('vision');
   },
 
+  uploadedImageBytes: null,
+
+  clearGeneratedVisionImages() {
+    // Retain user-uploaded thumbnail, remove previous run's generated outputs
+    this.visionImages = this.visionImages.filter(img => img.title && img.title.startsWith('Uploaded:'));
+    const list = document.getElementById('visionImagesList');
+    if (list) {
+      list.querySelectorAll('.vision-image-card').forEach(card => {
+        const titleEl = card.querySelector('.vision-image-card-title span');
+        if (!titleEl || !titleEl.textContent.startsWith('Uploaded:')) {
+          card.remove();
+        }
+      });
+    }
+    const countPill = document.getElementById('visionImageCount');
+    if (countPill) countPill.textContent = `${this.visionImages.length} Image${this.visionImages.length === 1 ? '' : 's'}`;
+    const tabBadge = document.getElementById('visionTabBadge');
+    if (tabBadge) {
+      if (this.visionImages.length > 0) {
+        tabBadge.textContent = this.visionImages.length;
+        tabBadge.style.display = 'inline-block';
+      } else {
+        tabBadge.style.display = 'none';
+      }
+    }
+  },
+
   clearVisionOutput() {
     this.visionImages = [];
+    this.uploadedImageBytes = null;
     const list = document.getElementById('visionImagesList');
     if (list) list.innerHTML = '';
 
@@ -8750,10 +8794,12 @@ Run & Test your code instantly at https://vab-code.in/
     try {
       const buffer = await file.arrayBuffer();
       const uint8 = new Uint8Array(buffer);
+      this.uploadedImageBytes = uint8;
 
       if (Engine.pyodide && Engine.pyodide.FS) {
         Engine.pyodide.FS.writeFile('/input.jpg', uint8);
         Engine.pyodide.FS.writeFile('/sample.jpg', uint8);
+        Engine.pyodide.FS.writeFile('/watch.jpg', uint8);
       }
 
       // Also render thumbnail card
@@ -8762,7 +8808,7 @@ Run & Test your code instantly at https://vab-code.in/
         const dataUrl = e.target.result;
         const base64 = dataUrl.split(',')[1];
         this.addVisionImage(`Uploaded: ${file.name}`, base64, 0, 0, 3);
-        this.toast(`📷 Uploaded '${file.name}' to virtual filesystem (/input.jpg)!`, 'success');
+        this.toast(`📷 Uploaded '${file.name}' to virtual filesystem (/input.jpg)! Click 'Run Code' to process it.`, 'success');
       };
       reader.readAsDataURL(file);
     } catch (err) {
@@ -8771,6 +8817,7 @@ Run & Test your code instantly at https://vab-code.in/
   },
 
   resetSampleVisionImage() {
+    this.uploadedImageBytes = null;
     try {
       if (Engine.pyodide && Engine.pyodide.FS) {
         const bytes = this.generateDefaultLabImageBytes();
@@ -8781,7 +8828,7 @@ Run & Test your code instantly at https://vab-code.in/
         Engine.pyodide.FS.writeFile('/shapes.jpg', bytes);
         this.toast('🔄 Reset virtual filesystem to default test image (/input.jpg)', 'success');
       } else {
-        this.toast('Virtual filesystem will initialize on next Python run', 'info');
+        this.toast('Virtual filesystem reset to default test image', 'info');
       }
     } catch (e) {
       this.toast(`Reset error: ${e.message}`, 'error');
