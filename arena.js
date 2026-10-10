@@ -26,105 +26,429 @@ const ADMIN_EMAILS = [
   "reddyvarun1271@gmail.com"
 ];
 
-// Curated Daily 10 MCQ Question Bank (Rotates automatically based on calendar day)
+// Curated Daily MCQ Question Bank (50+ Engineering & Programming Questions)
+// Automatically rotates 10 unique questions every 24 hours based on calendar date
 const QUESTION_BANK = [
-  // Pool 1: Python & Core Logic
+  // --- PYTHON ---
   {
     id: "q1",
     lang: "Python",
     q: "What is the output of `print(type(1/1))` in Python 3?",
     options: ["<class 'int'>", "<class 'float'>", "<class 'double'>", "SyntaxError"],
     ans: 1,
-    exp: "In Python 3, the single division operator `/` always performs true floating-point division and returns a float, so 1/1 evaluates to 1.0 (<class 'float'>)."
+    exp: "In Python 3, `/` always performs true floating-point division returning a float (1.0)."
   },
   {
     id: "q2",
-    lang: "Data Structures",
-    q: "What is the time complexity of searching for an element in a balanced Binary Search Tree (AVL / Red-Black)?",
-    options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
-    ans: 1,
-    exp: "Because the tree is balanced, the maximum height is strictly logarithmic (h = O(log n)), ensuring search, insertion, and deletion all take O(log n) time."
-  },
-  {
-    id: "q3",
-    lang: "C Language",
-    q: "What does the expression `*(arr + i)` evaluate to in C?",
-    options: ["Address of arr[i]", "Value of arr[i]", "Size of arr", "SyntaxError"],
-    ans: 1,
-    exp: "Pointer arithmetic in C equates array indexing to dereferencing: `arr[i]` is syntactically equivalent to `*(arr + i)`."
-  },
-  {
-    id: "q4",
-    lang: "C++",
-    q: "Which STL container guarantees O(1) average time complexity for key lookups?",
-    options: ["std::map", "std::vector", "std::unordered_map", "std::set"],
-    ans: 2,
-    exp: "`std::unordered_map` is implemented using a hash table, providing O(1) amortized lookup, unlike `std::map` which is a Red-Black tree with O(log n)."
-  },
-  {
-    id: "q5",
-    lang: "Java",
-    q: "In Java, what is the default value of an uninitialized instance variable of type `boolean`?",
-    options: ["true", "false", "null", "undefined"],
-    ans: 1,
-    exp: "In Java, primitive boolean fields in class objects are automatically initialized to `false` by the JVM specification."
-  },
-  {
-    id: "q6",
     lang: "Python",
     q: "What will `bool([])` evaluate to in Python?",
     options: ["True", "False", "None", "TypeError"],
     ans: 1,
-    exp: "In Python, empty sequences, collections, and containers (empty list [], tuple (), dict {}, string '') are considered falsy, evaluating to False."
+    exp: "In Python, empty collections (lists, tuples, dicts, strings) evaluate to False in boolean context."
   },
   {
-    id: "q7",
-    lang: "Algorithms",
-    q: "Which sorting algorithm is guaranteed to be stable and have an O(n log n) worst-case time complexity?",
-    options: ["Quick Sort", "Heap Sort", "Merge Sort", "Selection Sort"],
-    ans: 2,
-    exp: "Merge Sort consistently divides the array in half and merges sorted sub-arrays in O(n log n) worst-case while preserving relative order of equal keys (stable)."
-  },
-  {
-    id: "q8",
-    lang: "JavaScript",
-    q: "What is the output of `console.log([] + {})` in JavaScript?",
-    options: ["\"[object Object]\"", "NaN", "0", "TypeError"],
-    ans: 0,
-    exp: "The empty array `[]` converts to empty string `\"\"` via `toString()`, and `{}` converts to `\"[object Object]\"`, resulting in `\"[object Object]\"`."
-  },
-  {
-    id: "q9",
-    lang: "Operating Systems",
-    q: "Which condition is NOT one of Coffman's four conditions required for a Deadlock to occur?",
-    options: ["Mutual Exclusion", "Hold and Wait", "Preemption allowed", "Circular Wait"],
-    ans: 2,
-    exp: "The four Coffman deadlock conditions are: Mutual Exclusion, Hold & Wait, No Preemption, and Circular Wait. If Preemption is allowed, deadlock cannot persist."
-  },
-  {
-    id: "q10",
-    lang: "Computer Vision",
-    q: "Which OpenCV function is used to convert an RGB/BGR image to Grayscale?",
-    options: ["cv2.toGray()", "cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)", "cv2.filterGray()", "cv2.threshold()"],
-    ans: 1,
-    exp: "OpenCV's `cv2.cvtColor` with the color-space conversion code `cv2.COLOR_BGR2GRAY` applies the standard perceptual luminance formula: Y = 0.299R + 0.587G + 0.114B."
-  },
-  // Pool 2 (Additional Pool for rotation)
-  {
-    id: "q11",
+    id: "q3",
     lang: "Python",
     q: "What will `[1, 2, 3] * 2` produce in Python?",
     options: ["[2, 4, 6]", "[1, 2, 3, 1, 2, 3]", "[[1, 2, 3], [1, 2, 3]]", "TypeError"],
     ans: 1,
-    exp: "Multiplying a list by an integer n repeats the elements n times, yielding `[1, 2, 3, 1, 2, 3]`."
+    exp: "Multiplying a list by integer n duplicates the elements n times: [1, 2, 3, 1, 2, 3]."
   },
   {
-    id: "q12",
-    lang: "DSA",
-    q: "Which data structure is naturally used to implement Breadth-First Search (BFS)?",
-    options: ["Stack", "Queue", "Max Heap", "Binary Tree"],
+    id: "q4",
+    lang: "Python",
+    q: "What is the result of `\"python\"[::-1]` in Python?",
+    options: ["\"nohtyp\"", "\"python\"", "IndexError", "\"p\""],
+    ans: 0,
+    exp: "Negative step slicing `[::-1]` reverses a string in Python."
+  },
+  {
+    id: "q5",
+    lang: "Python",
+    q: "Which keyword is used to create an anonymous inline function in Python?",
+    options: ["def", "inline", "lambda", "func"],
+    ans: 2,
+    exp: "`lambda` creates small, anonymous single-expression functions in Python."
+  },
+  {
+    id: "q6",
+    lang: "Python",
+    q: "What is the time complexity of looking up a key in a standard Python dictionary?",
+    options: ["O(n)", "O(log n)", "O(1) average", "O(n log n)"],
+    ans: 2,
+    exp: "Python dicts are implemented as hash tables, providing O(1) average time lookup."
+  },
+
+  // --- C LANGUAGE ---
+  {
+    id: "q7",
+    lang: "C Language",
+    q: "What does the expression `*(arr + i)` evaluate to in C?",
+    options: ["Address of arr[i]", "Value of arr[i]", "Size of arr", "SyntaxError"],
     ans: 1,
-    exp: "BFS visits nodes level by level using a FIFO (First-In-First-Out) Queue, while DFS uses a LIFO Stack."
+    exp: "In C pointer arithmetic, `*(arr + i)` is syntactically equivalent to array indexing `arr[i]`."
+  },
+  {
+    id: "q8",
+    lang: "C Language",
+    q: "Which function dynamically allocates memory initialized to zero in C?",
+    options: ["malloc()", "calloc()", "realloc()", "zalloc()"],
+    ans: 1,
+    exp: "`calloc(n, size)` allocates contiguous memory and clears all bytes to zero, unlike `malloc()`."
+  },
+  {
+    id: "q9",
+    lang: "C Language",
+    q: "What is the size of a `char` in C according to the ANSI C standard?",
+    options: ["Always 1 byte", "2 bytes", "4 bytes", "Depends on OS"],
+    ans: 0,
+    exp: "In C, `sizeof(char)` is strictly defined by the ISO standard to be exactly 1 byte."
+  },
+  {
+    id: "q10",
+    lang: "C Language",
+    q: "What happens if you don't call `free()` on heap memory allocated with `malloc()`?",
+    options: ["Segmentation fault", "Memory leak", "Compilation error", "CPU throttling"],
+    ans: 1,
+    exp: "Failing to release dynamically allocated heap memory leads to a memory leak."
+  },
+  {
+    id: "q11",
+    lang: "C Language",
+    q: "What does the `static` keyword do to a global variable in C?",
+    options: ["Makes it constant", "Limits its scope to the current file", "Allocates it on stack", "Makes it thread-safe"],
+    ans: 1,
+    exp: "A static global variable has internal linkage, restricting visibility to its source file."
+  },
+
+  // --- C++ & OOP ---
+  {
+    id: "q12",
+    lang: "C++",
+    q: "Which STL container guarantees O(1) average time complexity for key lookups?",
+    options: ["std::map", "std::vector", "std::unordered_map", "std::set"],
+    ans: 2,
+    exp: "`std::unordered_map` is a hash table offering O(1) average lookup, whereas `std::map` is a Red-Black tree (O(log n))."
+  },
+  {
+    id: "q13",
+    lang: "C++",
+    q: "What is the purpose of a `virtual` destructor in a base class in C++?",
+    options: ["Speed up execution", "Ensure proper derived class cleanup via base pointer", "Prevent inheritance", "Make class abstract"],
+    ans: 1,
+    exp: "A virtual destructor ensures that deleting a derived object via a base pointer calls the derived destructor first."
+  },
+  {
+    id: "q14",
+    lang: "C++",
+    q: "What is the time complexity of pushing an element to the back of `std::vector` (amortized)?",
+    options: ["O(1)", "O(n)", "O(log n)", "O(n^2)"],
+    ans: 0,
+    exp: "Vector push_back is O(1) amortized because capacity doubles exponentially during reallocations."
+  },
+  {
+    id: "q15",
+    lang: "C++",
+    q: "What does the `nullptr` keyword represent in modern C++ (C++11 onwards)?",
+    options: ["Integer 0", "Typesafe null pointer constant of type nullptr_t", "Void pointer", "Undefined macro"],
+    ans: 1,
+    exp: "`nullptr` resolves function overload ambiguities that occurred when using integer 0 or NULL."
+  },
+
+  // --- JAVA ---
+  {
+    id: "q16",
+    lang: "Java",
+    q: "In Java, what is the default value of an uninitialized instance variable of type `boolean`?",
+    options: ["true", "false", "null", "undefined"],
+    ans: 1,
+    exp: "Instance fields of primitive boolean type in Java default to `false`."
+  },
+  {
+    id: "q17",
+    lang: "Java",
+    q: "Where are `String` literals stored in memory in Java?",
+    options: ["Call Stack", "String Constant Pool inside Heap", "Metaspace Code Cache", "CPU Cache"],
+    ans: 1,
+    exp: "String literals are deduplicated and cached inside the String Constant Pool on the Java Heap."
+  },
+  {
+    id: "q18",
+    lang: "Java",
+    q: "Can you instantiate an `interface` directly in Java?",
+    options: ["Yes, using new Interface()", "No, interfaces cannot be directly instantiated", "Yes, with static keyword", "Only in Java 17+"],
+    ans: 1,
+    exp: "Interfaces cannot be instantiated directly; they must be implemented by a class or anonymous inner class."
+  },
+  {
+    id: "q19",
+    lang: "Java",
+    q: "What is the difference between `==` and `.equals()` when comparing two String objects in Java?",
+    options: ["No difference", "`==` compares references, `.equals()` compares content", "`.equals()` compares memory addresses", "`==` checks length only"],
+    ans: 1,
+    exp: "`==` checks if both references point to the exact same memory address; `.equals()` checks string contents."
+  },
+
+  // --- DATA STRUCTURES ---
+  {
+    id: "q20",
+    lang: "Data Structures",
+    q: "What is the time complexity of searching for an element in a balanced Binary Search Tree (AVL / Red-Black)?",
+    options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+    ans: 1,
+    exp: "Because the tree height is balanced (h = O(log n)), search operations take logarithmic time O(log n)."
+  },
+  {
+    id: "q21",
+    lang: "Data Structures",
+    q: "Which data structure operates on a First-In-First-Out (FIFO) basis?",
+    options: ["Stack", "Queue", "Binary Heap", "Hash Table"],
+    ans: 1,
+    exp: "A Queue processes elements FIFO (First In, First Out); a Stack is LIFO."
+  },
+  {
+    id: "q22",
+    lang: "Data Structures",
+    q: "What is the worst-case time complexity of inserting a node at the head of a Singly Linked List?",
+    options: ["O(1)", "O(n)", "O(log n)", "O(n^2)"],
+    ans: 0,
+    exp: "Inserting at the head takes O(1) because you simply update the new node's next pointer and head pointer."
+  },
+  {
+    id: "q23",
+    lang: "Data Structures",
+    q: "In a Min-Heap, where is the smallest element always located?",
+    options: ["At the deepest leaf", "At the root (index 0)", "At index n/2", "At any node"],
+    ans: 1,
+    exp: "In a Min-Heap, the root element is guaranteed to be the minimum of all keys in the heap."
+  },
+  {
+    id: "q24",
+    lang: "Data Structures",
+    q: "Which data structure is optimal for evaluating arithmetic expressions in Postfix notation?",
+    options: ["Queue", "Stack", "Binary Search Tree", "Linked List"],
+    ans: 1,
+    exp: "A Stack naturally evaluates postfix expressions by pushing operands and popping two on encountering an operator."
+  },
+
+  // --- ALGORITHMS ---
+  {
+    id: "q25",
+    lang: "Algorithms",
+    q: "Which sorting algorithm is guaranteed to be stable and have an O(n log n) worst-case time complexity?",
+    options: ["Quick Sort", "Heap Sort", "Merge Sort", "Selection Sort"],
+    ans: 2,
+    exp: "Merge Sort consistently divides arrays in half and merges them in O(n log n) time while maintaining stability."
+  },
+  {
+    id: "q26",
+    lang: "Algorithms",
+    q: "What prerequisite is strictly required before performing Binary Search on an array?",
+    options: ["Array must contain unique elements", "Array must be sorted", "Array must be dynamically allocated", "Array size must be power of 2"],
+    ans: 1,
+    exp: "Binary search eliminates half the search space on each step, requiring monotonic (sorted) order."
+  },
+  {
+    id: "q27",
+    lang: "Algorithms",
+    q: "What is the worst-case time complexity of standard Quick Sort?",
+    options: ["O(n log n)", "O(n)", "O(n^2)", "O(log n)"],
+    ans: 2,
+    exp: "When the selected pivot is repeatedly the smallest or largest element (e.g. sorted array without random pivot), Quick Sort degrades to O(n^2)."
+  },
+  {
+    id: "q28",
+    lang: "Algorithms",
+    q: "Which graph traversal algorithm uses a Queue and finds the shortest path in an unweighted graph?",
+    options: ["Depth-First Search (DFS)", "Breadth-First Search (BFS)", "Prim's Algorithm", "Floyd-Warshall"],
+    ans: 1,
+    exp: "BFS explores neighbors level-by-level using a FIFO queue, finding the minimum edge distance in unweighted graphs."
+  },
+  {
+    id: "q29",
+    lang: "Algorithms",
+    q: "Which paradigm does the 0/1 Knapsack problem typically use to achieve an optimal solution?",
+    options: ["Greedy approach", "Dynamic Programming", "Divide & Conquer", "Backtracking only"],
+    ans: 1,
+    exp: "0/1 Knapsack displays overlapping subproblems and optimal substructure, solved in O(n*W) using Dynamic Programming."
+  },
+
+  // --- JAVASCRIPT & WEB ---
+  {
+    id: "q30",
+    lang: "JavaScript",
+    q: "What is the output of `console.log(typeof NaN)` in JavaScript?",
+    options: ["\"undefined\"", "\"number\"", "\"nan\"", "\"object\""],
+    ans: 1,
+    exp: "In the IEEE 754 floating-point standard and JavaScript specification, NaN is classified as a numerical value (`number`)."
+  },
+  {
+    id: "q31",
+    lang: "JavaScript",
+    q: "What does the `===` operator check in JavaScript compared to `==`?",
+    options: ["Checks value without coercion and type equality", "Checks memory address only", "Checks string length", "Calls custom equals method"],
+    ans: 0,
+    exp: "The strict equality operator `===` requires both operand type and value to match without implicit type coercion."
+  },
+  {
+    id: "q32",
+    lang: "JavaScript",
+    q: "Which Web API method is used to store data with no expiration date in the client's browser?",
+    options: ["sessionStorage", "localStorage", "cookie with max-age=0", "indexedCache"],
+    ans: 1,
+    exp: "`localStorage` persists key-value strings until explicitly cleared by the user or web app."
+  },
+
+  // --- OPERATING SYSTEMS ---
+  {
+    id: "q33",
+    lang: "Operating Systems",
+    q: "Which condition is NOT one of Coffman's four necessary conditions for Deadlock?",
+    options: ["Mutual Exclusion", "Hold and Wait", "Preemption allowed", "Circular Wait"],
+    ans: 2,
+    exp: "Deadlock requires No Preemption. If preemption is allowed, the OS can forcibly reclaim resources, preventing deadlock."
+  },
+  {
+    id: "q34",
+    lang: "Operating Systems",
+    q: "What is the primary difference between a Process and a Thread?",
+    options: ["Processes share memory, threads do not", "Threads share the address space of their parent process", "Threads take more memory than processes", "Processes cannot run in parallel"],
+    ans: 1,
+    exp: "Threads within the same process share code, data, and open files, but have their own individual registers and call stacks."
+  },
+  {
+    id: "q35",
+    lang: "Operating Systems",
+    q: "What is 'Thrashing' in an operating system with Virtual Memory?",
+    options: ["Hardware CPU failure", "Excessive page faulting where the OS spends more time swapping than executing", "Disk drive fragmentation", "Network packet loss"],
+    ans: 1,
+    exp: "Thrashing occurs when active working sets exceed physical RAM, causing constant page swapping and crippling CPU throughput."
+  },
+
+  // --- DATABASE & SQL ---
+  {
+    id: "q36",
+    lang: "Database",
+    q: "Which SQL clause is used to filter aggregated group records produced by `GROUP BY`?",
+    options: ["WHERE", "HAVING", "FILTER", "ORDER BY"],
+    ans: 1,
+    exp: "`WHERE` filters individual rows before grouping; `HAVING` filters aggregate group values (e.g., HAVING COUNT(*) > 5)."
+  },
+  {
+    id: "q37",
+    lang: "Database",
+    q: "What does the 'A' stand for in the ACID properties of database transactions?",
+    options: ["Availability", "Atomicity", "Accuracy", "Asynchronous"],
+    ans: 1,
+    exp: "Atomicity guarantees that all statements in a transaction either execute completely or roll back entirely (all-or-nothing)."
+  },
+  {
+    id: "q38",
+    lang: "Database",
+    q: "Which SQL JOIN returns all rows from the left table, and matched rows from the right table?",
+    options: ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER JOIN"],
+    ans: 1,
+    exp: "A LEFT JOIN preserves every row from the left table, populating NULLs for right table columns when no match exists."
+  },
+
+  // --- COMPUTER VISION & GRAPHICS ---
+  {
+    id: "q39",
+    lang: "Computer Vision",
+    q: "Which OpenCV function is used to convert an RGB/BGR image to Grayscale?",
+    options: ["cv2.toGray()", "cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)", "cv2.filterGray()", "cv2.threshold()"],
+    ans: 1,
+    exp: "`cv2.cvtColor` with `cv2.COLOR_BGR2GRAY` applies perceptual luminance weighting (0.299R + 0.587G + 0.114B)."
+  },
+  {
+    id: "q40",
+    lang: "Computer Vision",
+    q: "What is the primary purpose of Gaussian Blur filtering in Computer Vision?",
+    options: ["Detect edges", "Reduce high-frequency image noise before edge detection", "Sharpen blurred details", "Invert colors"],
+    ans: 1,
+    exp: "Gaussian blur smooths images by convolving with a Gaussian kernel, removing noise before edge detectors like Canny run."
+  },
+  {
+    id: "q41",
+    lang: "Computer Vision",
+    q: "What morphological operation is defined as an Erosion followed by a Dilation?",
+    options: ["Closing", "Opening", "Gradient", "Top Hat"],
+    ans: 1,
+    exp: "Morphological Opening (Erosion followed by Dilation) removes small white noise spots while preserving object size."
+  },
+
+  // --- ADVANCED LOGIC & CORE CS ---
+  {
+    id: "q42",
+    lang: "Python",
+    q: "What does the `id()` function return in Python?",
+    options: ["The variable name as string", "The unique memory address of the object in CPython", "The data type code", "The hash value"],
+    ans: 1,
+    exp: "In CPython, `id(obj)` returns the actual integer memory address of the object."
+  },
+  {
+    id: "q43",
+    lang: "Data Structures",
+    q: "What is the maximum number of nodes on level `k` of a binary tree (root at level 0)?",
+    options: ["2k", "2^k", "2^(k+1)", "k^2"],
+    ans: 1,
+    exp: "Since each node can branch to at most 2 children, level k can hold at most 2^k nodes."
+  },
+  {
+    id: "q44",
+    lang: "Algorithms",
+    q: "What is the time complexity of the Floyd-Warshall all-pairs shortest path algorithm?",
+    options: ["O(V^2)", "O(V^3)", "O(E log V)", "O(V + E)"],
+    ans: 1,
+    exp: "Floyd-Warshall uses three nested loops over all vertices V, resulting in O(V^3) time complexity."
+  },
+  {
+    id: "q45",
+    lang: "C Language",
+    q: "What does `argc` represent in `int main(int argc, char *argv[])`?",
+    options: ["Argument character", "Number of command-line arguments passed including program name", "Length of argv array in bytes", "Process ID"],
+    ans: 1,
+    exp: "`argc` (argument count) holds the total count of arguments passed to the binary, starting with argv[0] as executable name."
+  },
+  {
+    id: "q46",
+    lang: "Java",
+    q: "Which collection class in Java is thread-safe and synchronized by default?",
+    options: ["ArrayList", "Vector", "HashSet", "LinkedList"],
+    ans: 1,
+    exp: "Legacy `Vector` synchronizes all public methods, making it thread-safe, unlike unsynchronized `ArrayList`."
+  },
+  {
+    id: "q47",
+    lang: "Algorithms",
+    q: "Which algorithm is commonly used to find the Minimum Spanning Tree of a connected weighted graph?",
+    options: ["Dijkstra's Algorithm", "Kruskal's Algorithm", "Bellman-Ford", "Tarjan's SCC"],
+    ans: 1,
+    exp: "Kruskal's algorithm finds an MST by sorting edges and adding non-cyclical edges using Disjoint Set Union (DSU)."
+  },
+  {
+    id: "q48",
+    lang: "Operating Systems",
+    q: "Which CPU scheduling algorithm gives the minimum average waiting time for a set of processes?",
+    options: ["First-Come First-Served (FCFS)", "Shortest Job First (SJF / SRTF)", "Round Robin", "Priority Scheduling"],
+    ans: 1,
+    exp: "SJF (Shortest Job First) is provably optimal for minimizing average waiting time."
+  },
+  {
+    id: "q49",
+    lang: "Database",
+    q: "What is a Foreign Key in relational database design?",
+    options: ["An encrypted key for remote servers", "A field that uniquely references the Primary Key of another table", "A secondary index", "A composite primary key"],
+    ans: 1,
+    exp: "A Foreign Key establishes referential integrity by linking to the Primary Key of a parent table."
+  },
+  {
+    id: "q50",
+    lang: "C++",
+    q: "What does RAII stand for in modern C++ idiom?",
+    options: ["Resource Allocation Is Instant", "Resource Acquisition Is Initialization", "Runtime Array Interface Integration", "Recursive Algorithm Iterative Implementation"],
+    ans: 1,
+    exp: "RAII ties resource lifecycle (memory, file handles, mutexes) to object lifespan via constructors and destructors."
   }
 ];
 
@@ -177,23 +501,20 @@ class VabArena {
   }
 
   selectDailyQuestions() {
-    // Generate daily seed from current date (YYYY-MM-DD)
-    const today = new Date().toISOString().slice(0, 10);
-    let hash = 0;
-    for (let i = 0; i < today.length; i++) {
-      hash = (hash << 5) - hash + today.charCodeAt(i);
-      hash |= 0;
+    // Generate daily offset based on calendar day of year
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 0);
+    const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+
+    // Rotate 10 completely fresh questions every 24 hours
+    const totalQ = QUESTION_BANK.length;
+    const startIndex = (dayOfYear * 10) % totalQ;
+    const selected = [];
+    for (let i = 0; i < 10; i++) {
+      selected.push(QUESTION_BANK[(startIndex + i) % totalQ]);
     }
-    const seed = Math.abs(hash);
 
-    // Pick 10 questions consistently for everyone today
-    const shuffled = [...QUESTION_BANK].sort((a, b) => {
-      const ha = (a.id.charCodeAt(1) * 31 + seed) % 100;
-      const hb = (b.id.charCodeAt(1) * 31 + seed) % 100;
-      return ha - hb;
-    });
-
-    this.dailyQuestions = shuffled.slice(0, 10);
+    this.dailyQuestions = selected;
   }
 
   async handleAuthStateChange(user) {
