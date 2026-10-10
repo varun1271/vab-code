@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Computer Vision Lab — VAB-CODE | OpenCV & Python Online Compiler</title>
+  <meta name="description" content="Online Computer Vision Lab on VAB-CODE. Run OpenCV Python in browser with WebAssembly: Image and Video processing, 40 university syllabus experiments, custom media uploads.">
+  <meta name="keywords" content="vab-code computer vision, opencv online compiler, python cv lab, cv2_imshow online, image processing online">
+  <link rel="canonical" href="https://vab-code.in/vision.html">
+  <meta property="og:site_name" content="VAB-CODE">
+  <meta property="og:title" content="Computer Vision Lab — VAB-CODE">
+  <meta property="og:description" content="Run OpenCV Python in browser with WebAssembly: 40 university experiments, custom image/video upload, live vision canvas.">
+  <meta property="og:url" content="https://vab-code.in/vision.html">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://vab-code.in/assets/brand-logo-original.png?v=6.0">
+
+  <!-- Favicons -->
+  <link rel="icon" href="/favicon.ico?v=6.0" sizes="48x48 32x32 16x16">
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=6.0">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png?v=6.0">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png?v=6.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=6.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0a0c12">
+
+  <!-- Fonts & Stylesheet -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+
+  <!-- Google tag (gtag.js) Firebase Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3ZFZLNQ9WZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-3ZFZLNQ9WZ');
+  </script>
+
+  <style>
+    /* Dedicated Vision Lab Header & Toolbar Enhancements */
+    .cv-env-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font: 600 12px var(--font-mono);
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+    .cv-env-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #06b6d4;
+      box-shadow: 0 0 8px #06b6d4;
+    }
+    .media-active-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font: 600 11px var(--font-mono);
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      white-space: nowrap;
+    }
+    .media-btn-upload {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 7px;
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      color: #cffafe;
+      font: 600 11.5px var(--font-sans);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .media-btn-upload:hover {
+      background: rgba(6, 182, 212, 0.24);
+      border-color: rgba(6, 182, 212, 0.6);
+      box-shadow: 0 0 10px -2px rgba(6, 182, 212, 0.4);
+      transform: translateY(-1px);
+    }
+    .media-btn-reset {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 7px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font: 500 11.5px var(--font-sans);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .media-btn-reset:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+    .video-card-player {
+      width: 100%;
+      max-height: 380px;
+      border-radius: 6px;
+      background: #000;
+      outline: none;
+    }
+    .editor-gutter {
+      user-select: none;
+      min-width: 42px;
+      padding: 14px 6px 14px 8px;
+      text-align: right;
+      color: #4b5563;
+      font: 13px var(--font-mono);
+      line-height: 20px;
+      border-right: 1px solid var(--border);
+      background: var(--bg-surface);
+    }
+    .fallback-editor {
+      flex: 1;
+      height: 100%;
+      min-height: 480px;
+      background: #0a0d14;
+      color: #f1f5f9;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 20px;
+      padding: 14px 16px;
+      border: none;
+      outline: none;
+      resize: none;
+      white-space: pre;
+      overflow-wrap: normal;
+      overflow-x: auto;
+      tab-size: 4;
+    }
+    .back-home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #e2e8f0;
+      font: 600 12.5px var(--font-sans);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .back-home-btn:hover {
+      background: rgba(6, 182, 212, 0.16);
+      border-color: rgba(6, 182, 212, 0.5);
+      color: #67e8f9;
+      transform: translateX(-2px);
+      box-shadow: 0 0 12px -2px rgba(6, 182, 212, 0.35);
+    }
+    .back-home-btn svg {
+      transition: transform 0.2s ease;
+    }
+    .back-home-btn:hover svg {
+      transform: translateX(-2px);
+    }
+    .workspace-left-editor .lang-bar {
+      padding: 0 !important;
+    }
+    .workspace-left-editor .editor-toolbar-primary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 6px 12px;
+      gap: 10px;
+      flex-wrap: nowrap;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    /* 3-Dots More Options Menu */
+    .more-menu-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .more-menu-trigger-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 33px;
+      height: 33px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      flex-shrink: 0;
+    }
+    .more-menu-trigger-btn:hover,
+    .more-menu-wrapper.is-open .more-menu-trigger-btn {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border-color: rgba(56, 189, 248, 0.45);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+      transform: translateY(-1px);
+    }
+    .more-popover-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      z-index: 1000;
+      width: 280px;
+      background: rgba(11, 15, 25, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 12px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 25px rgba(56, 189, 248, 0.15);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      animation: popoverFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popoverFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .more-popover-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .more-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-primary);
+      font: 500 12px var(--font-sans);
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    .more-menu-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.08);
+      transform: translateX(2px);
+    }
+    .more-item-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .more-item-icon.icon-teal {
+      background: rgba(20, 187, 166, 0.12);
+      color: #14bba6;
+    }
+    .more-item-icon.icon-cobalt {
+      background: rgba(56, 189, 248, 0.12);
+      color: #38bdf8;
+    }
+    .more-item-icon.icon-blue {
+      background: rgba(96, 165, 250, 0.12);
+      color: #60a5fa;
+    }
+    .more-item-icon.icon-emerald {
+      background: rgba(52, 211, 153, 0.12);
+      color: #34d399;
+    }
+    .more-item-icon.icon-coral {
+      background: rgba(244, 114, 182, 0.12);
+      color: #f472b6;
+    }
+    .more-item-icon.icon-danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+    }
+    .more-item-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      flex: 1;
+      min-width: 0;
+    }
+    .more-item-title {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    .more-item-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.2;
+    }
+    .more-item-badge {
+      font: 600 9.5px var(--font-mono);
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      flex-shrink: 0;
+    }
+    .more-menu-item.item-danger:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+    .more-menu-item.item-danger:hover .more-item-title {
+      color: #ef4444;
+    }
+    .more-menu-setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .setting-label-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font: 500 11.5px var(--font-sans);
+      color: var(--text-secondary);
+    }
+    @media (max-width: 900px) {
+      .workspace-left-editor .editor-toolbar-primary {
+        padding: 5px 8px !important;
+        gap: 6px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="header">
+    <div class="header-left" style="display:flex;align-items:center;gap:12px">
+      <!-- GO BACK BUTTON -->
+      <a href="/" class="back-home-btn" title="Go back to first page (Multi-Language IDE)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <span>Go Back</span>
+      </a>
+
+      <a href="/" class="logo" style="text-decoration:none">
+        <div class="logo-icon">
+          <img src="assets/logo-icon.png?v=6.0" alt="VAB-CODE Logo">
+        </div>
+        <div>
+          <span class="logo-text">VAB-CODE</span>
+          <span class="logo-badge" style="background:#06b6d4;color:#082f49">VISION LAB</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="header-center header-tools-center" id="headerToolsCenter">
+      <div class="header-tools-row">
+        <!-- Font Size Selector -->
+        <div class="header-selects-group">
+          <select class="editor-select-sm header-tool-select" id="fontSizeSelect" title="Editor Font Size">
+            <option value="12">12px</option>
+            <option value="14" selected>14px</option>
+            <option value="16">16px</option>
+            <option value="18">18px</option>
+          </select>
+        </div>
+
+        <div class="header-tools-divider"></div>
+
+        <!-- Action Buttons (Format, Save, Copy, Share, Download, ZIP, Clear) -->
+        <div class="header-tools-btns">
+          <!-- Auto-Format / Beautify Code -->
+          <button class="sub-tool-btn format-tool-btn" id="formatBtn" title="Auto-Format / Beautify Code (Ctrl+Shift+F)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            <span>Format</span>
+          </button>
+
+          <!-- Save Code to Chrome LocalStorage -->
+          <button class="sub-tool-btn save-tool-btn" id="saveCodeBtn" title="Save Code to Chrome LocalStorage (Ctrl+S)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#14bba6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+            <span>Save</span>
+          </button>
+
+          <!-- Copy Code to Clipboard -->
+          <button class="sub-tool-btn" id="copyCodeBtn" title="Copy Code to Clipboard">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span>Copy</span>
+          </button>
+
+          <!-- Share Code via Instant Link -->
+          <button class="sub-tool-btn share-tool-btn" id="shareCodeBtn" title="Share Code via Instant Link (Serverless)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+            <span>Share</span>
+          </button>
+
+          <!-- Download Python File -->
+          <button class="sub-tool-btn" id="downloadCodeBtn" title="Download Python Script (.py)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <span>Download</span>
+          </button>
+
+          <!-- Export All Saved Codes as ZIP -->
+          <button class="sub-tool-btn" id="toolbarZipBtn" title="Export All Saved Codes as ZIP (.zip)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+            <span>ZIP</span>
+          </button>
+
+          <!-- Reset / Clear Editor -->
+          <button class="sub-tool-btn clear-tool-btn" id="clearEditorBtn" title="Clear Code Editor">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            <span>Clear</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <button class="header-action-btn" id="historyBtn" title="Saved Code & Local Storage History">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+        <span>Saved Code</span>
+        <span class="history-badge" id="historyBadge">0</span>
+      </button>
+      <div class="runtime-badge" id="runtimeBadge" title="OpenCV Python 4.x compiled to WebAssembly (Runs client-side in your browser)">
+        <span class="pulse-dot" style="background:#06b6d4"></span>
+        <span id="runtimeLabel">Pyodide WASM • OpenCV</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN WORKSPACE ========== -->
+  <main class="workspace">
+    <!-- Mobile View Switcher -->
+    <div class="mobile-view-bar" id="mobileViewBar">
+      <button class="mobile-view-btn active" data-view="editor" id="mobileViewEditorBtn" title="Switch to Code Editor">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        <span>Editor</span>
+      </button>
+      <button class="mobile-view-btn" data-view="split" id="mobileViewSplitBtn" title="Switch to Split View">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+        <span>Split</span>
+      </button>
+      <button class="mobile-view-btn" data-view="output" id="mobileViewOutputBtn" title="Switch to Output Console">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+        <span>Vision Output</span>
+      </button>
+    </div>
+
+    <div class="workspace-body-split">
+
+      <!-- ==================================================== -->
+      <!-- COLUMN 1: Computer Vision Editor                      -->
+      <!-- ==================================================== -->
+      <div class="workspace-left-editor" id="workspaceLeftEditor" style="flex: 1.1">
+        
+        <!-- Top Language Bar (Computer Vision Only) -->
+        <div class="lang-bar">
+          <div class="lang-bar-inner">
+            <span class="lang-bar-label">Active Environment:</span>
+            <div class="cv-env-pill">
+              <span class="cv-env-dot"></span>
+              <span>Python 3.11 • OpenCV 4.x (Pyodide WASM)</span>
+            </div>
+            <div class="media-active-badge" id="activeMediaBadge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+              <span id="activeMediaText">Default Sample Image (/input.jpg)</span>
+            </div>
+          </div>
+
+          <!-- Primary Editor Toolbar (Row 1): File Info, CV Experiments Selector, Media Inputs, & Run Button -->
+          <div class="editor-toolbar editor-toolbar-primary">
+            <div class="editor-toolbar-left" style="display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0">
+              <span class="file-name" id="fileName">exp1_grayscale_conversion.py</span>
+
+              <!-- 40 CV Experiments Selector Button -->
+              <button class="cv-lab-btn" id="openCvModalBtn" title="Browse and Load 40 University Syllabus Computer Vision Experiments">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
+                <span class="btn-text">Load CV Code</span>
+                <span class="cv-count-badge">40</span>
+              </button>
+
+              <!-- Upload Image Button -->
+              <label class="media-btn-upload" title="Upload local image (.jpg, .png, .webp) to process with cv2.imread()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                <span>Upload Image</span>
+                <input type="file" id="imageUploadInput" accept="image/*" style="display:none">
+              </label>
+
+              <!-- Upload Video Button -->
+              <label class="media-btn-upload" title="Upload local video (.mp4, .avi, .mov, .webm) to process with cv2.VideoCapture()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect width="14" height="14" x="1" y="5" rx="2" ry="2"/></svg>
+                <span>Upload Video</span>
+                <input type="file" id="videoUploadInput" accept="video/*" style="display:none">
+              </label>
+
+              <!-- Reset to Sample -->
+              <button class="media-btn-reset" id="resetSampleMediaBtn" title="Reset virtual filesystem to default test image">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                <span>Reset Sample</span>
+              </button>
+            </div>
+
+            <!-- Empty right spacer for clean single-line header -->
+            <div class="editor-toolbar-right" style="margin-left:auto"></div>
+          </div>
+        </div>
+
+        <!-- Full Height Code Editor -->
+        <div class="editor-panel full-height" id="editorPanel" style="position:relative">
+          <div class="code-editor-wrapper" id="codeEditorWrapper">
+            <div class="editor-gutter" id="editorGutter">1</div>
+            <textarea id="cvCodeEditor" class="fallback-editor" spellcheck="false" autocapitalize="none" autocomplete="off" autocorrect="off" placeholder="# Enter or paste your OpenCV Python code here..."></textarea>
+          </div>
+        </div>
+
+        <!-- ==================================================== -->
+        <!-- BOTTOM BAR OF INPUT CODE (Run Code on Right Bottom)  -->
+        <!-- ==================================================== -->
+        <div class="editor-bottom-bar" id="editorBottomBar">
+          <div class="editor-bottom-left">
+            <div class="editor-stat-pill">
+              <span class="editor-runtime-dot" style="background:#06b6d4"></span>
+              <span>OpenCV + Pyodide WASM</span>
+            </div>
+            <span class="editor-shortcut-hint"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> to execute</span>
+          </div>
+
+          <div class="editor-bottom-right">
+            <!-- PRIMARY ACTION: PROMINENT LIME RUN BUTTON (RIGHT BOTTOM OF INPUT CODE) -->
+            <button class="run-btn" id="runBtn" title="Execute Code (Ctrl+Enter)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+              <span>Run Code</span>
+              <span class="run-shortcut">Ctrl+↵</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resizer Handle -->
+      <div class="split-handle-vertical" id="splitHandle">
+        <div class="handle-grip-v"></div>
+      </div>
+
+      <!-- ==================================================== -->
+      <!-- COLUMN 2: Vision Canvas & Output Console              -->
+      <!-- ==================================================== -->
+      <div class="workspace-right-column" id="workspaceRightColumn" style="flex: 0.9">
+        <div class="output-panel" id="outputPanel">
+          
+          <!-- Output Tabs -->
+          <div class="output-tabs">
+            <button class="output-tab active" data-tab="vision" id="tabVisionBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
+              <span>Vision Canvas</span>
+              <span class="vision-tab-badge" id="visionCountBadge" style="display:none">0</span>
+            </button>
+            <button class="output-tab" data-tab="console" id="tabConsoleBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+              <span>Console Output</span>
+            </button>
+          </div>
+
+          <!-- Tab 1: Vision Canvas Output -->
+          <div class="vision-output" id="visionOutputView" style="display:flex">
+            <div class="vision-output-header">
+              <div class="vision-header-left">
+                <div class="vision-title-group">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  <span class="vision-title">Processed Image & Video Results</span>
+                </div>
+                <span class="vision-count-pill" id="visionImageCount">0 Outputs</span>
+              </div>
+              <div class="vision-header-actions">
+                <button class="vision-action-btn" id="clearVisionCanvasBtn" title="Clear all rendered outputs">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
+                  <span>Clear Canvas</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Vision Empty State -->
+            <div class="vision-empty-state" id="visionEmptyState">
+              <div class="vision-empty-icon">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
+              </div>
+              <h4 class="vision-empty-heading">No Processed Media Yet</h4>
+              <p class="vision-empty-text">Click <b>"Run Code"</b> to execute your OpenCV script with <code>cv2_imshow()</code>, <code>cv2.imshow()</code>, or video processing. Output frames and videos render live here!</p>
+              <div class="vision-hint-card" style="margin-top:14px">
+                <div class="vision-hint-row">
+                  <span class="vision-hint-badge">💡 40 EXPERIMENTS</span>
+                  <span>Click <b>"Load CV Code"</b> above to load ready-to-run university syllabus experiments.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rendered Images List -->
+            <div class="vision-images-list" id="visionImagesList" style="padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:14px"></div>
+          </div>
+
+          <!-- Tab 2: Terminal Console Output -->
+          <div class="console-output" id="consoleOutputView" style="display:none;flex:1;min-height:0;overflow-y:auto;background:#06080e;padding:14px;font-family:var(--font-mono);font-size:12.5px;color:#cbd5e1;line-height:1.6">
+            <div id="consoleLogContent"></div>
+          </div>
+
+          <!-- Status Bar -->
+          <div class="status-bar">
+            <div class="status-left">
+              <span class="status-indicator" id="statusIndicator">
+                <span class="status-dot green" id="statusDot"></span>
+                <span id="statusText">Ready</span>
+              </span>
+              <span class="status-time" id="statusTime">0ms</span>
+            </div>
+            <div class="status-right" style="font-size:11px;color:var(--text-muted)">
+              <span>Pyodide WebAssembly Sandbox</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ========== BOTTOM NAVIGATION DOCK (Practice, Problems, Vision Lab, Guides, About, Contact) ========== -->
+  <footer class="bottom-app-bar" id="bottomAppBar">
+    <div class="bottom-app-bar-inner">
+      <nav class="bottom-nav-tabs">
+        <a href="/" class="bottom-nav-tab-link" id="navPracticeBtn" title="Multi-Language Coding Practice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          <span>Practice</span>
+        </a>
+
+        <a href="/?view=problems" class="bottom-nav-tab-link" id="navProblemsBtn" title="Practice Problems & Curated Challenges">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          <span>Problems</span>
+        </a>
+
+        <a href="/vision.html" class="bottom-nav-tab active" id="navVisionBtn" title="Computer Vision Lab (40 OpenCV Experiments)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
+          <span>Vision Lab</span>
+        </a>
+
+        <a href="/guides.html" class="bottom-nav-tab-link" title="Programming Guides & Tutorials">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/></svg>
+          <span>Guides</span>
+        </a>
+
+        <a href="/about.html" class="bottom-nav-tab-link" title="About VAB-CODE">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <span>About</span>
+        </a>
+
+        <a href="/contact.html" class="bottom-nav-tab-link" title="Contact Us">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          <span>Contact</span>
+        </a>
+      </nav>
+
+      <div class="bottom-bar-right">
+        <span class="bottom-status-hint">VAB-CODE &bull; OpenCV Python WebAssembly Sandbox</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== 40 CV EXPERIMENTS MODAL ========== -->
+  <div class="overlay" id="cvLabOverlay" style="display:none">
+    <div class="overlay-content cv-modal-content">
+      <div class="overlay-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <h2>Computer Vision Lab — 40 Experiments</h2>
+            <span class="badge-mini-cyan">OpenCV & Python</span>
+          </div>
+          <p>University syllabus curriculum • 1-Click load into code editor</p>
+        </div>
+        <button class="icon-btn" id="closeCvLabBtn" title="Close Modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="cv-filter-wrapper">
+        <div class="cv-search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="cvSearchInput" placeholder="Filter experiments (e.g. Grayscale, Blur, Canny, Dilation, Erosion, Video, Scaling, Rotation, Affine, Homography, DLT)...">
+        </div>
+        <div class="cv-categories-bar" id="cvCategoriesBar">
+          <button class="cv-cat-btn active" data-cat="all">All (40)</button>
+          <button class="cv-cat-btn" data-cat="basic">Basic (8)</button>
+          <button class="cv-cat-btn" data-cat="video">Video & Camera (4)</button>
+          <button class="cv-cat-btn" data-cat="transform">Transform (4)</button>
+          <button class="cv-cat-btn" data-cat="edge">Edge Detection (5)</button>
+          <button class="cv-cat-btn" data-cat="sharpen">Sharpening (6)</button>
+          <button class="cv-cat-btn" data-cat="morphology">Morphology (7)</button>
+          <button class="cv-cat-btn" data-cat="roi">ROI & Marks (3)</button>
+          <button class="cv-cat-btn" data-cat="detection">Detection (3)</button>
+        </div>
+      </div>
+
+      <!-- CV Experiments Grid -->
+      <div class="cv-experiments-grid" id="cvExperimentsGrid"></div>
+    </div>
+  </div>
+
+  <!-- ========== SAVED CODE & HISTORY DRAWER ========== -->
+  <div class="overlay" id="historyOverlay" style="display:none">
+    <div class="overlay-content history-modal-content">
+      <div class="overlay-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <h2>Saved Code & Browser History</h2>
+            <span class="badge-mini-green">Client-Side</span>
+          </div>
+          <p>Access and manage your locally saved scripts</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="export-zip-btn" id="exportAllZipBtn" title="Export all saved codes as a single .ZIP file">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+            <span>Export All (.ZIP)</span>
+          </button>
+          <button class="icon-btn" id="closeHistoryBtn" title="Close">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- 100% Client-Side Private Storage Banner -->
+      <div class="storage-warning-banner">
+        <div class="warning-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <div class="warning-text">
+          <div class="warning-title">🔒 100% Private Client-Side Storage</div>
+          <div class="warning-desc">All code is saved directly in your browser's local memory. Zero server uploads, zero external tracking, always accessible offline.</div>
+        </div>
+      </div>
+
+      <!-- Storage Usage Meter Bar -->
+      <div class="storage-quota-bar" id="storageQuotaBar">
+        <div class="storage-quota-info">
+          <span class="storage-quota-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><line x1="22" y1="12" x2="2" y2="12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" y1="16" x2="6.01" y2="16"/><line x1="10" y1="16" x2="10.01" y2="16"/></svg>
+            <span>Local Storage Used: <strong id="storageUsedText">0 B</strong> across <strong id="storageCountText">0 scripts</strong></span>
+          </span>
+          <span class="storage-quota-available" id="storageQuotaText">Browser Quota: ~5 MB (0.0% used)</span>
+        </div>
+        <div class="storage-quota-track">
+          <div class="storage-quota-fill" id="storageQuotaFill" style="width: 0.2%"></div>
+        </div>
+      </div>
+
+      <!-- Save Current Code Form -->
+      <div class="save-snippet-bar">
+        <input type="text" id="saveSnippetName" placeholder="Enter title for current script (e.g. Canny Edge Detection)..." maxlength="60">
+        <button class="save-submit-btn" id="confirmSaveSnippetBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          <span>Save Current Code</span>
+        </button>
+      </div>
+
+      <!-- Saved Snippets List -->
+      <div class="history-list" id="historyList">
+        <!-- Rendered dynamically from localStorage -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="cvExperiments.js?v=6.4"></script>
+  <script src="vision.js?v=6.4"></script>
+</body>
+</html>

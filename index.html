@@ -144,9 +144,11 @@
     }
   </script>
 
-  <link rel="stylesheet" href="style.css?v=6.3">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+  <!-- Ambient Interactive Cursor Spotlight (Tracks cursor across page) -->
+  <div class="ambient-cursor-glow" id="ambientCursorGlow"></div>
 
   <!-- ========== HEADER ========== -->
   <header class="header">
@@ -162,37 +164,26 @@
       </div>
     </div>
 
-    <div class="header-center">
-      <nav class="nav-tabs">
-        <button class="nav-tab active" data-view="practice" id="navPracticeBtn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-          Practice
-        </button>
-        <button class="nav-tab" data-view="problems" id="navProblemsBtn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-          Problems
-        </button>
-        <a href="/guides.html" class="nav-tab-link" title="Programming Guides & Tutorials">
-          <i data-lucide="book-open" style="width:14px;height:14px"></i>
-          Guides
-        </a>
-        <a href="/about.html" class="nav-tab-link" title="About VAB-CODE">
-          <i data-lucide="info" style="width:14px;height:14px"></i>
-          About
-        </a>
-        <a href="/contact.html" class="nav-tab-link" title="Contact Us">
-          <i data-lucide="mail" style="width:14px;height:14px"></i>
-          Contact
-        </a>
-      </nav>
-    </div>
-
     <div class="header-right">
-      <!-- PWA Install App Button (Auto-reveals when installable) -->
-      <button class="header-action-btn install-app-btn" id="installAppBtn" title="Install VAB-CODE App to your Device" style="display:none">
-        <i data-lucide="download" style="width:14px;height:14px;color:#38bdf8"></i>
-        <span>Install App</span>
-      </button>
+      <!-- Quick Arena Navigation (Rankings & Daily 10) -->
+      <div class="header-arena-group">
+        <button class="header-arena-btn" id="headerLeaderboardBtn" title="View Top 10 Global Leaderboard">
+          <span class="arena-icon">🏆</span>
+          <span>Rankings</span>
+        </button>
+        <button class="header-arena-btn" id="headerDailyQuizBtn" title="Play Daily 10 MCQ Challenge">
+          <span class="arena-icon">🎮</span>
+          <span>Daily 10</span>
+        </button>
+      </div>
+
+      <!-- User Auth Profile / Login Pill -->
+      <div class="header-auth-wrapper" id="headerAuthWrapper"></div>
+
+      <a href="#editorSection" class="header-scroll-jump-btn" id="headerScrollJumpBtn" title="Instant jump down to Code Editor">
+        <span class="pulse-dot"></span>
+        <span>↓ Scroll to Code</span>
+      </a>
       <button class="header-action-btn" id="historyBtn" title="Saved Code & Local Storage History">
         <i data-lucide="folder-clock" style="width:15px;height:15px;color:#a78bfa"></i>
         <span>Saved Code</span>
@@ -205,19 +196,377 @@
     </div>
   </header>
 
-  <!-- ========== MAIN WORKSPACE ========== -->
-  <main class="workspace">
-    <!-- Mobile View Switcher (Visible only on screens <= 868px) -->
+  <!-- ========== FIRST VIEW HERO: ALL LANGUAGES & DIFFERENT SUBJECTS SHOWCASE ========== -->
+  <section class="first-view-hero" id="firstViewHero">
+    <div class="hero-container">
+      <!-- ── HERO TOP ROW: HEADLINE ON LEFT, HIGHLIGHTED SCROLL DOWN TO CODE ON RIGHT ── -->
+      <div class="hero-top-row" id="heroTopRow">
+        <div class="hero-top-left">
+          <div class="hero-header-badge">
+            <span class="pulse-dot"></span>
+            <span>High-Performance In-Browser IDE & Universal Algorithm Workbench</span>
+          </div>
+          <h1 class="hero-headline">
+            Practice, Code & Compile in <span class="gradient-text">All Languages & Subjects</span>
+          </h1>
+          <p class="hero-subtext">
+            Zero server setup, 100% private client-side execution. Choose any programming language or university lab module to begin coding below.
+          </p>
+        </div>
+
+        <div class="hero-top-right">
+          <!-- HIGHLIGHTED "SCROLL DOWN TO CODE" INTERACTIVE RIGHT-SIDE ACTION CARD -->
+          <a href="#editorSection" class="hero-right-scroll-card" id="heroRightScrollBtn" title="Scroll down to Input Code & Output Console">
+            <div class="right-scroll-glow"></div>
+            <div class="right-scroll-inner">
+              <div class="right-scroll-badge">
+                <span class="pulse-dot"></span>
+                <span>⚡ READY TO CODE</span>
+              </div>
+              <div class="right-scroll-title-wrap">
+                <span class="right-scroll-main-title">SCROLL DOWN TO CODE</span>
+                <span class="right-scroll-chevrons">
+                  <svg class="chevron-arrow down-1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="6 9 12 15 18 9"/></svg>
+                  <svg class="chevron-arrow down-2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="6 9 12 15 18 9"/></svg>
+                </span>
+              </div>
+              <p class="right-scroll-desc">Jump straight to In-Browser Code Editor & Output Console below</p>
+              <div class="right-scroll-action">
+                <span class="right-scroll-btn-pill">Jump to Code ↓</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- ── SECTION 1: ALL TYPES OF LANGUAGES ── -->
+      <div class="hero-block hero-languages-block">
+        <div class="block-title-row">
+          <div class="block-title-left">
+            <div class="block-icon-glow icon-blue">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            </div>
+            <div>
+              <h2 class="block-heading">All Types of Languages</h2>
+              <span class="block-sub">Click any language to select runtime and jump straight to code</span>
+            </div>
+          </div>
+          <span class="block-counter-badge">7 Runtimes</span>
+        </div>
+
+        <div class="hero-languages-grid" id="heroLanguagesGrid">
+          <!-- 1. Python -->
+          <div class="hero-lang-card active" data-lang="python" role="button" tabindex="0">
+            <div class="lang-card-top">
+              <div class="lang-icon-box py-box">
+                <span class="lang-emoji">🐍</span>
+              </div>
+              <span class="lang-tag-pill wasm-pill">Pyodide WASM</span>
+            </div>
+            <div class="lang-card-body">
+              <h3 class="lang-card-name">Python 3.11</h3>
+              <p class="lang-card-desc">NumPy, Matplotlib, OpenCV, Pandas & scientific libraries in-browser.</p>
+            </div>
+            <div class="lang-card-footer">
+              <span class="lang-action-text">Select & Code</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+
+          <!-- 2. C -->
+          <div class="hero-lang-card" data-lang="c" role="button" tabindex="0">
+            <div class="lang-card-top">
+              <div class="lang-icon-box c-box">
+                <span class="lang-emoji">⚙️</span>
+              </div>
+              <span class="lang-tag-pill c-pill">C99 / Clang</span>
+            </div>
+            <div class="lang-card-body">
+              <h3 class="lang-card-name">C Language</h3>
+              <p class="lang-card-desc">Pointers, memory management, dynamic structures & graphics.h.</p>
+            </div>
+            <div class="lang-card-footer">
+              <span class="lang-action-text">Select & Code</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+
+          <!-- 3. C++ -->
+          <div class="hero-lang-card" data-lang="cpp" role="button" tabindex="0">
+            <div class="lang-card-top">
+              <div class="lang-icon-box cpp-box">
+                <span class="lang-emoji">⚡</span>
+              </div>
+              <span class="lang-tag-pill cpp-pill">C++20 / STL</span>
+            </div>
+            <div class="lang-card-body">
+              <h3 class="lang-card-name">C++20</h3>
+              <p class="lang-card-desc">Standard Template Library, vectors, maps, stacks & competitive algorithms.</p>
+            </div>
+            <div class="lang-card-footer">
+              <span class="lang-action-text">Select & Code</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+
+          <!-- 4. Java -->
+          <div class="hero-lang-card" data-lang="java" role="button" tabindex="0">
+            <div class="lang-card-top">
+              <div class="lang-icon-box java-box">
+                <span class="lang-emoji">☕</span>
+              </div>
+              <span class="lang-tag-pill java-pill">JVM 17 Web</span>
+            </div>
+            <div class="lang-card-body">
+              <h3 class="lang-card-name">Java 17</h3>
+              <p class="lang-card-desc">Object-oriented programming, classes, inheritance & university labs.</p>
+            </div>
+            <div class="lang-card-footer">
+              <span class="lang-action-text">Select & Code</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+
+          <!-- 5. HTML5 -->
+          <div class="hero-lang-card" data-lang="html" role="button" tabindex="0">
+            <div class="lang-card-top">
+              <div class="lang-icon-box html-box">
+                <span class="lang-emoji">🌐</span>
+              </div>
+              <span class="lang-tag-pill html-pill">HTML5 DOM</span>
+            </div>
+            <div class="lang-card-body">
+              <h3 class="lang-card-name">HTML5</h3>
+              <p class="lang-card-desc">Semantic page structures, canvas rendering & instant live preview.</p>
+            </div>
+            <div class="lang-card-footer">
+              <span class="lang-action-text">Select & Code</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+
+          <!-- 6. CSS3 -->
+          <div class="hero-lang-card" data-lang="css" role="button" tabindex="0">
+            <div class="lang-card-top">
+              <div class="lang-icon-box css-box">
+                <span class="lang-emoji">🎨</span>
+              </div>
+              <span class="lang-tag-pill css-pill">Modern CSS3</span>
+            </div>
+            <div class="lang-card-body">
+              <h3 class="lang-card-name">CSS3</h3>
+              <p class="lang-card-desc">Flexbox, Grid layouts, keyframe animations & responsive design.</p>
+            </div>
+            <div class="lang-card-footer">
+              <span class="lang-action-text">Select & Code</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+
+          <!-- 7. JavaScript -->
+          <div class="hero-lang-card" data-lang="javascript" role="button" tabindex="0">
+            <div class="lang-card-top">
+              <div class="lang-icon-box js-box">
+                <span class="lang-emoji">✨</span>
+              </div>
+              <span class="lang-tag-pill js-pill">ESNext / Web</span>
+            </div>
+            <div class="lang-card-body">
+              <h3 class="lang-card-name">JavaScript</h3>
+              <p class="lang-card-desc">Modern ES6+ syntax, asynchronous JS, DOM manipulation & client sandbox.</p>
+            </div>
+            <div class="lang-card-footer">
+              <span class="lang-action-text">Select & Code</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECTION 2: DIFFERENT SUBJECTS & LAB MODULES ── -->
+      <div class="hero-block hero-subjects-block">
+        <div class="block-title-row">
+          <div class="block-title-left">
+            <div class="block-icon-glow icon-purple">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+            </div>
+            <div>
+              <h2 class="block-heading">Different Subjects & Lab Modules</h2>
+              <span class="block-sub">Specialized curriculums with starters, testbeds & printable exports</span>
+            </div>
+          </div>
+          <span class="block-counter-badge pill-purple">6 Modules</span>
+        </div>
+
+        <div class="hero-subjects-grid">
+          <!-- Subject 1: Data Structures & Algorithms -->
+          <div class="hero-subject-card subject-card-dsa">
+            <div class="subject-card-header">
+              <div class="subject-icon-box icon-cobalt">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
+              </div>
+              <span class="subject-tag-badge badge-cobalt">Starter Templates</span>
+            </div>
+            <h3 class="subject-title">Data Structures & Algorithms</h3>
+            <p class="subject-desc">Linked Lists, Binary Trees, Stacks, Queues, Graphs, Sorting & Dynamic Programming with 1-click code injection.</p>
+            <div class="subject-action-row">
+              <button class="hero-subject-btn btn-cobalt" id="heroDsaBtn" type="button">
+                <span>Open DSA Starters</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Subject 2: Computer Vision Lab -->
+          <div class="hero-subject-card subject-card-cv">
+            <div class="subject-card-header">
+              <div class="subject-icon-box icon-cyan">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
+              </div>
+              <span class="subject-tag-badge badge-cyan">40 Experiments</span>
+            </div>
+            <h3 class="subject-title">Computer Vision & OpenCV</h3>
+            <p class="subject-desc">Grayscale, Canny edge detection, morphological filters, transformations & face tracking rendered on live canvas.</p>
+            <div class="subject-action-row">
+              <button class="hero-subject-btn btn-cyan" id="heroCvBtn" type="button">
+                <span>Load 40 CV Experiments</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Subject 3: University Practice Programs -->
+          <div class="hero-subject-card subject-card-practice">
+            <div class="subject-card-header">
+              <div class="subject-icon-box icon-teal">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+              </div>
+              <span class="subject-tag-badge badge-teal">80 Solved Codes</span>
+            </div>
+            <h3 class="subject-title">University Practice Lab</h3>
+            <p class="subject-desc">20 solved core lab problems across Python, C, C++, and Java: Primes, Fibonacci, Matrix math & Binary Search.</p>
+            <div class="subject-action-row">
+              <button class="hero-subject-btn btn-teal" id="heroPracticeBtn" type="button">
+                <span>Browse Practice Codes</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Subject 4: Daily Mind Work & Brain Puzzles -->
+          <div class="hero-subject-card subject-card-quiz">
+            <div class="subject-card-header">
+              <div class="subject-icon-box icon-amber">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7Z"/><path d="M9 21h6"/></svg>
+              </div>
+              <span class="subject-tag-badge badge-amber">Daily Brain Work</span>
+            </div>
+            <h3 class="subject-title">Daily Mind Work & Puzzles</h3>
+            <p class="subject-desc">Sharpen your analytical skills with tricky code output puzzles, execution tracing, and instant in-depth explanations.</p>
+            <div class="subject-action-row">
+              <button class="hero-subject-btn btn-amber" id="heroQuizBtn" type="button">
+                <span>Start Mind Workout</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Subject 5: Polyglot Cross-Transpiler -->
+          <div class="hero-subject-card subject-card-translate">
+            <div class="subject-card-header">
+              <div class="subject-icon-box icon-lime">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg>
+              </div>
+              <span class="subject-tag-badge badge-lime">Universal AI</span>
+            </div>
+            <h3 class="subject-title">Cross-Language Transpiler</h3>
+            <p class="subject-desc">Universal zero-cost code converter: instantaneously convert any Python logic into Java, C, or C++ with correct syntax.</p>
+            <div class="subject-action-row">
+              <button class="hero-subject-btn btn-lime" id="heroTranslateBtn" type="button">
+                <span>Convert Syntax Now</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Subject 6: University Lab Record PDF -->
+          <div class="hero-subject-card subject-card-pdf">
+            <div class="subject-card-header">
+              <div class="subject-icon-box icon-coral">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+              </div>
+              <span class="subject-tag-badge badge-coral">Printable PDF</span>
+            </div>
+            <h3 class="subject-title">Lab Record PDF Generator</h3>
+            <p class="subject-desc">Generate official college practical lab records complete with Aim, Algorithm, Code, Terminal Output, and Marks Sheet.</p>
+            <div class="subject-action-row">
+              <button class="hero-subject-btn btn-coral" id="heroPdfBtn" type="button">
+                <span>Export Lab PDF</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── HIGHLIGHTED "SCROLL DOWN TO CODE" MILLION-DOLLAR INTERACTIVE BANNER ── -->
+      <div class="hero-scroll-showcase">
+        <div class="scroll-showcase-glow"></div>
+        <a href="#editorSection" class="highlighted-scroll-btn" id="heroScrollToCodeBtn" title="Scroll down to Input Code & Output Console">
+          <div class="scroll-btn-border-beam"></div>
+          <div class="scroll-btn-inner">
+            <div class="scroll-btn-left">
+              <div class="scroll-indicator-orb">
+                <span class="orb-pulse"></span>
+                <span class="orb-dot"></span>
+              </div>
+              <div class="scroll-label-group">
+                <div class="scroll-tagline">
+                  <span class="neon-pill">⚡ READY TO CODE</span>
+                  <span class="scroll-hint-key">Click or Scroll Down to Jump</span>
+                </div>
+                <div class="scroll-headline-row">
+                  <span class="scroll-main-text">SCROLL DOWN TO CODE</span>
+                  <span class="scroll-chevron-stack">
+                    <svg class="chevron-arrow down-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="6 9 12 15 18 9"/></svg>
+                    <svg class="chevron-arrow down-2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="6 9 12 15 18 9"/></svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="scroll-btn-right">
+              <span class="btn-live-badge">Input & Output Below</span>
+              <div class="cue-mouse">
+                <div class="cue-wheel"></div>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Floating Quick-Scroll Pill (Luminous CTA) -->
+      <div class="floating-quick-scroll" id="floatingQuickScroll">
+        <a href="#editorSection" class="floating-quick-btn" title="Instant jump to Code Editor">
+          <span class="quick-pulse-dot"></span>
+          <span>↓ Jump to Code</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== MAIN WORKSPACE (SCROLL DOWN TO CODE & OUTPUT) ========== -->
+  <main class="workspace" id="editorSection">
+    <!-- Mobile Navigation Anchor Bar (Visible only on screens <= 868px) -->
     <div class="mobile-view-bar" id="mobileViewBar">
-      <button class="mobile-view-btn active" data-view="editor" id="mobileViewEditorBtn" title="Switch to Code Editor">
+      <button class="mobile-view-btn" data-view="hero" id="mobileViewHeroBtn" title="Jump to Languages & Subjects">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+        <span>Explore</span>
+      </button>
+      <button class="mobile-view-btn active" data-view="editor" id="mobileViewEditorBtn" title="Scroll to Code Editor">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-        <span>Editor</span>
+        <span>Code</span>
       </button>
-      <button class="mobile-view-btn" data-view="split" id="mobileViewSplitBtn" title="Switch to Split View">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
-        <span>Split</span>
-      </button>
-      <button class="mobile-view-btn" data-view="output" id="mobileViewOutputBtn" title="Switch to Output Console">
+      <button class="mobile-view-btn" data-view="output" id="mobileViewOutputBtn" title="Scroll to Output Console">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
         <span>Output</span>
       </button>
@@ -236,7 +585,7 @@
           <ins class="adsbygoogle"
                style="display:block"
                data-ad-client="ca-pub-6387245631770824"
-               data-ad-slot="auto"
+               data-ad-slot="6448735061"
                data-ad-format="auto"
                data-full-width-responsive="true"></ins>
           <script>
@@ -246,77 +595,194 @@
       </aside>
 
       <!-- Vertical Resizer Handle 1 (Left Problem <-> Middle Editor) -->
-      <div class="split-handle-vertical" id="splitHandleLeft">
+      <div class="split-handle-vertical" id="splitHandleLeft" style="display:none">
         <div class="handle-grip-v"></div>
       </div>
 
       <!-- ==================================================== -->
-      <!-- COLUMN 2 (MIDDLE): Code Input & Editor               -->
+      <!-- MAIN WORKSPACE STACK: INPUT CODE ON TOP, OUTPUT DOWN -->
       <!-- ==================================================== -->
-      <div class="workspace-left-editor" id="workspaceLeftEditor">
-        <!-- ---- LANGUAGE SELECTOR BAR ---- -->
-        <div class="lang-bar">
-          <div class="lang-bar-inner">
-            <span class="lang-bar-label">Select Language:</span>
-            <div class="lang-buttons">
-              <button class="lang-btn active" data-lang="python">
-                <span class="lang-dot" style="background:#facc15"></span>
-                Python
-              </button>
-              <button class="lang-btn" data-lang="c">
-                <span class="lang-dot" style="background:#22d3ee"></span>
-                C
-              </button>
-              <button class="lang-btn" data-lang="cpp">
-                <span class="lang-dot" style="background:#60a5fa"></span>
-                C++
-              </button>
-              <button class="lang-btn" data-lang="java">
-                <span class="lang-dot" style="background:#fb923c"></span>
-                Java
-              </button>
-              <div class="lang-divider"></div>
-              <button class="lang-btn" data-lang="html">
-                <span class="lang-dot" style="background:#f97316"></span>
-                HTML
-              </button>
-              <button class="lang-btn" data-lang="css">
-                <span class="lang-dot" style="background:#3b82f6"></span>
-                CSS
-              </button>
-              <button class="lang-btn" data-lang="javascript">
-                <span class="lang-dot" style="background:#eab308"></span>
-                JavaScript
-              </button>
-            </div>
-            <div class="core-lang-badge" id="coreLangBadge" title="Automatic cross-translation active between Python, C, C++, and Java">
-              <i data-lucide="zap" style="width:12px;height:12px;color:#facc15"></i>
-              <span>Core Lab 4 ⇄ Auto-Translator</span>
-            </div>
-          </div>
+      <div class="workspace-main-stack" id="workspaceMainStack">
 
-          <!-- Editor Toolbar -->
-          <div class="editor-toolbar">
-            <div class="editor-toolbar-left" style="display:flex;align-items:center;gap:8px">
-              <span class="file-name" id="fileName">main.py</span>
-              <!-- Unsaved Changes Status Indicator -->
-              <div class="save-status-indicator" id="saveStatusIndicator" title="All changes saved locally (Ctrl+S)">
-                <span class="save-status-dot saved" id="saveStatusDot"></span>
-                <span class="save-status-text" id="saveStatusText">Saved</span>
+        <!-- ==================================================== -->
+        <!-- INPUT CODE & EDITOR                                  -->
+        <!-- ==================================================== -->
+        <div class="workspace-left-editor" id="workspaceLeftEditor">
+        <!-- ---- LANGUAGE SELECTOR BAR ---- -->
+        <!-- ---- COMPACT UNIFIED WORKSPACE TOOLBAR ---- -->
+        <div class="lang-bar compact-workspace-bar">
+          <!-- Unified Single-Row Editor Toolbar -->
+          <div class="editor-toolbar editor-toolbar-primary">
+            <div class="editor-toolbar-left">
+              <!-- File Name & Saved Indicator -->
+              <div class="file-status-box">
+                <span class="file-name" id="fileName">main.py</span>
+                <div class="save-status-indicator" id="saveStatusIndicator" title="All changes saved locally (Ctrl+S)">
+                  <span class="save-status-dot saved" id="saveStatusDot"></span>
+                  <span class="save-status-text" id="saveStatusText">Saved</span>
+                </div>
               </div>
-              <!-- Practice Programs (20 Questions - 80 Codes) Dropdown Slot -->
-              <div class="practice-programs-wrapper" id="practiceProgramsWrapper">
-                <button class="practice-programs-btn" id="practiceProgramsBtn" title="20 Essential Practice Programs (Python, C, C++, Java) - 1-Click Load into Editor">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
-                  <span class="btn-text">Practice Programs</span>
-                  <span class="practice-count-badge">20</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.7"><path d="m6 9 6 6 6-6"/></svg>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- 1ST ICON: PROGRAMMING LANGUAGES MENU (py, c, c++, java, html, css, js) -->
+              <div class="lang-menu-wrapper" id="langMenuWrapper">
+                <button class="lang-menu-trigger-btn" id="langMenuTriggerBtn" type="button" title="Select Programming Language" aria-haspopup="true" aria-expanded="false">
+                  <span class="trigger-icon-box">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                  </span>
+                  <span class="lang-trigger-label" id="currentLangLabel">Python</span>
+                  <span class="lang-trigger-badge" id="currentLangBadge">PY</span>
+                  <svg class="chevron-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
+
+                <!-- Floating Dropdown Popover (Cascading Staggered Upward Animation) -->
+                <div class="lang-popover-menu" id="langPopoverMenu" style="display:none">
+                  <div class="popover-header">
+                    <span class="popover-title">SELECT LANGUAGE</span>
+                    <span class="popover-hint">7 Runtimes</span>
+                  </div>
+                  <div class="lang-popover-list">
+                    <button class="lang-btn active" data-lang="python">
+                      <span class="lang-dot" style="background:#facc15"></span>
+                      <span class="lang-btn-name">Python</span>
+                      <span class="lang-btn-tag">Pyodide WASM</span>
+                    </button>
+                    <button class="lang-btn" data-lang="c">
+                      <span class="lang-dot" style="background:#22d3ee"></span>
+                      <span class="lang-btn-name">C</span>
+                      <span class="lang-btn-tag">C99 / Clang</span>
+                    </button>
+                    <button class="lang-btn" data-lang="cpp">
+                      <span class="lang-dot" style="background:#60a5fa"></span>
+                      <span class="lang-btn-name">C++</span>
+                      <span class="lang-btn-tag">C++20 / WASM</span>
+                    </button>
+                    <button class="lang-btn" data-lang="java">
+                      <span class="lang-dot" style="background:#fb923c"></span>
+                      <span class="lang-btn-name">Java</span>
+                      <span class="lang-btn-tag">JVM Web Engine</span>
+                    </button>
+                    <div class="popover-divider"></div>
+                    <button class="lang-btn" data-lang="html">
+                      <span class="lang-dot" style="background:#f97316"></span>
+                      <span class="lang-btn-name">HTML</span>
+                      <span class="lang-btn-tag">HTML5 Sandbox</span>
+                    </button>
+                    <button class="lang-btn" data-lang="css">
+                      <span class="lang-dot" style="background:#3b82f6"></span>
+                      <span class="lang-btn-name">CSS</span>
+                      <span class="lang-btn-tag">Modern CSS3</span>
+                    </button>
+                    <button class="lang-btn" data-lang="javascript">
+                      <span class="lang-dot" style="background:#eab308"></span>
+                      <span class="lang-btn-name">JavaScript</span>
+                      <span class="lang-btn-tag">ESNext / DOM</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2ND ICON: REMAINING ALL FEATURES MENU (Practice, DSA, CV Lab, Cross-Translate) -->
+              <div class="features-menu-wrapper" id="featuresMenuWrapper">
+                <button class="features-menu-trigger-btn" id="featuresMenuTriggerBtn" type="button" title="Open Features & Workbench Tools" aria-haspopup="true" aria-expanded="false">
+                  <span class="trigger-icon-box features-icon-box">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect width="7" height="7" x="3" y="3" rx="1"/>
+                      <rect width="7" height="7" x="14" y="3" rx="1"/>
+                      <rect width="7" height="7" x="14" y="14" rx="1"/>
+                      <rect width="7" height="7" x="3" y="14" rx="1"/>
+                    </svg>
+                  </span>
+                  <span class="features-trigger-label">Features</span>
+                  <span class="features-trigger-badge">4</span>
+                  <svg class="chevron-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+
+                <!-- Floating Features Popover (Cascading Staggered Animation) -->
+                <div class="features-popover-menu" id="featuresPopoverMenu" style="display:none">
+                  <div class="popover-header">
+                    <span class="popover-title">WORKBENCH FEATURES</span>
+                    <span class="popover-hint">Essential Tools</span>
+                  </div>
+                  <div class="features-popover-list">
+                    <!-- Feature 1: Practice Programs -->
+                    <button class="feature-menu-item" id="featureItemPractice" type="button">
+                      <div class="feature-item-icon icon-teal">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+                      </div>
+                      <div class="feature-item-content">
+                        <div class="feature-item-title-row">
+                          <span class="feature-title">Practice Programs</span>
+                          <span class="feature-pill pill-teal">20</span>
+                        </div>
+                        <span class="feature-subtitle">80 solved codes across Py, C, C++, Java</span>
+                      </div>
+                    </button>
+
+                    <!-- Feature 2: DSA Templates -->
+                    <button class="feature-menu-item" id="featureItemDSA" type="button">
+                      <div class="feature-item-icon icon-cobalt">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
+                      </div>
+                      <div class="feature-item-content">
+                        <div class="feature-item-title-row">
+                          <span class="feature-title">DSA Templates</span>
+                          <span class="feature-pill pill-cobalt">DSA</span>
+                        </div>
+                        <span class="feature-subtitle">1-click algorithm & data structure starters</span>
+                      </div>
+                    </button>
+
+                    <!-- Feature 3: Computer Vision Codes -->
+                    <button class="feature-menu-item" id="featureItemCV" type="button">
+                      <div class="feature-item-icon icon-coral">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
+                      </div>
+                      <div class="feature-item-content">
+                        <div class="feature-item-title-row">
+                          <span class="feature-title">Computer Vision Codes</span>
+                          <span class="feature-pill pill-coral">40</span>
+                        </div>
+                        <span class="feature-subtitle">OpenCV & Python Vision Lab with live canvas</span>
+                      </div>
+                    </button>
+
+                    <!-- Feature 4: Cross-Translate -->
+                    <button class="feature-menu-item" id="featureItemTranslate" type="button">
+                      <div class="feature-item-icon icon-lime">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg>
+                      </div>
+                      <div class="feature-item-content">
+                        <div class="feature-item-title-row">
+                          <span class="feature-title">Cross-Translate</span>
+                          <span class="feature-pill pill-lime">AI</span>
+                        </div>
+                        <span class="feature-subtitle">Universal syntax converter (Py, C, C++, Java)</span>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3RD BUTTON: LOAD CV CODE (40 COMPUTER VISION EXPERIMENTS) -->
+              <button class="cv-lab-btn" id="openCvModalBtn" title="Browse and Load 40 University Syllabus Computer Vision Experiments">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
+                <span class="btn-text">Load CV Code</span>
+                <span class="cv-count-badge">40</span>
+              </button>
+
+              <!-- Hidden proxy anchors for JS compatibility -->
+              <div class="practice-programs-wrapper" id="practiceProgramsWrapper" style="display:none">
+                <button class="practice-programs-btn" id="practiceProgramsBtn" title="Practice Programs" style="display:none"></button>
                 <div class="practice-dropdown-menu" id="practiceProgramsMenu" style="display:none">
                   <div class="practice-menu-header">
                     <div class="practice-menu-title-box">
                       <div class="practice-menu-title-left">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#14bba6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
                         <span>20 Practice Programs</span>
                       </div>
                       <span class="practice-lang-pill" id="practiceMenuLangPill">Python</span>
@@ -332,107 +798,99 @@
                 </div>
               </div>
 
-              <!-- DSA Templates Starter Button -->
-              <button class="templates-btn" id="templatesBtn" title="1-Click DSA & Algorithm Starter Templates">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
-                <span class="btn-text">DSA Templates</span>
-              </button>
+              <button class="templates-btn" id="templatesBtn" style="display:none"></button>
+              <a href="/vision.html" class="cv-lab-btn" id="cvLabBtn" style="display:none"></a>
 
-              <!-- Computer Vision Lab (40 Experiments) Starter Button -->
-              <button class="cv-lab-btn" id="cvLabBtn" title="Computer Vision Lab — 40 University Syllabus Experiments (OpenCV & Python) - 1-Click Load into Editor">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
-                <span class="btn-text">CV Lab</span>
-                <span class="cv-count-badge">40</span>
-              </button>
-              <!-- Cross-Translate Toolbar Button -->
-              <div class="translate-dropdown-wrapper" id="translateDropdownWrapper">
-                <button class="translate-btn" id="translateBtn" title="Instant Code Cross-Translator (Python, C, C++, Java)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg>
-                  <span class="btn-text">Cross-Translate</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.7"><path d="m6 9 6 6 6-6"/></svg>
-                </button>
+              <div class="translate-dropdown-wrapper" id="translateDropdownWrapper" style="display:none">
+                <button class="translate-btn" id="translateBtn" style="display:none">Cross-Translate</button>
                 <div class="translate-menu" id="translateMenu" style="display:none">
                   <div class="translate-menu-header">
-                    <i data-lucide="zap" style="width:12px;height:12px;color:#facc15"></i>
+                    <i data-lucide="zap" style="width:12px;height:12px;color:#c8ff3d"></i>
                     <span>Convert Current Code To:</span>
                   </div>
                   <div class="translate-menu-list" id="translateMenuList"></div>
                   <div class="translate-menu-footer">
-                    <span>⚡ $0 Server Cost • Gemini Nano / Lab Transpiler</span>
+                    <span>⚡ Instant Polyglot Syntax Transpiler</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="toolbar-actions">
-              <!-- PRIMARY ACTION: RUN BUTTON (ALWAYS PROMINENT & VISIBLE) -->
-              <button class="run-btn" id="runBtn" title="Run Code (Ctrl+Enter)">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span>Run Code</span>
-                <span class="run-shortcut">Ctrl+↵</span>
-              </button>
+            <!-- ==================================================== -->
+            <!-- UPSIDE OF INPUT CODE: EDITOR OPTIONS ROW (14px, VS Dark, Format, Save, Copy, Share, Lab PDF, Download, ZIP, Clear) -->
+            <!-- ==================================================== -->
+            <div class="editor-toolbar-right" id="editorToolbarRight">
+              <div class="header-tools-row editor-tools-row">
+                <!-- Font Size & Theme Selectors -->
+                <div class="header-selects-group">
+                  <select class="editor-select-sm header-tool-select" id="fontSizeSelect" title="Editor Font Size">
+                    <option value="12">12px</option>
+                    <option value="14" selected>14px</option>
+                    <option value="16">16px</option>
+                    <option value="18">18px</option>
+                    <option value="20">20px</option>
+                  </select>
+                  <select class="editor-select-sm header-tool-select" id="themeSelect" title="Editor Theme">
+                    <option value="theme-vsdark" selected>VS Dark</option>
+                    <option value="theme-monokai">Monokai</option>
+                    <option value="theme-dracula">Dracula</option>
+                    <option value="theme-light">Light</option>
+                  </select>
+                </div>
 
-              <div class="toolbar-divider"></div>
+                <div class="header-tools-divider"></div>
 
-              <!-- Font Size & Theme Selectors -->
-              <div class="editor-controls-group">
-                <select class="editor-select-sm" id="fontSizeSelect" title="Editor Font Size">
-                  <option value="12">12px</option>
-                  <option value="14" selected>14px</option>
-                  <option value="16">16px</option>
-                  <option value="18">18px</option>
-                  <option value="20">20px</option>
-                </select>
-                <select class="editor-select-sm" id="themeSelect" title="Editor Theme">
-                  <option value="theme-vsdark" selected>VS Dark</option>
-                  <option value="theme-monokai">Monokai</option>
-                  <option value="theme-dracula">Dracula</option>
-                  <option value="theme-light">Light</option>
-                </select>
+                <!-- Action Buttons (Format, Save, Copy, Share, Lab PDF, Download, ZIP, Clear) -->
+                <div class="header-tools-btns">
+                  <!-- Auto-Format / Beautify Code -->
+                  <button class="sub-tool-btn format-tool-btn" id="formatBtn" title="Auto-Format / Beautify Code (Ctrl+Shift+F)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ff6b5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                    <span>Format</span>
+                  </button>
+
+                  <!-- Save Code to Chrome LocalStorage -->
+                  <button class="sub-tool-btn save-tool-btn" id="saveCodeBtn" title="Save Code to Chrome LocalStorage (Ctrl+S)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#14bba6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                    <span>Save</span>
+                  </button>
+
+                  <!-- Copy Code to Clipboard -->
+                  <button class="sub-tool-btn" id="copyBtn" title="Copy Code to Clipboard">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                    <span>Copy</span>
+                  </button>
+
+                  <!-- Share Code via Instant Link -->
+                  <button class="sub-tool-btn share-tool-btn" id="shareCodeBtn" title="Share Code via Instant Link (Serverless)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2457ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+                    <span>Share</span>
+                  </button>
+
+                  <!-- Printable Lab Record PDF Generator -->
+                  <button class="sub-tool-btn lab-pdf-tool-btn" id="exportPdfBtn" title="Export Printable Lab Record PDF for College Submissions">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#14bba6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                    <span>Lab PDF</span>
+                  </button>
+
+                  <!-- Download Code File -->
+                  <button class="sub-tool-btn" id="downloadCodeBtn" title="Download Code File">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    <span>Download</span>
+                  </button>
+
+                  <!-- Export All Saved Codes as ZIP -->
+                  <button class="sub-tool-btn" id="toolbarZipBtn" title="Export All Saved Codes as ZIP (.zip)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2457ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                    <span>ZIP</span>
+                  </button>
+
+                  <!-- Reset / Clear Editor -->
+                  <button class="sub-tool-btn clear-tool-btn" id="resetBtn" title="Clear Editor">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    <span>Clear</span>
+                  </button>
+                </div>
               </div>
-
-              <!-- Format / Beautify Code -->
-              <button class="icon-btn" id="formatBtn" title="Auto-Format / Beautify Code (Ctrl+Shift+F)" aria-label="Format Code">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-              </button>
-
-              <!-- Share Code via Serverless URL Hash -->
-              <button class="share-code-btn" id="shareCodeBtn" title="Share Code via Instant Link (Serverless)">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
-                <span>Share</span>
-              </button>
-
-              <!-- Printable Lab Record PDF Generator -->
-              <button class="lab-pdf-btn" id="exportPdfBtn" title="Export Printable Lab Record PDF for College Submissions">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-                <span>Lab PDF</span>
-              </button>
-
-              <!-- Save to Chrome LocalStorage -->
-              <button class="save-code-btn" id="saveCodeBtn" title="Save Code to Chrome LocalStorage (Ctrl+S)">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                <span>Save</span>
-              </button>
-
-              <!-- Download Code File -->
-              <button class="icon-btn" id="downloadCodeBtn" title="Download Code File" aria-label="Download Code">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-              </button>
-
-              <!-- Export All Project Codes as ZIP -->
-              <button class="icon-btn" id="toolbarZipBtn" title="Export All Saved Codes as ZIP (.zip)" aria-label="Export ZIP Package">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
-              </button>
-
-              <!-- Copy Code to Clipboard -->
-              <button class="icon-btn" id="copyBtn" title="Copy Code to Clipboard" aria-label="Copy Code">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-              </button>
-
-              <!-- Reset / Clear Editor -->
-              <button class="icon-btn" id="resetBtn" title="Clear Editor" aria-label="Clear Editor">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-              </button>
             </div>
           </div>
         </div>
@@ -486,12 +944,57 @@
             <textarea id="fallbackEditor" class="fallback-editor" spellcheck="false" autocapitalize="none" autocomplete="off" autocorrect="off" placeholder="Write or paste your code here... (or click 'Load Starter Code' from the left challenge panel)"></textarea>
           </div>
         </div>
+
+        <!-- ==================================================== -->
+        <!-- BOTTOM BAR OF INPUT CODE (Run Code on Right Bottom)  -->
+        <!-- ==================================================== -->
+        <div class="editor-bottom-bar" id="editorBottomBar">
+          <div class="editor-bottom-left">
+            <div class="editor-stat-pill" id="editorLineColInfo" title="Current Cursor Line & Column">
+              <i data-lucide="hash" style="width:12px;height:12px;color:#818cf8"></i>
+              <span id="editorCursorPos">Ln 1, Col 1</span>
+            </div>
+            <div class="editor-stat-pill" id="editorLangInfo" title="Active Programming Runtime">
+              <span class="editor-runtime-dot" id="editorRuntimeDot"></span>
+              <span id="editorActiveRuntime">Python 3.11</span>
+            </div>
+            <span class="editor-shortcut-hint"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> to run</span>
+
+            <!-- Inner Scroll Controls for Input Code -->
+            <div class="inner-scroll-controls" id="editorInnerScrollControls" title="Input Editor Inner Scroll Options">
+              <span class="inner-scroll-label">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v18"/><path d="m19 9-7-6-7 6"/><path d="m19 15-7 6-7-6"/></svg>
+                <span>Code Scroll</span>
+              </span>
+              <button class="inner-scroll-btn" id="editorScrollTopBtn" type="button" title="Inner Scroll: Go to Top of Code">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="18 15 12 9 6 15"/></svg>
+                <span>Top</span>
+              </button>
+              <button class="inner-scroll-btn" id="editorScrollBottomBtn" type="button" title="Inner Scroll: Go to Bottom of Code">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="6 9 12 15 18 9"/></svg>
+                <span>Bottom</span>
+              </button>
+              <button class="inner-scroll-btn height-toggle-btn" id="editorExpandBtn" type="button" title="Toggle Editor Inner Height (Compact / Tall)">
+                <span id="editorExpandLabel">Tall View</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="editor-bottom-right">
+            <!-- PRIMARY ACTION: PROMINENT LIME RUN BUTTON (RIGHT BOTTOM OF INPUT CODE) -->
+            <button class="run-btn" id="runBtn" title="Run Code (Ctrl+Enter)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+              <span>Run Code</span>
+              <span class="run-shortcut">Ctrl+↵</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      <!-- Vertical Resizer Handle 2 (Middle Editor <-> Right Output) -->
-      <div class="split-handle-vertical" id="splitHandleRight">
-        <div class="handle-grip-v"></div>
-      </div>
+        <!-- Vertical Resizer Handle 2 (Hidden in vertical stack) -->
+        <div class="split-handle-vertical" id="splitHandleRight" style="display:none">
+          <div class="handle-grip-v"></div>
+        </div>
 
       <!-- ==================================================== -->
       <!-- COLUMN 3 (RIGHT): Output Panel (Console & Preview)   -->
@@ -502,7 +1005,7 @@
         <div class="output-panel" id="outputPanel">
           <!-- Output tabs -->
           <div class="output-tabs">
-            <button class="output-tab active" data-tab="console">
+            <button class="output-tab active" data-tab="console" id="tabConsoleBtn">
               <i data-lucide="terminal" style="width:14px;height:14px"></i>
               Console Output
             </button>
@@ -511,15 +1014,40 @@
               <span>Vision Output</span>
               <span class="vision-tab-badge" id="visionTabBadge" style="display:none">0</span>
             </button>
-            <button class="output-tab" data-tab="testcases">
+            <button class="output-tab" data-tab="testcases" id="tabTestcasesBtn">
               <i data-lucide="check-circle-2" style="width:14px;height:14px;color:#22c55e"></i>
               Test Cases
             </button>
-            <button class="output-tab" data-tab="preview">
+            <button class="output-tab" data-tab="preview" id="tabPreviewBtn">
               <i data-lucide="monitor" style="width:14px;height:14px"></i>
               Web Preview
             </button>
+            <span class="active-output-lang-pill" id="activeOutputLangPill">🐍 Python</span>
             <div style="flex:1"></div>
+
+            <!-- Inner Scroll Controls for Output Slot -->
+            <div class="inner-scroll-controls output-scroll-controls" id="outputInnerScrollControls" title="Output Console Inner Scroll Options">
+              <span class="inner-scroll-label">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v18"/><path d="m19 9-7-6-7 6"/><path d="m19 15-7 6-7-6"/></svg>
+                <span>Console Scroll</span>
+              </span>
+              <button class="inner-scroll-btn" id="outputScrollTopBtn" type="button" title="Inner Scroll: Go to Top of Console">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="18 15 12 9 6 15"/></svg>
+                <span>Top</span>
+              </button>
+              <button class="inner-scroll-btn" id="outputScrollBottomBtn" type="button" title="Inner Scroll: Go to Latest Output">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="6 9 12 15 18 9"/></svg>
+                <span>Bottom</span>
+              </button>
+              <button class="inner-scroll-btn active" id="outputAutoScrollToggleBtn" type="button" title="Auto-Scroll: Keep locked to bottom on new output">
+                <span class="auto-scroll-dot"></span>
+                <span>Auto-Scroll: ON</span>
+              </button>
+              <button class="inner-scroll-btn height-toggle-btn" id="outputExpandBtn" type="button" title="Toggle Console Inner Height (Compact / Tall)">
+                <span id="outputExpandLabel">Tall View</span>
+              </button>
+            </div>
+
             <!-- Open/Close Toggle Button for Daily Mind Work Slot (Hidden for clean workspace) -->
             <button class="workout-toggle-tab-btn" id="toggleWorkoutSlotBtn" title="Toggle Daily Mind Work Slot" style="display:none">
               <i data-lucide="brain-circuit" style="width:13px;height:13px;color:#facc15"></i>
@@ -676,7 +1204,7 @@
               <ins class="adsbygoogle"
                    style="display:block"
                    data-ad-client="ca-pub-6387245631770824"
-                   data-ad-slot="auto"
+                   data-ad-slot="3846622453"
                    data-ad-format="auto"
                    data-full-width-responsive="true"></ins>
               <script>
@@ -779,8 +1307,51 @@ print(append_item(2))</code></pre>
 
       </div> <!-- /.workspace-right-column -->
 
+      </div> <!-- /.workspace-main-stack -->
+
     </div> <!-- /.workspace-body-split -->
   </main>
+
+  <!-- ========== BOTTOM NAVIGATION DOCK (Practice, Problems, Vision Lab, Guides, About, Contact) ========== -->
+  <footer class="bottom-app-bar" id="bottomAppBar">
+    <div class="bottom-app-bar-inner">
+      <nav class="bottom-nav-tabs">
+        <button class="bottom-nav-tab nav-tab active" data-view="practice" id="navPracticeBtn" title="Multi-Language Coding Practice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          <span>Practice</span>
+        </button>
+
+        <button class="bottom-nav-tab nav-tab" data-view="problems" id="navProblemsBtn" title="Practice Problems & Curated Challenges">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          <span>Problems</span>
+        </button>
+
+        <a href="/vision.html" class="bottom-nav-tab-link" id="navVisionBtn" title="Computer Vision Lab (40 OpenCV Experiments)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
+          <span>Vision Lab</span>
+        </a>
+
+        <a href="/guides.html" class="bottom-nav-tab-link" title="Programming Guides & Tutorials">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/></svg>
+          <span>Guides</span>
+        </a>
+
+        <a href="/about.html" class="bottom-nav-tab-link" title="About VAB-CODE">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <span>About</span>
+        </a>
+
+        <a href="/contact.html" class="bottom-nav-tab-link" title="Contact Us">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          <span>Contact</span>
+        </a>
+      </nav>
+
+      <div class="bottom-bar-right">
+        <span class="bottom-status-hint">VAB-CODE &bull; Zero-Server WebAssembly Compiler</span>
+      </div>
+    </div>
+  </footer>
 
   <!-- ========== CRAWLABLE EDUCATIONAL & DOCUMENTATION CONTENT (ADSENSE COMPLIANCE) ========== -->
   <section class="educational-seo-section">
@@ -895,6 +1466,46 @@ print(append_item(2))</code></pre>
       </div>
     </div>
   </footer>
+
+  <!-- ========== 40 CV EXPERIMENTS MODAL ========== -->
+  <div class="overlay" id="cvLabOverlay" style="display:none">
+    <div class="overlay-content cv-modal-content">
+      <div class="overlay-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <h2>Computer Vision Lab — 40 Experiments</h2>
+            <span class="badge-mini-cyan">OpenCV & Python</span>
+          </div>
+          <p>University syllabus curriculum • 1-Click load into code editor</p>
+        </div>
+        <button class="icon-btn" id="closeCvLabBtn" title="Close Modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="cv-filter-wrapper">
+        <div class="cv-search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="cvSearchInput" placeholder="Filter experiments (e.g. Grayscale, Blur, Canny, Dilation, Erosion, Video, Scaling, Rotation, Affine, Homography, DLT)...">
+        </div>
+        <div class="cv-categories-bar" id="cvCategoriesBar">
+          <button class="cv-cat-btn active" data-cat="all">All (40)</button>
+          <button class="cv-cat-btn" data-cat="basic">Basic (8)</button>
+          <button class="cv-cat-btn" data-cat="video">Video & Camera (4)</button>
+          <button class="cv-cat-btn" data-cat="transform">Transform (4)</button>
+          <button class="cv-cat-btn" data-cat="edge">Edge Detection (5)</button>
+          <button class="cv-cat-btn" data-cat="sharpen">Sharpening (6)</button>
+          <button class="cv-cat-btn" data-cat="morphology">Morphology (7)</button>
+          <button class="cv-cat-btn" data-cat="roi">ROI & Marks (3)</button>
+          <button class="cv-cat-btn" data-cat="detection">Detection (3)</button>
+        </div>
+      </div>
+
+      <!-- CV Experiments Grid -->
+      <div class="cv-experiments-grid" id="cvExperimentsGrid"></div>
+    </div>
+  </div>
 
   <!-- ========== PROBLEMS OVERLAY ========== -->
   <div class="overlay" id="problemsOverlay" style="display:none">
@@ -1087,9 +1698,240 @@ print(append_item(2))</code></pre>
     </div>
   </div>
 
+  <!-- ==================================================== -->
+  <!-- GAMIFIED USER DASHBOARD MODAL                       -->
+  <!-- ==================================================== -->
+  <div class="arena-modal-backdrop" id="dashboardModal" style="display:none">
+    <div class="arena-modal-card dashboard-card">
+      <div class="arena-modal-header">
+        <div class="dash-user-header">
+          <div class="dash-avatar" id="dashAvatar">👤</div>
+          <div class="dash-user-titles">
+            <div class="dash-name-row">
+              <h2 class="dash-name" id="dashProfileName">Coder</h2>
+              <span class="dash-founder-badge" id="dashAdminBadge" style="display:none">👑 Founder / Admin</span>
+            </div>
+            <span class="dash-email" id="dashProfileEmail">Logged In Player</span>
+          </div>
+        </div>
+        <button class="arena-modal-close" title="Close Dashboard">&times;</button>
+      </div>
+
+      <div class="arena-modal-body">
+        <!-- 4 Key Activity Stats -->
+        <div class="dash-stats-grid">
+          <div class="dash-stat-box box-lime">
+            <span class="dash-stat-label">DAILY STREAK</span>
+            <span class="dash-stat-value" id="dashStreakVal">1 Day 🔥</span>
+            <span class="dash-stat-sub">Consecutive activity</span>
+          </div>
+          <div class="dash-stat-box box-cyan">
+            <span class="dash-stat-label">TOTAL XP</span>
+            <span class="dash-stat-value" id="dashXpVal">100 XP</span>
+            <span class="dash-stat-sub">From quizzes & code</span>
+          </div>
+          <div class="dash-stat-box box-purple">
+            <span class="dash-stat-label">GLOBAL RANK</span>
+            <span class="dash-stat-value" id="dashRankVal">#--</span>
+            <span class="dash-stat-sub">Live standing</span>
+          </div>
+          <div class="dash-stat-box box-amber">
+            <span class="dash-stat-label">CODE RUNS</span>
+            <span class="dash-stat-value" id="dashRunsVal">0 Runs</span>
+            <span class="dash-stat-sub">Programs compiled</span>
+          </div>
+        </div>
+
+        <!-- Dashboard Action Hub -->
+        <div class="dash-actions-row">
+          <button class="dash-action-btn primary-lime-btn" id="dashStartQuizBtn">
+            <span class="btn-emoji">🎮</span>
+            <div class="dash-btn-text">
+              <span class="dash-btn-title">Play Daily 10 MCQs</span>
+              <span class="dash-btn-desc">Earn +100 XP & boost rank</span>
+            </div>
+          </button>
+          <button class="dash-action-btn secondary-cyan-btn" id="dashViewLeaderboardBtn">
+            <span class="btn-emoji">🏆</span>
+            <div class="dash-btn-text">
+              <span class="dash-btn-title">View Top 10 Leaderboard</span>
+              <span class="dash-btn-desc">See top coders & your place</span>
+            </div>
+          </button>
+        </div>
+
+        <div class="dash-footer-bar">
+          <span class="dash-sync-badge">🟢 Real-time Firebase Sync</span>
+          <button class="dash-logout-btn" id="dashLogoutBtn">Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- DAILY 10 MCQ CHALLENGE MODAL                        -->
+  <!-- ==================================================== -->
+  <div class="arena-modal-backdrop" id="quizModal" style="display:none">
+    <div class="arena-modal-card quiz-card">
+      <div class="arena-modal-header">
+        <div class="quiz-header-info">
+          <span class="quiz-badge">⚡ DAILY 10 MCQ ARENA</span>
+          <h2 class="quiz-title">Daily Coding & DSA Quiz</h2>
+        </div>
+        <button class="arena-modal-close" title="Close Quiz">&times;</button>
+      </div>
+
+      <!-- Active Quiz Question View -->
+      <div class="quiz-body" id="quizActiveArea">
+        <div class="quiz-progress-track">
+          <div class="quiz-prog-row">
+            <span class="quiz-prog-text" id="quizProgText">Question 1 of 10</span>
+            <span class="quiz-prog-lang" id="quizLangBadge">Python</span>
+          </div>
+          <div class="quiz-meter">
+            <div class="quiz-meter-fill" id="quizProgressBar" style="width: 10%;"></div>
+          </div>
+        </div>
+
+        <div class="quiz-question-box">
+          <p class="quiz-question-text" id="quizQuestionText">Loading question...</p>
+        </div>
+
+        <!-- 4 Options A, B, C, D -->
+        <div class="quiz-options-grid" id="quizOptionsContainer"></div>
+
+        <!-- Instant Explanation Box -->
+        <div class="quiz-explanation-drawer" id="quizExpBox" style="display:none">
+          <div class="exp-title-row">
+            <span class="exp-icon">💡</span>
+            <span class="exp-title">Explanation</span>
+          </div>
+          <p class="exp-content" id="quizExpText"></p>
+        </div>
+
+        <div class="quiz-nav-row">
+          <button class="quiz-next-btn" id="quizNextQuestionBtn" style="display:none">
+            <span>Next Question</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quiz Finished Celebration View -->
+      <div class="quiz-finished-body" id="quizFinishedArea" style="display:none">
+        <div class="quiz-trophy-anim">🏆</div>
+        <h3 class="quiz-fin-headline">Daily Challenge Completed!</h3>
+        <p class="quiz-fin-sub">You have earned XP for today. Check your position on the global leaderboard!</p>
+        <div class="quiz-score-pill">
+          <span class="score-label">EARNED TODAY</span>
+          <span class="score-points" id="quizFinalScore">100 / 100 XP</span>
+        </div>
+        <button class="primary-lime-btn quiz-fin-btn" id="quizFinishedCloseBtn">
+          <span>View Global Leaderboard ➜</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- REAL-TIME TOP 10 LEADERBOARD & YOUR PLACE MODAL     -->
+  <!-- ==================================================== -->
+  <div class="arena-modal-backdrop" id="leaderboardModal" style="display:none">
+    <div class="arena-modal-card leaderboard-card">
+      <div class="arena-modal-header">
+        <div class="lb-header-info">
+          <div class="lb-trophy-badge">🏆 TOP 10 PLAYERS</div>
+          <h2 class="lb-main-title">Global Coding Leaderboard</h2>
+          <span class="lb-sub-desc">Ranked by points earned from Daily MCQs & Code Execution</span>
+        </div>
+        <button class="arena-modal-close" title="Close Leaderboard">&times;</button>
+      </div>
+
+      <div class="arena-modal-body lb-modal-body">
+        <!-- Top 10 List -->
+        <div class="leaderboard-list-box" id="leaderboardList"></div>
+
+        <!-- Sticky "YOUR PLACE" Row Directly Beneath Top 10 -->
+        <div class="leaderboard-my-rank-wrapper" id="leaderboardMyRankBox"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- AUTHENTICATION GATE MODAL (LOG IN TO PLAY / SEE)    -->
+  <!-- ==================================================== -->
+  <div class="arena-modal-backdrop" id="authGateModal" style="display:none">
+    <div class="arena-modal-card auth-gate-card">
+      <div class="arena-modal-header auth-gate-header">
+        <span class="auth-gate-badge" id="authGateBadge">🎮 DAILY 10 MCQ GAME</span>
+        <button class="arena-modal-close" title="Close Modal">&times;</button>
+      </div>
+
+      <div class="arena-modal-body auth-gate-body">
+        <div class="auth-gate-icon-orb" id="authGateIconOrb">
+          <span class="auth-gate-orb-icon" id="authGateIcon">🎮</span>
+        </div>
+
+        <h2 class="auth-gate-title" id="authGateTitle">Log in to play</h2>
+        <p class="auth-gate-desc" id="authGateDesc">
+          Log in to play today's 10 coding MCQs, earn XP points, build your daily streak, and compete on the leaderboard.
+        </p>
+
+        <!-- Feature Perks List -->
+        <div class="auth-gate-features">
+          <div class="auth-gate-feature-item">
+            <span class="gate-feat-icon">🎯</span>
+            <div class="gate-feat-text">
+              <strong>Daily 10 Puzzles</strong>
+              <span>Curated algorithms, syntax & DSA MCQs refreshed daily</span>
+            </div>
+          </div>
+          <div class="auth-gate-feature-item">
+            <span class="gate-feat-icon">🏆</span>
+            <div class="gate-feat-text">
+              <strong>Global Leaderboard</strong>
+              <span>Live Top 10 rankings & your exact standing</span>
+            </div>
+          </div>
+          <div class="auth-gate-feature-item">
+            <span class="gate-feat-icon">🔥</span>
+            <div class="gate-feat-text">
+              <strong>Personal Activity Dashboard</strong>
+              <span>Track consecutive daily streaks, XP & code runs</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Google 1-Click Login Button -->
+        <button class="auth-gate-google-btn" id="authGateGoogleBtn">
+          <svg class="google-logo-svg" width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.97 0 12s.45 3.84 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          <span id="authGateGoogleBtnText">Sign In with Google</span>
+        </button>
+
+        <!-- Free Coding Reassurance -->
+        <div class="auth-gate-free-note">
+          <p>Want to write and run code without logging in?</p>
+          <button class="auth-gate-dismiss-btn" id="authGateDismissBtn">
+            Continue Free Anonymous Coding ➜
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ========== TOAST ========== -->
   <div class="toast-container" id="toastContainer"></div>
 
+  <!-- Firebase App, Auth, Firestore (v10 Compat CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="arena.js"></script>
   <script src="cvExperiments.js"></script>
   <script src="app.js"></script>
 </body>

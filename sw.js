@@ -3,7 +3,7 @@
    Shields users from "Slow Wi-Fi" and heavy WASM download lag
    ============================================================ */
 
-const CACHE_NAME = 'vab-code-v6.3';
+const CACHE_NAME = 'vab-code-v6.4';
 const CORE_ASSETS = [
   '/',
   '/manifest.json',
@@ -11,10 +11,12 @@ const CORE_ASSETS = [
   '/favicon-48x48.png',
   '/favicon-96x96.png',
   '/favicon-192x192.png',
-  '/index.html?v=6.3',
-  '/style.css?v=6.3',
-  '/cvExperiments.js?v=6.3',
-  '/app.js?v=6.3',
+  '/index.html?v=6.4',
+  '/vision.html?v=6.4',
+  '/style.css?v=6.4',
+  '/cvExperiments.js?v=6.4',
+  '/app.js?v=6.4',
+  '/vision.js?v=6.4',
   '/assets/logo-icon.png?v=6.0',
   '/assets/brand-logo-original.png?v=6.0',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap',

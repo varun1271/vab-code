@@ -1557,6 +1557,12 @@ const Engine = {
       }
     }
 
+    // Direct check for OpenCV / Computer Vision keywords
+    if (/\b(cv2|opencv|cv2_imshow)\b/.test(code)) {
+      if (!this.loadedPackages.has('numpy')) needed.add('numpy');
+      if (!this.loadedPackages.has('opencv-python')) needed.add('opencv-python');
+    }
+
     if (needed.size > 0) {
       const pkgList = [...needed];
       log('info', `📦 Auto-loading packages: ${pkgList.join(', ')}...`);
@@ -1586,20 +1592,19 @@ const Engine = {
   ensureVirtualLabImages(py) {
     try {
       if (!py || !py.FS) return;
-      // If student uploaded a custom photo, write it to /input.jpg and /sample.jpg!
-      if (typeof App !== 'undefined' && App.uploadedImageBytes && App.uploadedImageBytes.length > 0) {
-        py.FS.writeFile('/input.jpg', App.uploadedImageBytes);
-        py.FS.writeFile('/sample.jpg', App.uploadedImageBytes);
-        py.FS.writeFile('/watch.jpg', App.uploadedImageBytes);
-      } else if (!py._vab_images_initialized) {
-        if (typeof window.generateDefaultLabImageBytes === 'function') {
-          const imgBytes = window.generateDefaultLabImageBytes();
-          py.FS.writeFile('/input.jpg', imgBytes);
-          py.FS.writeFile('/sample.jpg', imgBytes);
-          py.FS.writeFile('/watch.jpg', imgBytes);
-          py.FS.writeFile('/face.jpg', imgBytes);
-          py.FS.writeFile('/shapes.jpg', imgBytes);
-        }
+      const imgBytes = (this.uploadedImageBytes && this.uploadedImageBytes.length > 0)
+        ? this.uploadedImageBytes
+        : (typeof this.generateDefaultLabImageBytes === 'function' ? this.generateDefaultLabImageBytes() : null);
+
+      if (imgBytes && imgBytes.length > 0) {
+        py.FS.writeFile('/input.jpg', imgBytes);
+        py.FS.writeFile('input.jpg', imgBytes);
+        py.FS.writeFile('/sample.jpg', imgBytes);
+        py.FS.writeFile('sample.jpg', imgBytes);
+        py.FS.writeFile('/watch.jpg', imgBytes);
+        py.FS.writeFile('watch.jpg', imgBytes);
+        py.FS.writeFile('/face.jpg', imgBytes);
+        py.FS.writeFile('face.jpg', imgBytes);
       }
       py._vab_images_initialized = true;
     } catch (e) {
@@ -1636,13 +1641,14 @@ matplotlib.use('agg')
     }
 
     // Inject OpenCV & Matplotlib Vision Bridges
-    const usesCv = /import\s+cv2|from\s+cv2/m.test(code);
+    const usesCv = /\b(cv2|opencv|cv2_imshow)\b/m.test(code);
     if (usesCv || usesMpl) {
       try {
         await py.runPythonAsync(`
 import sys
 import base64
 import os
+import types
 
 try:
     import cv2
@@ -1683,10 +1689,11 @@ try:
         res = cv2._vab_orig_imread(filename, flags)
         if res is not None:
             return res
-        if os.path.exists('/input.jpg'):
-            fb = cv2._vab_orig_imread('/input.jpg', flags)
-            if fb is not None:
-                return fb
+        for fallback in ['/input.jpg', 'input.jpg', '/sample.jpg', 'sample.jpg']:
+            if os.path.exists(fallback):
+                fb = cv2._vab_orig_imread(fallback, flags)
+                if fb is not None:
+                    return fb
         syn = np.zeros((300, 400, 3), dtype=np.uint8)
         cv2.rectangle(syn, (30, 30), (370, 270), (0, 140, 255), -1)
         cv2.circle(syn, (200, 150), 70, (255, 255, 0), -1)
@@ -1718,8 +1725,67 @@ try:
         def release(self):
             pass
     cv2.VideoCapture = _VabVideoCapture
-except ImportError:
-    pass
+
+    if not hasattr(cv2, 'CAP_PROP_FPS'): cv2.CAP_PROP_FPS = 5
+    if not hasattr(cv2, 'CAP_PROP_FRAME_WIDTH'): cv2.CAP_PROP_FRAME_WIDTH = 3
+    if not hasattr(cv2, 'CAP_PROP_FRAME_HEIGHT'): cv2.CAP_PROP_FRAME_HEIGHT = 4
+    if not hasattr(cv2, 'VideoWriter'):
+        class _VideoWriterStub:
+            def __init__(self, *args, **kwargs): pass
+            def write(self, frame): pass
+            def release(self): pass
+        cv2.VideoWriter = _VideoWriterStub
+    if not hasattr(cv2, 'VideoWriter_fourcc'):
+        cv2.VideoWriter_fourcc = lambda *args: 0
+
+    # Google Colab Compatibility Bridge (files.upload, cv2_imshow)
+    _g = sys.modules.get('google') or types.ModuleType('google')
+    sys.modules['google'] = _g
+    _gc = types.ModuleType('google.colab')
+    _g.colab = _gc
+    sys.modules['google.colab'] = _gc
+
+    _files = types.ModuleType('google.colab.files')
+    def _colab_upload():
+        for fn in ['input.jpg', '/input.jpg', 'input.mp4', '/input.mp4', 'sample.jpg']:
+            if os.path.exists(fn):
+                try:
+                    with open(fn, 'rb') as f:
+                        return {os.path.basename(fn): f.read()}
+                except Exception:
+                    pass
+        return {'input.jpg': b''}
+    _files.upload = _colab_upload
+    _gc.files = _files
+    sys.modules['google.colab.files'] = _files
+
+    _patches = types.ModuleType('google.colab.patches')
+    _colab_win_count = [0]
+    def _colab_imshow(mat):
+        _colab_win_count[0] += 1
+        lbl = 'Original Image' if _colab_win_count[0] == 1 else ('Grayscale / Processed Image' if _colab_win_count[0] == 2 else f'Output {_colab_win_count[0]}')
+        _vab_imshow(lbl, mat)
+    _patches.cv2_imshow = _colab_imshow
+    _gc.patches = _patches
+    sys.modules['google.colab.patches'] = _patches
+
+    # IPython.display stub
+    _ipy = sys.modules.get('IPython') or types.ModuleType('IPython')
+    sys.modules['IPython'] = _ipy
+    _ipyd = types.ModuleType('IPython.display')
+    _ipy.display = _ipyd
+    sys.modules['IPython.display'] = _ipyd
+    class _VideoStub:
+        def __init__(self, filename, embed=False):
+            self.filename = filename
+    def _display_stub(*args, **kwargs):
+        for a in args:
+            if hasattr(a, 'filename'):
+                print(f"✓ Video ready: {a.filename}")
+    _ipyd.Video = _VideoStub
+    _ipyd.display = _display_stub
+except Exception as _e:
+    print(f"OpenCV Bridge note: {_e}")
 
 try:
     import matplotlib
@@ -1763,9 +1829,13 @@ except ImportError:
     try {
       py.setStdout({ batched: (s) => log('stdout', s) });
       py.setStderr({ batched: (s) => log('stderr', s) });
-      await py.runPythonAsync(code);
+      const execCode = code.replace(/^[ \t]*[!%](.*)$/gm, '# [Shell command skipped in browser]: $1');
+      await py.runPythonAsync(execCode);
       const ms = (performance.now() - t0).toFixed(1);
       log('dim', `\n[Finished in ${ms}ms — exit code 0]`);
+      if (usesCv && this.visionImages && this.visionImages.length > 0) {
+        this.switchOutputTab('vision');
+      }
       return ms;
     } catch (err) {
       const ms = (performance.now() - t0).toFixed(1);
@@ -5426,9 +5496,134 @@ const App = {
     QuizManager.init();
     WorkoutSlotManager.init();
     AdBlockDetector.init();
-    this.checkUrlHash();
+    this.initInteractiveCursor();
+    this.initInnerScrollControls();
     this.initServiceWorker();
     lucide.createIcons();
+  },
+
+  outputAutoScroll: true,
+
+  // ── Inner Scroll Options & Controls for Input and Output Slots ──
+  initInnerScrollControls() {
+    // 1. Input Code Editor Inner Scroll Controls
+    const editor = document.getElementById('fallbackEditor');
+    const edScrollTopBtn = document.getElementById('editorScrollTopBtn');
+    const edScrollBottomBtn = document.getElementById('editorScrollBottomBtn');
+    const edExpandBtn = document.getElementById('editorExpandBtn');
+    const edExpandLabel = document.getElementById('editorExpandLabel');
+    const leftEditor = document.getElementById('workspaceLeftEditor');
+
+    if (editor) {
+      if (edScrollTopBtn) {
+        edScrollTopBtn.addEventListener('click', () => {
+          editor.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      if (edScrollBottomBtn) {
+        edScrollBottomBtn.addEventListener('click', () => {
+          editor.scrollTo({ top: editor.scrollHeight, behavior: 'smooth' });
+        });
+      }
+
+      if (edExpandBtn && leftEditor) {
+        edExpandBtn.addEventListener('click', () => {
+          const isExpanded = leftEditor.classList.toggle('is-expanded');
+          if (edExpandLabel) edExpandLabel.textContent = isExpanded ? 'Compact' : 'Tall View';
+          this.toast(isExpanded ? 'Editor expanded (Tall View)' : 'Editor restored (Compact View)');
+          if (this.editor && typeof this.editor.layout === 'function') {
+            setTimeout(() => this.editor.layout(), 300);
+          }
+        });
+      }
+    }
+
+    // 2. Output Slot Console Inner Scroll Controls
+    const consoleOutput = document.getElementById('consoleOutput');
+    const outScrollTopBtn = document.getElementById('outputScrollTopBtn');
+    const outScrollBottomBtn = document.getElementById('outputScrollBottomBtn');
+    const outAutoScrollBtn = document.getElementById('outputAutoScrollToggleBtn');
+    const outExpandBtn = document.getElementById('outputExpandBtn');
+    const outExpandLabel = document.getElementById('outputExpandLabel');
+    const rightCol = document.getElementById('workspaceRightColumn');
+
+    if (consoleOutput) {
+      if (outScrollTopBtn) {
+        outScrollTopBtn.addEventListener('click', () => {
+          consoleOutput.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      if (outScrollBottomBtn) {
+        outScrollBottomBtn.addEventListener('click', () => {
+          consoleOutput.scrollTo({ top: consoleOutput.scrollHeight, behavior: 'smooth' });
+        });
+      }
+
+      if (outAutoScrollBtn) {
+        outAutoScrollBtn.addEventListener('click', () => {
+          this.outputAutoScroll = !this.outputAutoScroll;
+          outAutoScrollBtn.classList.toggle('active', this.outputAutoScroll);
+          const labelSpan = outAutoScrollBtn.querySelector('span:not(.auto-scroll-dot)');
+          if (labelSpan) {
+            labelSpan.textContent = this.outputAutoScroll ? 'Auto-Scroll: ON' : 'Auto-Scroll: OFF';
+          }
+          this.toast(this.outputAutoScroll ? 'Terminal auto-scroll enabled' : 'Terminal auto-scroll paused');
+        });
+      }
+
+      if (outExpandBtn && rightCol) {
+        outExpandBtn.addEventListener('click', () => {
+          const isExpanded = rightCol.classList.toggle('is-expanded');
+          if (outExpandLabel) outExpandLabel.textContent = isExpanded ? 'Compact' : 'Tall View';
+          this.toast(isExpanded ? 'Console output expanded (Tall View)' : 'Console output restored (Compact View)');
+        });
+      }
+    }
+  },
+
+  // ── Global Interactive Million-Dollar Cursor Tracker & Card Sheen ──
+  initInteractiveCursor() {
+    // 1. Global mouse coordinate tracking for ambient glow & mesh
+    window.addEventListener('mousemove', (e) => {
+      document.documentElement.style.setProperty('--cursor-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--cursor-y', `${e.clientY}px`);
+    }, { passive: true });
+
+    // 2. Card-specific spotlight sheen reflection on hover
+    const interactiveCards = document.querySelectorAll(
+      '.hero-lang-card, .hero-subject-card, .highlighted-scroll-btn, .workspace-left-editor, .workspace-right-column, .seo-card'
+    );
+    interactiveCards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      }, { passive: true });
+    });
+
+    // 3. Floating quick-scroll visibility & click handler
+    const floatingBtn = document.getElementById('floatingQuickScroll');
+    const editorSec = document.getElementById('editorSection');
+    if (floatingBtn && editorSec) {
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        const editorTop = editorSec.getBoundingClientRect().top + window.scrollY;
+        if (scrollY > 250 && scrollY < editorTop - 150) {
+          floatingBtn.classList.add('visible');
+        } else {
+          floatingBtn.classList.remove('visible');
+        }
+      }, { passive: true });
+
+      floatingBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        editorSec.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
   },
 
   // ── Native High-Performance Code Editor ──
@@ -5498,13 +5693,29 @@ const App = {
       if (gutter) gutter.scrollTop = el.scrollTop;
     };
 
+    const updateCursorPos = () => {
+      const posEl = document.getElementById('editorCursorPos');
+      if (!posEl) return;
+      const val = el.value || '';
+      const sel = el.selectionStart || 0;
+      const sub = val.substring(0, sel);
+      const lines = sub.split('\n');
+      const ln = lines.length;
+      const col = lines[lines.length - 1].length + 1;
+      posEl.textContent = `Ln ${ln}, Col ${col}`;
+    };
+
     updateGutter();
+    updateCursorPos();
 
     if (el._bound) return;
     el._bound = true;
+    el.addEventListener('keyup', updateCursorPos);
+    el.addEventListener('click', updateCursorPos);
     el.addEventListener('input', () => { 
       this.codeBuffers[this.currentLang] = el.value;
       updateGutter();
+      updateCursorPos();
       this.checkUnsavedChanges();
     });
     el.addEventListener('scroll', syncScroll);
@@ -5746,8 +5957,115 @@ const App = {
 
   // ── Events ──
   bindEvents() {
+    this.initToolbarMenus();
+
     document.querySelectorAll('.lang-btn').forEach(btn => {
       btn.addEventListener('click', () => this.switchLang(btn.dataset.lang));
+    });
+
+    // ── First View Hero: Language Cards Selection ──
+    document.querySelectorAll('.hero-lang-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const lang = card.dataset.lang;
+        this.switchLang(lang);
+        const editorSec = document.getElementById('editorSection');
+        if (editorSec) {
+          editorSec.scrollIntoView({ behavior: 'smooth' });
+        }
+        const editor = document.getElementById('fallbackEditor');
+        if (editor) setTimeout(() => editor.focus(), 350);
+      });
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          card.click();
+        }
+      });
+    });
+
+    // ── First View Hero: Subject Action Buttons ──
+    const heroDsaBtn = document.getElementById('heroDsaBtn');
+    if (heroDsaBtn) {
+      heroDsaBtn.addEventListener('click', () => {
+        const item = document.getElementById('featureItemDSA') || document.getElementById('templatesBtn');
+        if (item) item.click();
+        else {
+          const ov = document.getElementById('templatesOverlay');
+          if (ov) ov.style.display = 'flex';
+        }
+        const editorSec = document.getElementById('editorSection');
+        if (editorSec) editorSec.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    const heroCvBtn = document.getElementById('heroCvBtn');
+    if (heroCvBtn) {
+      heroCvBtn.addEventListener('click', () => {
+        const cvBtn = document.getElementById('openCvModalBtn');
+        if (cvBtn) cvBtn.click();
+        else {
+          const ov = document.getElementById('cvLabOverlay');
+          if (ov) ov.style.display = 'flex';
+        }
+        const editorSec = document.getElementById('editorSection');
+        if (editorSec) editorSec.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    const heroPracticeBtn = document.getElementById('heroPracticeBtn');
+    if (heroPracticeBtn) {
+      heroPracticeBtn.addEventListener('click', () => {
+        const item = document.getElementById('featureItemPractice');
+        if (item) item.click();
+        else {
+          const ov = document.getElementById('problemsOverlay');
+          if (ov) ov.style.display = 'flex';
+        }
+        const editorSec = document.getElementById('editorSection');
+        if (editorSec) editorSec.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    const heroQuizBtn = document.getElementById('heroQuizBtn');
+    if (heroQuizBtn) {
+      heroQuizBtn.addEventListener('click', (e) => {
+        if (window.vabArena) {
+          e.preventDefault();
+          window.vabArena.openQuizModal();
+          return;
+        }
+        const slot = document.getElementById('dailyWorkoutSlot');
+        if (slot) {
+          slot.style.display = 'block';
+          const rCol = document.getElementById('workspaceRightColumn');
+          if (rCol) rCol.classList.remove('workout-closed');
+          slot.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
+
+    const heroTranslateBtn = document.getElementById('heroTranslateBtn');
+    if (heroTranslateBtn) {
+      heroTranslateBtn.addEventListener('click', () => {
+        const item = document.getElementById('featureItemTranslate');
+        if (item) item.click();
+        const editorSec = document.getElementById('editorSection');
+        if (editorSec) editorSec.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    const heroPdfBtn = document.getElementById('heroPdfBtn');
+    if (heroPdfBtn) {
+      heroPdfBtn.addEventListener('click', () => this.exportLabRecordPdf());
+    }
+
+    const scrollCues = document.querySelectorAll('#heroScrollToCodeBtn, #heroRightScrollBtn, #headerScrollJumpBtn, #floatingQuickScroll a');
+    scrollCues.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const editorSec = document.getElementById('editorSection');
+        if (editorSec) editorSec.scrollIntoView({ behavior: 'smooth' });
+      });
     });
 
     // Cross-Translate button & menu
@@ -5775,7 +6093,10 @@ const App = {
     const dismissBtn = document.getElementById('dismissBannerBtn');
     if (dismissBtn) dismissBtn.addEventListener('click', () => this.hideTranslationBanner());
 
-    document.getElementById('runBtn').addEventListener('click', () => this.run());
+    document.getElementById('runBtn').addEventListener('click', () => {
+      this.run();
+      if (window.vabArena) window.vabArena.recordCodeExecution();
+    });
     
     // Auto-Format / Beautify Code
     const formatBtn = document.getElementById('formatBtn');
@@ -5888,6 +6209,283 @@ const App = {
     });
   },
 
+  // ── Unified 2-Icon Toolbar Popovers (Languages & Features) ──
+  initToolbarMenus() {
+    const langTrigger = document.getElementById('langMenuTriggerBtn');
+    const langPopover = document.getElementById('langPopoverMenu');
+    const langWrapper = document.getElementById('langMenuWrapper');
+    const featuresTrigger = document.getElementById('featuresMenuTriggerBtn');
+    const featuresPopover = document.getElementById('featuresPopoverMenu');
+    const featuresWrapper = document.getElementById('featuresMenuWrapper');
+
+    this.updateActiveLangUI(this.currentLang);
+
+    // 1. Language Popover Toggle
+    if (langTrigger && langPopover) {
+      langTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = langPopover.classList.contains('is-open');
+        if (featuresPopover) {
+          featuresPopover.classList.remove('is-open');
+          featuresPopover.style.display = 'none';
+          if (featuresWrapper) featuresWrapper.classList.remove('is-open');
+        }
+        if (isOpen) {
+          langPopover.classList.remove('is-open');
+          langPopover.style.display = 'none';
+          if (langWrapper) langWrapper.classList.remove('is-open');
+        } else {
+          langPopover.style.display = 'flex';
+          void langPopover.offsetHeight;
+          langPopover.classList.add('is-open');
+          if (langWrapper) langWrapper.classList.add('is-open');
+        }
+      });
+    }
+
+    // 2. Features Popover Toggle
+    if (featuresTrigger && featuresPopover) {
+      featuresTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = featuresPopover.classList.contains('is-open');
+        if (langPopover) {
+          langPopover.classList.remove('is-open');
+          langPopover.style.display = 'none';
+          if (langWrapper) langWrapper.classList.remove('is-open');
+        }
+        if (isOpen) {
+          featuresPopover.classList.remove('is-open');
+          featuresPopover.style.display = 'none';
+          if (featuresWrapper) featuresWrapper.classList.remove('is-open');
+        } else {
+          featuresPopover.style.display = 'flex';
+          void featuresPopover.offsetHeight;
+          featuresPopover.classList.add('is-open');
+          if (featuresWrapper) featuresWrapper.classList.add('is-open');
+        }
+      });
+    }
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (langPopover && !e.target.closest('#langMenuWrapper')) {
+        langPopover.classList.remove('is-open');
+        langPopover.style.display = 'none';
+        if (langWrapper) langWrapper.classList.remove('is-open');
+      }
+      if (featuresPopover && !e.target.closest('#featuresMenuWrapper')) {
+        featuresPopover.classList.remove('is-open');
+        featuresPopover.style.display = 'none';
+        if (featuresWrapper) featuresWrapper.classList.remove('is-open');
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (langPopover) {
+          langPopover.classList.remove('is-open');
+          langPopover.style.display = 'none';
+          if (langWrapper) langWrapper.classList.remove('is-open');
+        }
+        if (featuresPopover) {
+          featuresPopover.classList.remove('is-open');
+          featuresPopover.style.display = 'none';
+          if (featuresWrapper) featuresWrapper.classList.remove('is-open');
+        }
+      }
+    });
+
+    // Feature item action bindings
+    const itemPractice = document.getElementById('featureItemPractice');
+    if (itemPractice) {
+      itemPractice.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (featuresPopover) {
+          featuresPopover.classList.remove('is-open');
+          featuresPopover.style.display = 'none';
+          if (featuresWrapper) featuresWrapper.classList.remove('is-open');
+        }
+        const pBtn = document.getElementById('practiceProgramsBtn');
+        const pMenu = document.getElementById('practiceProgramsMenu');
+        if (pMenu) {
+          const isVis = pMenu.style.display === 'flex';
+          pMenu.style.display = isVis ? 'none' : 'flex';
+          if (!isVis && typeof this.updatePracticeLangPill === 'function') {
+            this.updatePracticeLangPill();
+          }
+        } else if (pBtn) {
+          pBtn.click();
+        }
+      });
+    }
+
+    const itemDSA = document.getElementById('featureItemDSA');
+    if (itemDSA) {
+      itemDSA.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (featuresPopover) {
+          featuresPopover.classList.remove('is-open');
+          featuresPopover.style.display = 'none';
+          if (featuresWrapper) featuresWrapper.classList.remove('is-open');
+        }
+        const overlay = document.getElementById('templatesOverlay');
+        if (overlay) {
+          this.renderTemplates('all');
+          overlay.style.display = 'grid';
+          if (window.lucide) lucide.createIcons();
+        }
+      });
+    }
+
+    const itemTranslate = document.getElementById('featureItemTranslate');
+    if (itemTranslate) {
+      itemTranslate.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (featuresPopover) {
+          featuresPopover.classList.remove('is-open');
+          featuresPopover.style.display = 'none';
+          if (featuresWrapper) featuresWrapper.classList.remove('is-open');
+        }
+        const trMenu = document.getElementById('translateMenu');
+        if (trMenu) {
+          const isVis = trMenu.style.display === 'block';
+          trMenu.style.display = isVis ? 'none' : 'block';
+        }
+      });
+    }
+  },
+
+  updateActiveLangUI(lang) {
+    const cfg = LANGUAGES[lang];
+    if (!cfg) return;
+    const langLabel = document.getElementById('currentLangLabel');
+    if (langLabel) langLabel.textContent = cfg.name;
+    const langBadge = document.getElementById('currentLangBadge');
+    if (langBadge) {
+      const shortNames = { python: 'PY', c: 'C', cpp: 'C++', java: 'JAVA', html: 'HTML', css: 'CSS', javascript: 'JS' };
+      langBadge.textContent = shortNames[lang] || lang.toUpperCase();
+    }
+    const langPopover = document.getElementById('langPopoverMenu');
+    if (langPopover) {
+      langPopover.classList.remove('is-open');
+      langPopover.style.display = 'none';
+    }
+    const langWrapper = document.getElementById('langMenuWrapper');
+    if (langWrapper) langWrapper.classList.remove('is-open');
+
+    // Update bottom bar active runtime pill
+    const activeRuntimeEl = document.getElementById('editorActiveRuntime');
+    if (activeRuntimeEl && cfg) {
+      activeRuntimeEl.textContent = `${cfg.name} ${cfg.runtime ? '• ' + cfg.runtime : ''}`;
+    }
+
+    // Sync active state on First View hero language cards
+    document.querySelectorAll('.hero-lang-card').forEach(c => {
+      c.classList.toggle('active', c.dataset.lang === lang);
+    });
+
+    // Adapt the output section dynamically for the selected language
+    this.updateOutputSectionForLang(lang);
+  },
+
+  // ── Language-Specific Dynamic Output Slot ──
+  updateOutputSectionForLang(lang) {
+    const tabConsole = document.getElementById('tabConsoleBtn') || document.querySelector('.output-tab[data-tab="console"]');
+    const tabVision = document.getElementById('tabVisionBtn');
+    const tabTestcases = document.getElementById('tabTestcasesBtn') || document.querySelector('.output-tab[data-tab="testcases"]');
+    const tabPreview = document.getElementById('tabPreviewBtn') || document.querySelector('.output-tab[data-tab="preview"]');
+    const stdinPanel = document.getElementById('customStdinPanel');
+    const stdinHint = document.querySelector('.stdin-hint');
+    const stdinTextarea = document.getElementById('customStdin');
+    const langPill = document.getElementById('activeOutputLangPill');
+
+    if (langPill) {
+      const names = {
+        python: '🐍 Python',
+        c: '⚡ C',
+        cpp: '⚡ C++',
+        java: '☕ Java',
+        html: '🌐 HTML',
+        css: '🎨 CSS',
+        javascript: '⚡ JS'
+      };
+      langPill.textContent = names[lang] || lang.toUpperCase();
+    }
+
+    if (lang === 'python') {
+      // PYTHON: Show Console, Vision Output (OpenCV/Matplotlib), Test Cases. Hide Web Preview.
+      if (tabConsole) tabConsole.style.display = 'inline-flex';
+      if (tabVision) tabVision.style.display = 'inline-flex';
+      if (tabTestcases) tabTestcases.style.display = 'inline-flex';
+      if (tabPreview) tabPreview.style.display = 'none';
+
+      // Custom Input (stdin)
+      if (stdinPanel) stdinPanel.style.display = 'block';
+      if (stdinHint) stdinHint.innerHTML = 'Python input() &bull; standard input';
+      if (stdinTextarea) stdinTextarea.placeholder = 'Enter Python inputs for input() e.g.\n5\n10 20\nAlice';
+
+      this.switchOutputTab('console');
+    } else if (lang === 'c') {
+      // C: Show Console & Test Cases. Hide Vision & Web Preview.
+      if (tabConsole) tabConsole.style.display = 'inline-flex';
+      if (tabVision) tabVision.style.display = 'none';
+      if (tabTestcases) tabTestcases.style.display = 'inline-flex';
+      if (tabPreview) tabPreview.style.display = 'none';
+
+      if (stdinPanel) stdinPanel.style.display = 'block';
+      if (stdinHint) stdinHint.innerHTML = 'C scanf() &bull; standard input';
+      if (stdinTextarea) stdinTextarea.placeholder = 'Enter C inputs for scanf() e.g.\n10 20\n42';
+
+      this.switchOutputTab('console');
+    } else if (lang === 'cpp') {
+      // C++: Show Console & Test Cases. Hide Vision & Web Preview.
+      if (tabConsole) tabConsole.style.display = 'inline-flex';
+      if (tabVision) tabVision.style.display = 'none';
+      if (tabTestcases) tabTestcases.style.display = 'inline-flex';
+      if (tabPreview) tabPreview.style.display = 'none';
+
+      if (stdinPanel) stdinPanel.style.display = 'block';
+      if (stdinHint) stdinHint.innerHTML = 'C++ cin &bull; standard input';
+      if (stdinTextarea) stdinTextarea.placeholder = 'Enter C++ inputs for std::cin e.g.\n10 20\nHello';
+
+      this.switchOutputTab('console');
+    } else if (lang === 'java') {
+      // Java: Show Console & Test Cases. Hide Vision & Web Preview.
+      if (tabConsole) tabConsole.style.display = 'inline-flex';
+      if (tabVision) tabVision.style.display = 'none';
+      if (tabTestcases) tabTestcases.style.display = 'inline-flex';
+      if (tabPreview) tabPreview.style.display = 'none';
+
+      if (stdinPanel) stdinPanel.style.display = 'block';
+      if (stdinHint) stdinHint.innerHTML = 'Java Scanner &bull; System.in';
+      if (stdinTextarea) stdinTextarea.placeholder = 'Enter Java inputs for Scanner e.g.\n10 20';
+
+      this.switchOutputTab('console');
+    } else if (lang === 'html' || lang === 'css') {
+      // Web (HTML/CSS): Show Web Preview. Hide Vision, Testcases, stdin.
+      if (tabConsole) tabConsole.style.display = 'inline-flex';
+      if (tabVision) tabVision.style.display = 'none';
+      if (tabTestcases) tabTestcases.style.display = 'none';
+      if (tabPreview) tabPreview.style.display = 'inline-flex';
+
+      // Hide custom stdin because Web apps run in interactive iframe
+      if (stdinPanel) stdinPanel.style.display = 'none';
+
+      this.switchOutputTab('preview');
+    } else if (lang === 'javascript') {
+      // JavaScript: Show Web Preview, Console, Test Cases. Hide Vision.
+      if (tabConsole) tabConsole.style.display = 'inline-flex';
+      if (tabVision) tabVision.style.display = 'none';
+      if (tabTestcases) tabTestcases.style.display = 'inline-flex';
+      if (tabPreview) tabPreview.style.display = 'inline-flex';
+
+      if (stdinPanel) stdinPanel.style.display = 'none';
+
+      this.switchOutputTab('preview');
+    }
+  },
+
   // ── Toggle Fullscreen Output Box ──
   toggleFullscreenOutput() {
     const op = document.getElementById('outputPanel');
@@ -5976,7 +6574,9 @@ const App = {
 
       document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
       document.getElementById('fileName').textContent = cfg.file;
-      document.getElementById('runtimeLabel').textContent = cfg.runtime;
+      const rl = document.getElementById('runtimeLabel');
+      if (rl) rl.textContent = cfg.runtime;
+      this.updateActiveLangUI(lang);
 
       this.updateTranslateButtonState();
       this.updatePracticeLangPill();
@@ -6038,7 +6638,9 @@ const App = {
 
     document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === toLang));
     document.getElementById('fileName').textContent = cfg.file;
-    document.getElementById('runtimeLabel').textContent = cfg.runtime;
+    const rl = document.getElementById('runtimeLabel');
+    if (rl) rl.textContent = cfg.runtime;
+    this.updateActiveLangUI(toLang);
 
     this.setCode(result.code, cfg.mode);
     this.codeBuffers[toLang] = result.code;
@@ -6107,9 +6709,9 @@ const App = {
 
     // Execution timeout guard (Prevents browser tab freezing on infinite loops)
     // When downloading and initializing heavy packages (OpenCV, NumPy, Matplotlib, Pandas),
-    // first-time download from CDN can take 15-30s. Grant 60 seconds so it never false-timeouts.
+    // first-time download from CDN can take 20-40s on standard connections. Grant 120 seconds so it never false-timeouts.
     const isHeavyPackage = lang === 'python' && /(import\s+(cv2|opencv|matplotlib|plt|pandas|pd|sklearn|scipy|sympy)|from\s+(cv2|matplotlib|pandas|sklearn|scipy))/m.test(code);
-    const TIMEOUT_MS = isHeavyPackage ? 60000 : 12000;
+    const TIMEOUT_MS = isHeavyPackage ? 120000 : 15000;
     let timeoutTimer = null;
     const timeoutPromise = new Promise((_, reject) => {
       timeoutTimer = setTimeout(() => {
@@ -6170,8 +6772,7 @@ const App = {
     }
 
     btn.classList.remove('running');
-    btn.innerHTML = `<i data-lucide="play" style="width:16px;height:16px;fill:currentColor"></i>Run Code<span class="run-shortcut">Ctrl+Enter</span>`;
-    lucide.createIcons();
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="6 3 20 12 6 21 6 3"/></svg><span>Run Code</span><span class="run-shortcut">Ctrl+↵</span>`;
     this.setStatus(this.hasRunError ? 'Error' : 'Ready', this.hasRunError ? 'red' : 'green');
     document.getElementById('statusTime').textContent = `${ms}ms`;
 
@@ -6188,7 +6789,9 @@ const App = {
     div.className = `console-line ${type}`;
     div.textContent = text;
     c.appendChild(div);
-    c.scrollTop = c.scrollHeight;
+    if (this.outputAutoScroll !== false) {
+      c.scrollTop = c.scrollHeight;
+    }
   },
 
   setStatus(text, color) {
@@ -6389,85 +6992,104 @@ const App = {
 
   // ── Resizer for 3 Columns ──
   initResizer() {
-    // 1. Left Resizer: Resizes Column 1 (Problem) vs Middle Editor
+    // 1. Left Resizer: Resizes Column 1 (Ad/Problem) vs Middle Editor
     const leftHandle = document.getElementById('splitHandleLeft');
     const leftProblem = document.getElementById('workspaceLeftAd') || document.getElementById('workspaceLeftProblem');
+    
+    // Restore saved left column width
+    try {
+      const savedLeftW = localStorage.getItem('vab_col_left_w');
+      if (savedLeftW && leftProblem && window.innerWidth > 868) {
+        const parsed = parseInt(savedLeftW, 10);
+        if (parsed >= 140 && parsed <= 480) {
+          leftProblem.style.flex = `0 0 ${parsed}px`;
+          leftProblem.style.width = `${parsed}px`;
+        }
+      }
+    } catch(e) {}
+
     if (leftHandle && leftProblem) {
       let dragging = false, startX, startW;
-      leftHandle.addEventListener('mousedown', (e) => {
+
+      const onStart = (clientX) => {
         dragging = true;
-        startX = e.clientX;
+        startX = clientX;
         startW = leftProblem.getBoundingClientRect().width;
         leftHandle.classList.add('dragging');
         document.body.style.cursor = 'col-resize';
         document.body.style.userSelect = 'none';
-      });
+      };
 
-      window.addEventListener('mousemove', (e) => {
+      const onMove = (clientX) => {
         if (!dragging) return;
-        const newW = Math.max(220, Math.min(500, startW + (e.clientX - startX)));
+        const maxW = Math.min(480, Math.floor(window.innerWidth * 0.4));
+        const newW = Math.max(140, Math.min(maxW, startW + (clientX - startX)));
         leftProblem.style.flex = `0 0 ${newW}px`;
         leftProblem.style.width = `${newW}px`;
         if (this.editor && typeof this.editor.layout === 'function') this.editor.layout();
-      });
+      };
 
-      window.addEventListener('mouseup', () => {
+      const onEnd = () => {
         if (dragging) {
           dragging = false;
           leftHandle.classList.remove('dragging');
           document.body.style.cursor = '';
           document.body.style.userSelect = '';
+          try {
+            localStorage.setItem('vab_col_left_w', Math.round(leftProblem.getBoundingClientRect().width));
+          } catch(e) {}
           if (this.editor && typeof this.editor.layout === 'function') this.editor.layout();
         }
+      };
+
+      leftHandle.addEventListener('mousedown', (e) => onStart(e.clientX));
+      window.addEventListener('mousemove', (e) => onMove(e.clientX));
+      window.addEventListener('mouseup', onEnd);
+
+      leftHandle.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) onStart(e.touches[0].clientX);
+      }, { passive: true });
+      window.addEventListener('touchmove', (e) => {
+        if (dragging && e.touches.length === 1) onMove(e.touches[0].clientX);
+      }, { passive: true });
+      window.addEventListener('touchend', onEnd);
+
+      // Double-click to reset left column to default (220px)
+      leftHandle.addEventListener('dblclick', () => {
+        leftProblem.style.flex = '0 0 220px';
+        leftProblem.style.width = '220px';
+        try { localStorage.removeItem('vab_col_left_w'); } catch(e) {}
+        if (this.editor && typeof this.editor.layout === 'function') this.editor.layout();
       });
     }
 
-    // 2. Right Resizer: Resizes Middle Editor vs Column 3 (Output Panel)
-    const rightHandle = document.getElementById('splitHandleRight') || document.getElementById('splitHandle');
+    // 2. Right Resizer: Handled via vertical down-scroll layout
     const rightCol = document.getElementById('workspaceRightColumn');
-    if (rightHandle && rightCol) {
-      let dragging = false, startX, startW;
-      rightHandle.addEventListener('mousedown', (e) => {
-        dragging = true;
-        startX = e.clientX;
-        startW = rightCol.getBoundingClientRect().width;
-        rightHandle.classList.add('dragging');
-        document.body.style.cursor = 'col-resize';
-        document.body.style.userSelect = 'none';
-      });
-
-      window.addEventListener('mousemove', (e) => {
-        if (!dragging) return;
-        const newW = Math.max(260, Math.min(650, startW - (e.clientX - startX)));
-        rightCol.style.flex = `0 0 ${newW}px`;
-        rightCol.style.width = `${newW}px`;
-        if (this.editor && typeof this.editor.layout === 'function') this.editor.layout();
-      });
-
-      window.addEventListener('mouseup', () => {
-        if (dragging) {
-          dragging = false;
-          rightHandle.classList.remove('dragging');
-          document.body.style.cursor = '';
-          document.body.style.userSelect = '';
-          if (this.editor && typeof this.editor.layout === 'function') this.editor.layout();
-        }
-      });
+    if (rightCol) {
+      rightCol.style.width = '100%';
+      rightCol.style.flex = 'none';
+      try { localStorage.removeItem('vab_col_right_w'); } catch(e) {}
     }
   },
 
-  // ── Mobile Responsive View Switcher ──
+  // ── Mobile Responsive View Switcher & Smooth Anchor Navigation ──
   initMobileViews() {
     const bar = document.getElementById('mobileViewBar');
     if (!bar) return;
 
-    const splitContainer = document.querySelector('.workspace-body-split');
     const btns = bar.querySelectorAll('.mobile-view-btn');
 
     const setView = (view) => {
       btns.forEach(b => b.classList.toggle('active', b.dataset.view === view));
-      if (splitContainer) {
-        splitContainer.setAttribute('data-mobile-view', view);
+      if (view === 'hero') {
+        const hero = document.getElementById('firstViewHero');
+        if (hero) hero.scrollIntoView({ behavior: 'smooth' });
+      } else if (view === 'editor') {
+        const ed = document.getElementById('workspaceLeftEditor');
+        if (ed) ed.scrollIntoView({ behavior: 'smooth' });
+      } else if (view === 'output') {
+        const out = document.getElementById('workspaceRightColumn');
+        if (out) out.scrollIntoView({ behavior: 'smooth' });
       }
       if (this.editor && typeof this.editor.layout === 'function') {
         setTimeout(() => this.editor.layout(), 100);
@@ -6480,10 +7102,6 @@ const App = {
         setView(b.dataset.view);
       });
     });
-
-    if (window.innerWidth <= 868 && splitContainer) {
-      splitContainer.setAttribute('data-mobile-view', 'editor');
-    }
   },
 
   toast(msg, type = 'info') {
@@ -6966,7 +7584,8 @@ const App = {
             this.currentLang = targetLang;
             document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === targetLang));
             document.getElementById('fileName').textContent = LANGUAGES[targetLang].file;
-            document.getElementById('runtimeLabel').textContent = LANGUAGES[targetLang].runtime;
+            const rl = document.getElementById('runtimeLabel');
+            if (rl) rl.textContent = LANGUAGES[targetLang].runtime;
           }
           this.setCode(payload.c, LANGUAGES[this.currentLang].mode);
           this.codeBuffers[this.currentLang] = payload.c;
@@ -8434,22 +9053,28 @@ Run & Test your code instantly at https://vab-code.in/
   visionImages: [],
 
   initCvLabModal() {
-    const btn = document.getElementById('cvLabBtn');
+    const openBtn = document.getElementById('openCvModalBtn') || document.getElementById('cvLabBtn');
+    const featureItemCV = document.getElementById('featureItemCV');
     const overlay = document.getElementById('cvLabOverlay');
     const closeBtn = document.getElementById('closeCvLabBtn');
     const searchInput = document.getElementById('cvSearchInput');
     const categoriesBar = document.getElementById('cvCategoriesBar');
 
-    if (!btn || !overlay) return;
+    if (!overlay) return;
 
-    btn.addEventListener('click', () => {
-      overlay.style.display = 'flex';
+    const openModal = (e) => {
+      if (e) e.preventDefault();
+      overlay.style.display = 'grid';
       this.renderCvExperimentsGrid();
-      if (searchInput) {
-        searchInput.value = '';
-        this.cvExperimentsQuery = '';
-        setTimeout(() => searchInput.focus(), 80);
-      }
+    };
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (featureItemCV) featureItemCV.addEventListener('click', (e) => {
+      openModal(e);
+      const featMenu = document.getElementById('featuresPopoverMenu');
+      if (featMenu) featMenu.style.display = 'none';
+      const featWrap = document.getElementById('featuresMenuWrapper');
+      if (featWrap) featWrap.classList.remove('is-open');
     });
 
     if (closeBtn) {
@@ -8559,7 +9184,14 @@ Run & Test your code instantly at https://vab-code.in/
       this.switchLang('python');
     }
 
-    this.setCode(exp.code, 'python');
+    const cleanCode = (exp.code || '')
+      .split('\n')
+      .filter(line => !line.trim().startsWith('#'))
+      .join('\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim() + '\n';
+
+    this.setCode(cleanCode, 'python');
 
     const fileNameEl = document.getElementById('fileName');
     if (fileNameEl) {
